@@ -3,13 +3,13 @@ import os
 import time
 import datetime
 #####
-from selenium_utils import stop, log, new_tab, close_tab, assert_tab
-from selenium_utils import assert_logged_in, assert_logged_out
-from selenium_utils import kill_irritating_popup, disable_irritating_popup, image_div, save_element_html
-from selenium_utils import wait_for_xpath_element, wait_for_invisible_xpath
-from selenium_utils import submit_login_form, sign_up_to_isaac, set_guerrilla_mail_address
-from selenium_utils import GuerrillaInbox, User, TestUsers
-from selenium_utils import INFO, PASS, ERROR, start_testing, end_testing
+from isaactest.emails.guerrillamail import set_guerrilla_mail_address, GuerrillaInbox
+from isaactest.utils.log import log, INFO, ERROR, PASS, stop, start_testing, end_testing
+from isaactest.utils.isaac import submit_login_form, assert_logged_in, assert_logged_out, sign_up_to_isaac
+from isaactest.utils.isaac import kill_irritating_popup, disable_irritating_popup
+from isaactest.utils.isaac import TestUsers, User
+from isaactest.utils.i_selenium import assert_tab, new_tab, close_tab, image_div, save_element_html
+from isaactest.utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
 #####
 import selenium.webdriver
 from selenium.webdriver.common.keys import Keys
@@ -192,7 +192,7 @@ assert_tab(driver, ISAAC_WEB)
 time.sleep(1)
 request_verify_email = driver.find_element_by_xpath("//a[@ng-click='requestEmailVerification()']")
 
-email_verification_popup_shown = False
+email_verification_popup_shown_yet = False
 verify_popup_xpath = "//div[@class='toast-message']/h4[@class='ng-binding']"
 verification_email_request_limit = 4
 verification_requests = 0
@@ -201,11 +201,11 @@ try:
         log(INFO, "Clicking request email verification link.")
         request_verify_email.click()
         popup = wait_for_xpath_element(driver, verify_popup_xpath)
-        image_div(driver, "email_verification_request_popup_%s.png" % i)
-        email_verification_popup_shown = True
         popup_text = popup.text
+        image_div(driver, "email_verification_request_popup_%s.png" % i)
+        email_verification_popup_shown_yet = True
         wait_for_invisible_xpath(driver, verify_popup_xpath)
-        email_verification_popup_shown = False
+        email_verification_popup_shown_yet = False
         time.sleep(1)
         if i <= verification_email_request_limit - 1:  # i starts from 0, not 1
             assert popup_text == "Email verification request succeeded."
@@ -219,7 +219,7 @@ try:
             else:
                 stop(driver, "Warning not shown after %s requests!" % verification_requests)
 except TimeoutException:
-    if email_verification_popup_shown:
+    if email_verification_popup_shown_yet:
         stop(driver, "Verification Popup didn't close; see 'email_verification_request_popup.png'!")
     else:
         stop(driver, "Verification Popup didn't appear!")
