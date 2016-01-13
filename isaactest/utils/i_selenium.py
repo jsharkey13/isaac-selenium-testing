@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from PIL import Image
-from .log import log, INFO, stop
+from .log import log, INFO, ERROR
 
 
 __all__ = ['new_tab', 'change_tab', 'assert_tab', 'close_tab', 'image_div',
@@ -12,7 +12,9 @@ __all__ = ['new_tab', 'change_tab', 'assert_tab', 'close_tab', 'image_div',
 
 
 def new_tab(driver):
+    main_window = driver.current_window_handle
     driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 't')
+    driver.switch_to_window(main_window)
     time.sleep(1)
     log(INFO, "Opened new tab.")
 
@@ -48,7 +50,8 @@ def assert_tab(driver, url_part):
             change_tab(driver)
             current_url = driver.current_url
             if current_url in urls:
-                stop(driver, "AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
+                log(ERROR, "AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
+                raise AssertionError("AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
             urls.append(current_url)
 
 

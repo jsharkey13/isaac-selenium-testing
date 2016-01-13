@@ -14,8 +14,9 @@ def _format_recipients(recipients):
     return ", ".join(recipients)
 
 
-def send_results(timestamp, recipients=_TO):
+def send_results(timestamp, summary, recipients=_TO):
     msg_text = "Isaac Regression Test on %s\n\n" % timestamp
+    msg_text += summary
     msg = MIMEMultipart()
     msg['To'] = _format_recipients(recipients)
     msg['From'] = email.utils.formataddr(('Isaac Regression Test', 'cl-isaac-contact@lists.cam.ac.uk'))
