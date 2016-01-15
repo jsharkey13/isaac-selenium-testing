@@ -272,7 +272,11 @@ welcome_email(driver, inbox)  # Delete
 def req_verify_emails(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(1)
-    request_verify_email = driver.find_element_by_xpath("//a[@ng-click='requestEmailVerification()']")
+    try:
+        request_verify_email = driver.find_element_by_xpath("//a[@ng-click='requestEmailVerification()']")
+    except NoSuchElementException:
+        log(ERROR, "Can't access verification request link in banner; can't continue! Are we logged in?")
+        return False
 
     email_verification_popup_shown_yet = False
     verify_popup_xpath = "//div[@class='toast-message']/h4[@class='ng-binding']"
@@ -375,6 +379,9 @@ def verify_link(driver, inbox):
         return False
     except IndexError:
         log(ERROR, "No verification emails recieved! Can't continue.")
+        return False
+    except NoSuchElementException:
+        log(ERROR, "Can't access verification link in email; can't continue!")
         return False
 verify_link(driver, inbox)  # Delete
 
@@ -504,7 +511,10 @@ def pwd_reset_link(driver, inbox, Users):
         time.sleep(1)
         assert_tab(driver, ISAAC_WEB + "/resetpassword")
         log(INFO, "Reset Password URL: '%s'." % driver.current_url)
-
+    except NoSuchElementException:
+        log(ERROR, "Can't access reset password link in email; can't continue!")
+        return False
+    try:
         pwd1 = driver.find_element_by_xpath("//input[@id='password']")
         pwd1.clear()
         pwd1.send_keys(Users.Guerrilla.new_password)
@@ -514,6 +524,10 @@ def pwd_reset_link(driver, inbox, Users):
         change_password = driver.find_element_by_xpath("//button[@ng-click='resetPassword()']")
         change_password.click()
         time.sleep(1)
+    except NoSuchElementException:
+        log(ERROR, "Can't access reset password form correctly; can't continue!")
+        return False
+    try:
         driver.find_element_by_xpath("//div[@ng-switch='submitted']/div[contains(text(), 'reset successfully')]")
         Users.Guerrilla.password = Users.Guerrilla.new_password
         close_tab(driver)
@@ -537,11 +551,14 @@ def reset_pwd_login(driver, Users):
     log(INFO, "Got: %s" % ISAAC_WEB)
     time.sleep(1)
 
-    login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
-    login_tab.click()
-    submit_login_form(driver, user=Users.Guerrilla)
-    time.sleep(2)
-
+    try:
+        login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
+        login_tab.click()
+        submit_login_form(driver, user=Users.Guerrilla)
+        time.sleep(2)
+    except NoSuchElementException:
+        log(ERROR, "Can't access login tab; can't continue!")
+        return False
     try:
         assert_logged_in(driver, Users.Guerrilla)
         log(INFO, "Login successful.")
@@ -564,12 +581,14 @@ def login_uppercase(driver, Users):
     driver.get(ISAAC_WEB + "/logout")
     log(INFO, "Logging out any logged in user.")
     time.sleep(2)
-
-    login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
-    login_tab.click()
-    submit_login_form(driver, Users.Student.email.upper(), Users.Student.password)
-    time.sleep(2)
-
+    try:
+        login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
+        login_tab.click()
+        submit_login_form(driver, Users.Student.email.upper(), Users.Student.password)
+        time.sleep(2)
+    except NoSuchElementException:
+        log(ERROR, "Can't access login tab; can't continue!")
+        return False
     try:
         assert_logged_in(driver, Users.Student)
         log(INFO, "Login successful.")
@@ -592,10 +611,13 @@ def signup_uppercase(driver, Users):
     driver.get(ISAAC_WEB + "/logout")
     log(INFO, "Logging out any logged in user.")
     time.sleep(2)
-
-    login_tab = driver.find_element_by_id("login-tab")
-    login_tab.click()
-    time.sleep(2)
+    try:
+        login_tab = driver.find_element_by_id("login-tab")
+        login_tab.click()
+        time.sleep(2)
+    except NoSuchElementException:
+        log(ERROR, "Can't access login tab; can't continue!")
+        return False
     try:
         assert not sign_up_to_isaac(driver, Users.Guerrilla.email.upper(), Users.Guerrilla.firstname, Users.Guerrilla.lastname, Users.Guerrilla.password, suppress=True)
         wait_for_xpath_element(driver, "//h4[contains(text(), 'Registration Failed')]/span[contains(text(), 'An account already exists with the e-mail address')]")
@@ -603,7 +625,7 @@ def signup_uppercase(driver, Users):
         driver.get(ISAAC_WEB)
         log(INFO, "Got: %s" % ISAAC_WEB)
         time.sleep(1)
-        log(PASS, "Canot sign up with uppercase form of existing email.")
+        log(PASS, "Cannot sign up with uppercase form of existing email.")
         return True
     except TimeoutException:
         log(ERROR, "Sign up with uppercase password failed with wrong error message!")
@@ -950,8 +972,24 @@ def admin_page_access(driver, Users):
     log(INFO, "Logging out any logged in user.")
     time.sleep(2)
 
-    access_cases = [("Student", Users.Student), ("Teacher", Users.Teacher), ("Content Editor", Users.Editor)]
     admin_access_fail = False
+
+    try:
+        log(INFO, "Test if logged out user can access '/admin'.")
+        driver.get(ISAAC_WEB + "/admin")
+        time.sleep(2)
+        wait_for_xpath_element(driver, "//h1[text()='Unauthorised']")
+        log(INFO, "Logged out users can't access admin page.")
+        time.sleep(2)
+        driver.get(ISAAC_WEB + "/logout")
+        log(INFO, "Logging out to start from same initial page each time.")
+        time.sleep(2)
+    except TimeoutException:
+        admin_access_fail = True
+        image_div(driver, "ERROR_unexpected_admin_access")
+        log(ERROR, "Logged out user accessed '/admin'; see 'ERROR_unexpected_admin_access.png'!")
+
+    access_cases = [("Student", Users.Student), ("Teacher", Users.Teacher), ("Content Editor", Users.Editor)]
     for i_type, user in access_cases:
         log(INFO, "Test if '%s' users can access admin page." % i_type)
         try:
