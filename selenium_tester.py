@@ -58,9 +58,9 @@ start_testing()
 def selenium_startup(Users):
     # Selenium Start-up:
     driver = selenium.webdriver.Firefox()
-#    driver = selenium.webdriver.Chrome("../chromedriver")  # Works differently, currently broken!
+    #driver = selenium.webdriver.Chrome("../chromedriver")
     driver.set_window_size(1920, 1080)
-    log(INFO, "Opened Selenium.")
+    log(INFO, "Opened Selenium Driver for '%s'." % driver.name.title())
     time.sleep(2)
     # Navigate to Staging:
     driver.get(ISAAC_WEB)
@@ -165,7 +165,7 @@ def login_throttle(driver, Users):
         image_div(driver, "11_login_attempts.png")
         log(ERROR, "Tried to log in 11 times. No error message; see '11_login_attempts.png'!")
         return False
-#login_throttle(driver, Users)  # Delete
+login_throttle(driver, Users)  # Delete
 
 
 #####
@@ -193,7 +193,7 @@ def login_timeout(driver, Users):
         image_div(driver, "login_error.png")
         log(ERROR, "Can't login after 10 minute lockout; see 'login_error.png'!")
         return False
-#login_timeout(driver, Users)  # Delete
+login_timeout(driver, Users)  # Delete
 
 
 #####
@@ -647,6 +647,7 @@ def user_consistency_popup(driver):
     time.sleep(2)
     try:
         assert_logged_out(driver)
+        time.sleep(2)
         log(INFO, "Logged out in new tab successfully.")
     except AssertionError:
         image_div(driver, "ERROR_logout_failure.png")
@@ -658,6 +659,7 @@ def user_consistency_popup(driver):
     non_isaac_url = "http://www.bbc.co.uk"
     driver.get(non_isaac_url)
     log(INFO, "Navigating away from Isaac (to '%s') to avoid muddling tabs." % non_isaac_url)
+    time.sleep(2)
 
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -792,6 +794,7 @@ def email_change_emails(driver, inbox, Users):
         return False
     time.sleep(2)
     set_guerrilla_mail_address(driver, Users.Guerrilla.new_email)
+    log(INFO, "Wating 10 seconds for emails to arrive.")
     time.sleep(11)
     inbox.refresh()
 

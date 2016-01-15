@@ -94,12 +94,16 @@ def assert_logged_in(driver, user=None):
         try:
             """angular.element("head").scope().user.familyName"""
             wait_for_invisible_xpath(driver, "//span[text()=' to Isaac']", 0.5)
+            log(INFO, "AssertLoggedIn: A user is logged in.")
         except TimeoutException:
+            log(INFO, "AssertLoggedIn: No user is logged in!")
             raise AssertionError("AssertLoggedIn: Not logged in!")
     else:
         try:
             wait_for_xpath_element(driver, "//span[contains(text(), '%s')]" % user.firstname, 0.5, False)
+            log(INFO, "AssertLoggedIn: The user '%s' is logged in." % user.firstname)
         except TimeoutException:
+            log(INFO, "AssertLoggedIn: The user '%s' is not logged in!" % user.firstname)
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
 
@@ -107,7 +111,9 @@ def assert_logged_out(driver):
     time.sleep(0.5)
     try:
         wait_for_xpath_element(driver, "//span[text()=' to Isaac']", 0.5)
+        log(INFO, "AssertLoggedOut: All users are logged out.")
     except TimeoutException:
+        log(INFO, "AssertLoggedOut: A user is still logged in!")
         raise AssertionError("AssertLoggedOut: Not logged out!")
 
 
