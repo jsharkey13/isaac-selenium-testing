@@ -20,6 +20,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 # Set the working dir:
 os.chdir("/path/to/dir")
 
+PATH_TO_CHROMEDRIVER = "../chromedriver"
 
 # Some important global constants:
 ISAAC_WEB = "https://staging.isaacphysics.org"
@@ -58,7 +59,7 @@ start_testing()
 def selenium_startup(Users):
     # Selenium Start-up:
     driver = selenium.webdriver.Firefox()
-    #driver = selenium.webdriver.Chrome("../chromedriver")
+    #driver = selenium.webdriver.Chrome(PATH_TO_CHROMEDRIVER)
     driver.set_window_size(1920, 1080)
     log(INFO, "Opened Selenium Driver for '%s'." % driver.name.title())
     time.sleep(2)
@@ -103,7 +104,7 @@ def login(driver, Users):
         return True
     except AssertionError:
         log(INFO, "Login failed!")
-        image_div(driver, "ERROR_not_logging_in.png")
+        image_div(driver, "ERROR_not_logging_in")
         log(ERROR, "Can't login; see 'ERROR_not_logging_in.png'!")
         return False
 login(driver, Users)  # Delete
@@ -140,7 +141,7 @@ def logout(driver):
         log(PASS, "Log out button works.")
         return True
     except AssertionError:
-        image_div(driver, "ERROR_logout_failure.png")
+        image_div(driver, "ERROR_logout_failure")
         log(ERROR, "Couldn't logout; see 'ERROR_logout_failure.png'!")
         return False
 logout(driver)  # Delete
@@ -162,7 +163,7 @@ def login_throttle(driver, Users):
         log(PASS, "11 login attempts. Warning message and locked out for 10 mins.")
         return True
     except NoSuchElementException:
-        image_div(driver, "11_login_attempts.png")
+        image_div(driver, "11_login_attempts")
         log(ERROR, "Tried to log in 11 times. No error message; see '11_login_attempts.png'!")
         return False
 login_throttle(driver, Users)  # Delete
@@ -190,7 +191,7 @@ def login_timeout(driver, Users):
         return True
     except AssertionError:
         log(INFO, "Login failed!")
-        image_div(driver, "login_error.png")
+        image_div(driver, "ERROR_login_after_lockout")
         log(ERROR, "Can't login after 10 minute lockout; see 'login_error.png'!")
         return False
 login_timeout(driver, Users)  # Delete
@@ -241,7 +242,7 @@ def welcome_email(driver, inbox):
         log(PASS, "Welcome email recieved!")
         return True
     except AssertionError, e:
-        image_div(driver, "ERROR_not_isaac_email.png")
+        image_div(driver, "ERROR_not_isaac_email")
         log(ERROR, e.message + " See 'ERROR_not_isaac_email.png'!")
         return False
 welcome_email(driver, inbox)  # Delete
@@ -266,7 +267,7 @@ def req_verify_emails(driver):
             request_verify_email.click()
             popup = wait_for_xpath_element(driver, verify_popup_xpath)
             popup_text = popup.text
-            image_div(driver, "email_verification_request_popup_%s.png" % i)
+            image_div(driver, "email_verification_request_popup_%s" % i)
             email_verification_popup_shown_yet = True
             wait_for_invisible_xpath(driver, verify_popup_xpath)
             email_verification_popup_shown_yet = False
@@ -319,7 +320,7 @@ def recieve_verify_emails(driver, inbox):
         log(PASS, "%s verification emails recieved." % verification_emails_recived)
         return True
     except AssertionError:
-        image_div(driver, "ERROR_recieve_verification.png")
+        image_div(driver, "ERROR_recieve_verification")
         log(ERROR, "Expected %s verification emails, recieved %s. See 'ERROR_recieve_verification.png'!" % (verification_email_request_limit, verification_emails_recived))
         return False
 recieve_verify_emails(driver, inbox)  # Delete
@@ -352,7 +353,7 @@ def verify_link(driver, inbox):
         time.sleep(2)
         return True
     except TimeoutException:
-        image_div(driver, "ERROR_verification_status.png")
+        image_div(driver, "ERROR_verification_status")
         log(ERROR, "Verification Failed; see 'ERROR_verification_status.png'!")
         return False
     except IndexError:
@@ -403,7 +404,7 @@ def pwd_reset_throttle(driver, Users):
             forgot_password_button = driver.find_element_by_xpath("(//a[@ng-click='resetPassword()'])[2]")
             log(INFO, "Clicking password reset button.")
             forgot_password_button.click()
-            image_div(driver, "reset_password_button_message_%s.png" % i)
+            image_div(driver, "reset_password_button_message_%s" % i)
             password_resets += 1
             if i <= forgot_pwd_request_limit - 1:  # i starts from 0 not 1
                 try:
@@ -460,7 +461,7 @@ def recieve_pwd_reset_emails(driver, inbox):
         log(PASS, "%s reset password emails recieved." % forgot_pwd_request_limit)
         return True
     except AssertionError:
-        image_div(driver, "ERROR_recieve_reset_pwd.png")
+        image_div(driver, "ERROR_recieve_reset_pwd")
         log(ERROR, "Expected %s password reset emails, recieved %s. See 'ERROR_recieve_reset_pwd.png'!" % (forgot_pwd_request_limit, forgot_password_emails_recieved))
         return False
 recieve_pwd_reset_emails(driver, inbox)  # Delete
@@ -503,7 +504,7 @@ def pwd_reset_link(driver, inbox, Users):
         log(PASS, "Reset password link works.")
         return True
     except NoSuchElementException:
-        image_div(driver, "ERROR_resetting_password.png")
+        image_div(driver, "ERROR_resetting_password")
         log(ERROR, "Resetting password failed; see 'ERROR_resetting_password.png'!")
         return False
 pwd_reset_link(driver, inbox, Users)  # Delete
@@ -531,7 +532,7 @@ def reset_pwd_login(driver, Users):
         return True
     except AssertionError:
         log(INFO, "Login failed!")
-        image_div(driver, "ERROR_not_logging_in.png")
+        image_div(driver, "ERROR_not_logging_in")
         log(ERROR, "Can't login with new password; see 'ERROR_not_logging_in.png'!")
         return False
 reset_pwd_login(driver, Users)  # Delete
@@ -559,7 +560,7 @@ def login_uppercase(driver, Users):
         return True
     except AssertionError:
         log(INFO, "Login failed!")
-        image_div(driver, "ERROR_not_logging_in.png")
+        image_div(driver, "ERROR_not_logging_in")
         log(ERROR, "Can't login with uppercase email; see 'ERROR_logging_in_uppercase.png'!")
         return False
 login_uppercase(driver, Users)  # Delete
@@ -650,7 +651,7 @@ def user_consistency_popup(driver):
         time.sleep(2)
         log(INFO, "Logged out in new tab successfully.")
     except AssertionError:
-        image_div(driver, "ERROR_logout_failure.png")
+        image_div(driver, "ERROR_logout_failure")
         close_tab(driver)
         time.sleep(2)
         log(ERROR, "Couldn't logout in new tab; see 'ERROR_logout_failure.png'!")
@@ -665,10 +666,10 @@ def user_consistency_popup(driver):
     try:
         consistency_popup = wait_for_xpath_element(driver, "//div[@isaac-modal='userConsistencyError']")
         log(INFO, "User consistency popup shown.")
-        image_div(driver, "user_consistency_popup.png", consistency_popup)
-        save_element_html(consistency_popup, "user_consistency_popup.html")
+        image_div(driver, "user_consistency_popup", consistency_popup)
+        save_element_html(consistency_popup, "user_consistency_popup")
     except TimeoutException:
-        image_div(driver, "ERROR_user_consistency_not_shown.png")
+        image_div(driver, "ERROR_user_consistency_not_shown")
         close_tab(driver)
         time.sleep(2)
         log(ERROR, "User consistency popup not shown; see 'ERROR_user_consistency_not_shown.png'!")
@@ -724,18 +725,18 @@ def email_change(driver, Users):
         log(INFO, "Clicked 'My Account' button.")
         time.sleep(2)
     except (NoSuchElementException, ElementNotVisibleException):
-        image_div(driver, "ERROR_account_global_nav.png")
+        image_div(driver, "ERROR_account_global_nav")
         log(ERROR, "Couldn't access 'My Account' link from global nav; see ERROR_account_global_nav.png'")
         return False
     try:
         start_url = driver.current_url
         assert "/account" in start_url, "'/account' not in URL: '%s'!" % start_url
         email_address_box = driver.find_element_by_xpath("//input[@id='account-email']")
-        image_div(driver, "change_email_old_email.png", email_address_box.find_element_by_xpath(".."))
+        image_div(driver, "change_email_old_email", email_address_box.find_element_by_xpath(".."))
         email_address_box.clear()
         email_address_box.send_keys(Users.Guerrilla.new_email)
         time.sleep(2)
-        image_div(driver, "change_email_new_email.png", email_address_box.find_element_by_xpath(".."))
+        image_div(driver, "change_email_new_email", email_address_box.find_element_by_xpath(".."))
         save_button = driver.find_element_by_xpath("//a[text()='Save']")
         save_button.click()
         time.sleep(2)
@@ -753,11 +754,11 @@ def email_change(driver, Users):
         log(PASS, "Email changed in account setting successfully.")
         return True
     except AssertionError, e:
-        image_div(driver, "ERROR_change_email_page.png")
+        image_div(driver, "ERROR_change_email_page")
         log(ERROR, e.message)
         return False
     except NoSuchElementException:
-        image_div(driver, "ERROR_change_email_page.png")
+        image_div(driver, "ERROR_change_email_page")
         log(ERROR, "Couldn't change password on 'My Account' page; see 'ERROR_change_email_page.png'!")
         return False
 email_change(driver, Users)  # Delete
@@ -779,14 +780,14 @@ def email_change_emails(driver, inbox, Users):
         old_warning_email = inbox.get_by_subject("Change in Isaac Physics email address requested!")[0]
         log(INFO, "Old warning email recieved and has expected subject line.")
         old_warning_email.image("change_email_old_email.png")
-        old_warning_email.save_html_body("change_email_old_email.html")
+        old_warning_email.save_html_body("change_email_old_email")
         old_warning_email.view()
         email_body = old_warning_email.get_email_body_element()
         email_body.find_element_by_xpath("//a[text()='%s']" % Users.Guerrilla.new_email)
         old_warning_email.close()
         log(INFO, "Warning email successfully sent to old address.")
     except IndexError:
-        image_div(driver, "ERROR_no_old_email_warning.png")
+        image_div(driver, "ERROR_no_old_email_warning")
         log(ERROR, "No warning email recieved in old email inbox; see 'ERROR_no_old_email_warning.png'!")
         return False
     except NoSuchElementException:
@@ -802,7 +803,7 @@ def email_change_emails(driver, inbox, Users):
         new_verify_email = inbox.get_by_subject("Verify your email")[0]
         log(INFO, "New verify email recieved and has expected subject line.")
         new_verify_email.image("change_email_new_email.png")
-        new_verify_email.save_html_body("change_email_new_email.html")
+        new_verify_email.save_html_body("change_email_new_email")
         new_verify_email.view()
         time.sleep(2)
         email_body = new_verify_email.get_email_body_element()
@@ -814,7 +815,7 @@ def email_change_emails(driver, inbox, Users):
         log(PASS, "Emails recieved for old and new accounts after changing email address.")
         return True
     except IndexError:
-        image_div(driver, "ERROR_verify_new_not_recieved.png")
+        image_div(driver, "ERROR_verify_new_not_recieved")
         log(ERROR, "Verification email for new email not recieved; see 'ERROR_verify_new_not_recieved.png'!")
         return False
     except NoSuchElementException:
@@ -848,7 +849,7 @@ def email_change_login_status(driver, Users):
         log(INFO, "Login successful with old email before verification of new email.")
     except AssertionError:
         log(INFO, "Login failed.")
-        image_div(driver, "ERROR_not_logging_in.png")
+        image_div(driver, "ERROR_not_logging_in")
         log(ERROR, "Login failed with old email before verification of new email; see 'ERROR_not_logging_in.png'!")
         return False
     driver.get(ISAAC_WEB + "/logout")
@@ -863,7 +864,7 @@ def email_change_login_status(driver, Users):
         wait_for_xpath_element(driver, "//strong[text()='Incorrect credentials provided.']", 5)
         log(INFO, "Login failed with new email before verification of new email.")
     except TimeoutException:
-        image_div(driver, "ERROR_logged_in_unexpectedly.png")
+        image_div(driver, "ERROR_logged_in_unexpectedly")
         log(ERROR, "Login succeeded with old email before verification of new email; see 'ERROR_logged_in_unexpectedly.png'!")
         return False
     driver.refresh()
@@ -880,7 +881,7 @@ def email_change_login_status(driver, Users):
         log(INFO, "Verification of new email address succeeded.")
         close_tab(driver)
     except TimeoutException:
-        image_div(driver, "ERROR_change_email_verify_fail.png")
+        image_div(driver, "ERROR_change_email_verify_fail")
         close_tab(driver)
         time.sleep(2)
         log(ERROR, "New email verification failed, can't continue. See 'ERROR_change_email_verify_fail.png'!")
@@ -898,7 +899,7 @@ def email_change_login_status(driver, Users):
         wait_for_xpath_element(driver, "//strong[text()='Incorrect credentials provided.']", 5)
         log(INFO, "Login failed with old email after verification of new email.")
     except TimeoutException:
-        image_div(driver, "ERROR_logged_in_unexpectedly.png")
+        image_div(driver, "ERROR_logged_in_unexpectedly")
         log(ERROR, "Login suceeded with old email after verification of new email; see 'ERROR_logged_in_unexpectedly.png'!")
         return False
     driver.get(ISAAC_WEB + "/login")
@@ -911,7 +912,7 @@ def email_change_login_status(driver, Users):
         assert_logged_in(driver)
         log(INFO, "Login successful with new email after verification of new email.")
     except AssertionError:
-        image_div(driver, "ERROR_not_logging_in.png")
+        image_div(driver, "ERROR_not_logging_in")
         log(ERROR, "Login failed with new email after verification of new email; see 'ERROR_not_logging_in.png'!")
         return False
     time.sleep(2)
@@ -946,7 +947,7 @@ def admin_page_access(driver, Users):
             log(INFO, "User of type '%s' can't access admin page." % i_type)
         except TimeoutException:
             admin_access_fail = True
-            image_div(driver, "ERROR_unexpected_admin_access.png")
+            image_div(driver, "ERROR_unexpected_admin_access")
             log(ERROR, "User of type '%s' accessed '/admin'; see 'ERROR_unexpected_admin_access.png'!")
         except AssertionError:
             log(ERROR, "Couldn't log user in to test '/admin' access!")
@@ -974,7 +975,7 @@ def admin_page_access(driver, Users):
             log(INFO, "'%s' users can access '/admin'." % i_type)
         except TimeoutException:
             admin_access_fail = True
-            image_div(driver, "ERROR_no_admin_access.png")
+            image_div(driver, "ERROR_no_admin_access")
             log(ERROR, "'%s' user can't access '/admin'; see 'ERROR_no_admin_access.png'!" % i_type)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)

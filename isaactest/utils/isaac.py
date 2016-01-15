@@ -13,18 +13,29 @@ __all__ = ['User', 'TestUsers', 'kill_irritating_popup', 'disable_irritating_pop
 
 
 class User():
+    """A class to encapsulate an Isaac user."""
+
     def __init__(self, email, firstname, lastname, password):
+        """Create using a string email address, firstname, lastname and password."""
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.password = password
 
     def __repr__(self):
+        """Set Python's representation of the object to something useful."""
         return "<User: '%s' - '%s' '%s' - '%s'>" % (self.email, self.firstname, self.lastname, self.password)
 
 
 class TestUsers():
+    """A class to contain Isaac User objects.
+
+       Also contains a 'load()' method to load a pickled form from file. Useful for
+       encapsulating all the users in the hierarchy."""
+
     def __init__(self, Student, Teacher, Editor, Event, Admin):
+        """Create using student, teacher, content editor, event manager and admin
+           User objects."""
         self.Student = Student
         self.Teacher = Teacher
         self.Editor = Editor
@@ -32,10 +43,12 @@ class TestUsers():
         self.Admin = Admin
 
     def __repr__(self):
+        """Set Python's representation of the object to something useful."""
         return "<User List: 'Student', 'Teacher', 'Editor', 'Event', 'Admin'>"
 
     @staticmethod
     def load():
+        """Return the TestUser object loaded from file."""
         f = open("TestUsers.pickle")
         Users = pickle.load(f)
         f.close()
@@ -45,7 +58,10 @@ class TestUsers():
 def kill_irritating_popup(driver, wait_dur=60):
     """Wait for the annoying popup to popup and then close it.
 
-        If it hasn't appeared after one minute, continue with code."""
+        If it hasn't appeared after one minute, continue with code.
+         - 'driver' should be a Selenium WebDriver.
+         - 'wait_dur' is the interger time to wait in seconds.
+    """
     try:
         popup = WebDriverWait(driver, wait_dur).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='close-reveal-modal']")))
         popup.click()
@@ -56,6 +72,14 @@ def kill_irritating_popup(driver, wait_dur=60):
 
 
 def disable_irritating_popup(driver, undo=False):
+    """Disable the questionnaire popup for the duration of the session.
+
+       To prevent the popup from getting in the way of tests, set the local storage
+       flag requred to disable it.
+        - 'driver' should be a Selenium WebDriver.
+        - 'undo' is a boolean flag to reset the disabling by pretending the last
+          time the popup was seen was in 1970.
+    """
     if undo:
         epoch_time = 0  # Pretend last time shown was 1/1/1970 !
     else:
@@ -66,6 +90,20 @@ def disable_irritating_popup(driver, undo=False):
 
 
 def submit_login_form(driver, username="", password="", user=None, disable_popup=True):
+    """Given that the browser is on the Isaac login page; fill in and submin the login form.
+
+       This requires being on the login page to function. Will return 'False' if
+       it cannot submit the form.
+        - 'driver' should be a Selenium WebDriver.
+        - 'username' is the username to use. It will be overridden if a 'user' is
+          specified at all.
+        - 'password' is the password to use. It will be overridden if a 'user' is
+          specified at all.
+        - 'user' is the User object to use to login. It will override any username
+          and password otherwise set.
+        - 'disable_popup' is an optional boolean flag to disable the questionnaire
+          popup, to prevent it getting in the way of testing.
+    """
     if user is not None:
         username = user.email
         password = user.password
@@ -89,6 +127,14 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
 
 
 def assert_logged_in(driver, user=None):
+    """Assert that a user is currently logged in to Isaac.
+
+       Raises an AssertionError if no user is logged in. A specific user to check
+       for can also be specified.
+        - 'driver' should be a Selenium WebDriver.
+        - 'user' is an optional User object to check if logged in. If this specific
+          user is not logged in, an AssertionError will be raised.
+    """
     time.sleep(0.5)
     if user is None:
         try:
@@ -108,6 +154,11 @@ def assert_logged_in(driver, user=None):
 
 
 def assert_logged_out(driver):
+    """Assert that no user is logged in to Isaac.
+
+       Raises an AssertionError if a user is logged in.
+        - 'driver' should be a Selenium WebDriver.
+    """
     time.sleep(0.5)
     try:
         wait_for_xpath_element(driver, "//span[text()=' to Isaac']", 0.5)
@@ -118,6 +169,24 @@ def assert_logged_out(driver):
 
 
 def sign_up_to_isaac(driver, username="", firstname="", lastname="", password="", user=None, suppress=False):
+    """Sign a user up to Isaac.
+
+       Fill out the first login form and then the subsequent registration form.
+       Requires being on the login page when run.
+        - 'driver' should be a Selenium WebDriver.
+        - 'username' is the username to use. It will be overridden if a 'user' is
+          specified.
+        - 'firstname' is the first name to use. It will be overridden if a 'user' is
+          specified.
+        - 'lastname' is the last name to use. It will be overridden if a 'user' is
+          specified.
+        - 'password' is the password to use. It will be overridden if a 'user' is
+          specified.
+        - 'user' is the User object to use to sign up. It will override any username
+          and password otherwise set.
+        - 'suppress' is a boolean flag to silence any error message upon failure.
+          It is useful for testing when the expected result is failure.
+    """
     if user is not None:
         username = user.email
         firstname = user.firstname

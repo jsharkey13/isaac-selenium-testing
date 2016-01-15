@@ -2,38 +2,45 @@ import datetime
 from ..emails.result_email import send_results
 
 
-__all__ = ['INFO', 'PASS', 'ERROR', 'FATAL', 'log', 'start_testing', 'end_testing']
+__all__ = ['INFO', 'PASS', 'ERROR', 'log', 'start_testing', 'end_testing']
 
 _LOGFILE = None
 INFO = "INFO"
 PASS = "PASS"
 ERROR = "ERROR"
-FATAL = "FATAL"
 TEST = "TEST"
 
 
 _errors = 0
 
 # Customise which log events are printed:
-_OUTPUT_LOGGING_LEVELS = [INFO, PASS, ERROR, FATAL]
+_OUTPUT_LOGGING_LEVELS = [INFO, PASS, ERROR]
 
-
+""" Depricated!
 def stop(driver, message="Fatal Error! Stopping"):
     log(FATAL, message)
 #    raw_input("Paused (Press Enter to Quit)")
 #    driver.quit()
     end_testing()
     raise SystemExit
+"""
 
 
 def log(level, message):
-    """NOT THREAD SAFE!"""
-    global _OUTPUT_LOGGING_LEVELS, FATAL, ERROR, _tests_passed, _errors
-    if ((level == ERROR) or (level == FATAL)):
+    """Log a message to stdout and to file. Not thread safe!
+
+       Use to log messages; manages formatting and printing of only requested levels
+       of logging.
+        - 'level' should be one of the level constants from isaactest.utils.log
+          either INFO or ERROR for user-written code.
+        - 'message' is the string of the message to log.
+    """
+    global _OUTPUT_LOGGING_LEVELS, ERROR, _tests_passed, _errors
+    if (level == ERROR):
         _errors += 1
     if level != TEST:
         message = " - " + message
-    if (level in _OUTPUT_LOGGING_LEVELS) or (level == FATAL) or (level == TEST):
+    if (level in _OUTPUT_LOGGING_LEVELS) or (level == TEST):
         log_time = "[%s]" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         level = "[%s]" % level.ljust(5)
         log_item = "%s %s\t%s" % (log_time, level, message)
@@ -43,6 +50,7 @@ def log(level, message):
 
 
 def _generate_summary(Results):
+    """When testing has finished, return a string of the results in a nice format."""
     passes = len([v for v in Results.values() if v])
     total = len(Results)
     summary = "Testing Finished. %s of %s passed. %s errors!\n" % (passes, total, _errors)
@@ -53,6 +61,10 @@ def _generate_summary(Results):
 
 
 def start_testing():
+    """Run before tests start!
+
+       Opens the logfile and records the time at which the test started.
+    """
     global _LOGFILE
     log_time = "[%s]" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print "%s \t Starting Regression Testing." % log_time
@@ -61,6 +73,12 @@ def start_testing():
 
 
 def end_testing(Results):
+    """Run when testing finishes.
+
+       Closes the logfile, records the time testing finishes, manages the displaying
+       of the results of the tests and sends the emails out.
+        - 'Results' should be an OrderedDict of {TestName: bool} pairs.
+    """
     global _LOGFILE, _tests_passed, _errors
     now = datetime.datetime.now()
     log_time = "[%s]" % now.strftime("%Y-%m-%d %H:%M:%S")
