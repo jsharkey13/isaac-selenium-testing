@@ -2,11 +2,15 @@ import time
 import re
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
 from ..utils.i_selenium import image_div
-from ..utils.log import log, INFO, stop
+from ..utils.log import log, INFO, ERROR
 
 __all__ = ['set_guerrilla_mail_address', 'GuerrillaInbox', 'GuerrillaEmail']
 
 _SAFENAMECHARS = '[^-a-zA-Z0-9_ ]+'
+
+
+class GuerrillaMailError(Exception):
+    pass
 
 
 def set_guerrilla_mail_address(driver, guerrilla_email=None):
@@ -34,16 +38,18 @@ def set_guerrilla_mail_address(driver, guerrilla_email=None):
             time.sleep(1)
             email_box = driver.find_element_by_id("email-widget")
             if guerrilla_email != str(email_box.text):
-                stop(driver, "Failed to change GuerrillaMail email address!")
+                log(ERROR, "GM - Failed to change GuerrillaMail email address!")
+                raise GuerrillaMailError
             return guerrilla_email
         else:
             email_box = driver.find_element_by_id("email-widget")
             guerrilla_email = str(email_box.text)
             log(INFO, "Set GuerrillaMail email address to %s" % guerrilla_email)
             return guerrilla_email
-    except (Exception, NoSuchElementException):
+    except NoSuchElementException:
         image_div(driver, "ERROR_set_guerrillamail.png")
-        stop(driver, "Can't fill out signup form; see 'ERROR_set_guerrillamail.png'!")
+        log(ERROR, "GM - Can't fill out signup form; see 'ERROR_set_guerrillamail.png'!")
+        raise GuerrillaMailError
 
 
 class GuerrillaInbox():
@@ -67,8 +73,12 @@ class GuerrillaInbox():
         """
         log(INFO, "Creating GuerrillaInbox object.")
         self._driver = driver
-        self.emails = [GuerrillaEmail(driver, e) for e in driver.find_elements_by_xpath("//tr[contains(@class, 'mail_row')]")]
-        self.unread = [GuerrillaEmail(driver, e) for e in driver.find_elements_by_xpath("//tr[contains(@class, 'email_unread')]")]
+        try:
+            self.emails = [GuerrillaEmail(driver, e) for e in driver.find_elements_by_xpath("//tr[contains(@class, 'mail_row')]")]
+            self.unread = [GuerrillaEmail(driver, e) for e in driver.find_elements_by_xpath("//tr[contains(@class, 'email_unread')]")]
+        except NoSuchElementException:
+            log(ERROR, "GM - No email elements on the page; failed to find inbox!")
+            raise GuerrillaMailError
 
     def refresh(self):
         """Refresh the inbox object, remove any old emails add new ones.
@@ -78,10 +88,14 @@ class GuerrillaInbox():
            update to include any new emails that have been recieved.
         """
         log(INFO, "Refreshing GuerrillaInbox object.")
-        del(self.emails)
-        del(self.unread)
-        self.emails = [GuerrillaEmail(self._driver, e) for e in self._driver.find_elements_by_xpath("//tr[contains(@class, 'mail_row')]")]
-        self.unread = [GuerrillaEmail(self._driver, e) for e in self._driver.find_elements_by_xpath("//tr[contains(@class, 'email_unread')]")]
+        try:
+            del(self.emails)
+            del(self.unread)
+            self.emails = [GuerrillaEmail(self._driver, e) for e in self._driver.find_elements_by_xpath("//tr[contains(@class, 'mail_row')]")]
+            self.unread = [GuerrillaEmail(self._driver, e) for e in self._driver.find_elements_by_xpath("//tr[contains(@class, 'email_unread')]")]
+        except NoSuchElementException:
+            log(ERROR, "GM - No email elements on page; failed to find inbox!")
+            raise GuerrillaMailError
 
     def delete_email(self, email):
         """Delete a GuerillaMail email.
@@ -136,14 +150,18 @@ class GuerrillaEmail():
         """Create a new GuerrillaEmail object; not reccommended to run this by hand."""
         self._driver = driver
         self._row_element = row_element
-        self.sender_element = row_element.find_element_by_xpath("./td[@class='td2']")
-        self.sender = str(self.sender_element.text).lstrip().rstrip()
-        self.subject_element = row_element.find_element_by_xpath("./td[@class='td3']")
-        self.subject = str(self.subject_element.text).lstrip().rstrip()
-        self.excerpt_element = self.subject_element.find_element_by_xpath("./span[@class='email-excerpt']")
-        self.excerpt = str(self.excerpt_element.text).lstrip().rstrip()
-        self.time_element = row_element.find_element_by_xpath("./td[@class='td4']")
-        self.time = str(self.time_element.text).lstrip().rstrip()
+        try:
+            self.sender_element = row_element.find_element_by_xpath("./td[@class='td2']")
+            self.sender = str(self.sender_element.text).lstrip().rstrip()
+            self.subject_element = row_element.find_element_by_xpath("./td[@class='td3']")
+            self.subject = str(self.subject_element.text).lstrip().rstrip()
+            self.excerpt_element = self.subject_element.find_element_by_xpath("./span[@class='email-excerpt']")
+            self.excerpt = str(self.excerpt_element.text).lstrip().rstrip()
+            self.time_element = row_element.find_element_by_xpath("./td[@class='td4']")
+            self.time = str(self.time_element.text).lstrip().rstrip()
+        except NoSuchElementException:
+            log(ERROR, "GM - Can't created email object. Can't find elements required!")
+            raise GuerrillaMailError
 
     def __str__(self):
         """A useful string representation of the email."""
@@ -166,7 +184,11 @@ class GuerrillaEmail():
 
            Take care when doing this by hand; the email will be deleted if any other
            email is deleted!"""
-        tickbox = self._row_element.find_element_by_xpath("./td[@class='td1']/input")
+        try:
+            tickbox = self._row_element.find_element_by_xpath("./td[@class='td1']/input")
+        except NoSuchElementException:
+            log(ERROR, "GM - Couldn't find email element!")
+            raise GuerrillaMailError
         if not tickbox.is_selected():
             tickbox.click()
         time.sleep(0.5)
@@ -182,15 +204,19 @@ class GuerrillaEmail():
               email.
         """
         log(INFO, "Viewing %s" % self)
-        self.sender_element.click()
-        time.sleep(1)
-        if images:
-            show_images = self._driver.find_element_by_id("display_images")
-            show_images.click()
-            body = self._driver.find_element_by_xpath("//div[@class='email_body']")
-            height = body.size['height'] + 125
-            self._driver.execute_script("document.getElementsByClassName('email')[0].style.height = '%spx';" % height)
+        try:
+            self.sender_element.click()
             time.sleep(1)
+            if images:
+                show_images = self._driver.find_element_by_id("display_images")
+                show_images.click()
+                body = self._driver.find_element_by_xpath("//div[@class='email_body']")
+                height = body.size['height'] + 125
+                self._driver.execute_script("document.getElementsByClassName('email')[0].style.height = '%spx';" % height)
+                time.sleep(1)
+        except NoSuchElementException:
+            log(ERROR, "GM - Can't view email; can't find elements required!")
+            raise GuerrillaMailError
 
     def image(self, fname=None):
         """Save a png image of the email.
@@ -203,8 +229,12 @@ class GuerrillaEmail():
             fname = (self.subject + "_" + self.time).lstrip().replace(" ", "_").replace(":", "")
             fname = re.sub(_SAFENAMECHARS, '', fname) + ".png"
         self.view()
-        email = self._driver.find_element_by_xpath("//div[@class='email']")
-        image_div(self._driver, fname, email)
+        try:
+            email = self._driver.find_element_by_xpath("//div[@class='email']")
+            image_div(self._driver, fname, email)
+        except NoSuchElementException:
+            log(ERROR, "GM - Can't image email; can't find required elements!")
+            raise GuerrillaMailError
         self.close()
 
     def get_email_body_element(self):
@@ -222,10 +252,14 @@ class GuerrillaEmail():
             fname = (self.subject + "_" + self.time).lstrip().replace(" ", "_").replace(":", "")
             fname = re.sub(_SAFENAMECHARS, '', fname) + ".html"
         self.view()
-        body_element = self.get_email_body_element()
-        body_html = str(body_element.get_attribute('innerHTML'))
-        with open(fname, "w") as f:
-            f.write(body_html)
+        try:
+            body_element = self.get_email_body_element()
+            body_html = str(body_element.get_attribute('innerHTML'))
+            with open(fname, "w") as f:
+                f.write(body_html)
+        except NoSuchElementException:
+            log(ERROR, "Can't save email html body; can't access elements required!")
+            raise GuerrillaMailError
         self.close()
 
     def close(self):

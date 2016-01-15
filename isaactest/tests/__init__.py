@@ -1,5 +1,5 @@
 from functools import wraps
-from ..utils.log import log, TEST, ERROR
+from ..utils.log import log, TEST, INFO, ERROR
 
 
 __all__ = ['TestWithDependency']
@@ -11,7 +11,9 @@ def TestWithDependency(Name, Results, deps=[]):
        Use as a decorator for each regression test function to ensure the test is
        run only if the tests it depends upon have run successfully. Automatically
        keeps track of the results of tests using 'Results'.
-       Throws 'KeyError' if dependency in 'deps' has not been run/defined!
+        - Tests must return a boolean 'True' for pass, 'False' for failure. Any other
+          return value will be considered a failure!
+        - Throws 'KeyError' if dependency in 'deps' has not been run/defined!
         - 'Name' should be an uppercase string of max length 25 characters to describe
           the test and is the name to be used in 'deps' if any other test depends
           on this test.
@@ -27,6 +29,9 @@ def TestWithDependency(Name, Results, deps=[]):
             if all([Results[d] for d in deps]):
                 log(TEST, "Test '%s'." % Name)
                 result = test_func(*args, **kwargs)
+                if type(result) != bool:
+                    log(INFO, "Test returned unexpected value. Assuming failure!")
+                    result = False
                 Results[Name] = result
                 return result
             else:

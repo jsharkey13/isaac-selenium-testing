@@ -8,7 +8,13 @@ from .log import log, INFO, ERROR
 
 
 __all__ = ['new_tab', 'change_tab', 'assert_tab', 'close_tab', 'image_div',
-           'wait_for_xpath_element', 'wait_for_invisible_xpath', 'save_element_html']
+           'wait_for_xpath_element', 'wait_for_invisible_xpath', 'save_element_html',
+           'AssertTabError']
+
+
+class AssertTabError(Exception):
+    """The error raised by 'assert_tab' if it cannot find the required tab."""
+    pass
 
 
 def new_tab(driver):
@@ -121,7 +127,7 @@ def assert_tab(driver, url_part):
             current_url = driver.current_url
             if current_url in urls:
                 log(ERROR, "AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
-                raise AssertionError("AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
+                raise AssertTabError("AssertTab: Couldn't reach required tab with url containing '%s'!" % url_part)
             urls.append(current_url)
 
 

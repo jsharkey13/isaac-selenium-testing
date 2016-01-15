@@ -93,9 +93,13 @@ driver, inbox = selenium_startup(Users)  # Delete
 @TestWithDependency("LOGIN", Results)
 def login(driver, Users):
     assert_tab(driver, ISAAC_WEB)
-    login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
-    login_tab.click()
-    submit_login_form(driver, user=Users.Student, disable_popup=False)
+    try:
+        login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
+        login_tab.click()
+        submit_login_form(driver, user=Users.Student, disable_popup=False)
+    except NoSuchElementException:
+        log(ERROR, "Couldn't click login tab; can't login!")
+        return False
     time.sleep(1)
     try:
         assert_logged_in(driver, Users.Student)
@@ -132,8 +136,13 @@ questionnaire(driver)  # Delete
 @TestWithDependency("LOGOUT", Results, ["LOGIN"])
 def logout(driver):
     assert_tab(driver, ISAAC_WEB)
-    logout_button = driver.find_element_by_xpath("//a[@ui-sref='logout']")
-    logout_button.click()
+    try:
+        logout_button = driver.find_element_by_xpath("//a[@ui-sref='logout']")
+        logout_button.click()
+    except NoSuchElementException:
+        image_div(driver, "ERROR_logout_failure")
+        log(ERROR, "Can't find logout button; can't logout, see 'ERROR_logout_failure.png'!")
+        return False
     time.sleep(1)
     try:
         assert_logged_out(driver)
@@ -153,8 +162,12 @@ logout(driver)  # Delete
 @TestWithDependency("LOGIN_THROTTLE", Results)
 def login_throttle(driver, Users):
     assert_tab(driver, ISAAC_WEB)
-    login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
-    login_tab.click()
+    try:
+        login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
+        login_tab.click()
+    except NoSuchElementException:
+        log(ERROR, "Couldn't find login button; can't continue!")
+        return False
     for i in range(11):
         submit_login_form(driver, username=Users.Student.email, password="wrongpassword")
         time.sleep(1)
@@ -209,8 +222,12 @@ def signup(driver, Users):
 
     assert_tab(driver, ISAAC_WEB)
     time.sleep(2)
-    login_tab = driver.find_element_by_id("login-tab")
-    login_tab.click()
+    try:
+        login_tab = driver.find_element_by_id("login-tab")
+        login_tab.click()
+    except NoSuchElementException:
+        log(ERROR, "Can't find login button; can't continue!")
+        return False
     time.sleep(2)
     if sign_up_to_isaac(driver, user=Users.Guerrilla):
         log(PASS, "Successfully register new user '%s' on Isaac." % Users.Guerrilla.email)
