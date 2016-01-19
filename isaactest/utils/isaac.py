@@ -65,6 +65,7 @@ def kill_irritating_popup(driver, wait_dur=60):
     try:
         popup = WebDriverWait(driver, wait_dur).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='close-reveal-modal']")))
         popup.click()
+        time.sleep(1)
         log(INFO, "Popup Closed!")
         return True
     except TimeoutException:
@@ -136,19 +137,18 @@ def assert_logged_in(driver, user=None):
           user is not logged in, an AssertionError will be raised.
     """
     time.sleep(0.5)
+    u_email = str(driver.execute_script("return angular.element('head').scope().user.email;"))
+    u_firstname = str(driver.execute_script("return angular.element('head').scope().user.givenName;"))
     if user is None:
-        try:
-            """angular.element("head").scope().user.familyName"""
-            wait_for_invisible_xpath(driver, "//span[text()=' to Isaac']", 0.5)
+        if ((u_email is not None) and (u_firstname is not None)):
             log(INFO, "AssertLoggedIn: A user is logged in.")
-        except TimeoutException:
+        else:
             log(INFO, "AssertLoggedIn: No user is logged in!")
             raise AssertionError("AssertLoggedIn: Not logged in!")
     else:
-        try:
-            wait_for_xpath_element(driver, "//span[contains(text(), '%s')]" % user.firstname, 0.5, False)
+        if ((u_email == user.email) and (u_firstname == user.firstname)):
             log(INFO, "AssertLoggedIn: The user '%s' is logged in." % user.firstname)
-        except TimeoutException:
+        else:
             log(INFO, "AssertLoggedIn: The user '%s' is not logged in!" % user.firstname)
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
@@ -160,10 +160,10 @@ def assert_logged_out(driver):
         - 'driver' should be a Selenium WebDriver.
     """
     time.sleep(0.5)
-    try:
-        wait_for_xpath_element(driver, "//span[text()=' to Isaac']", 0.5)
+    user_obj = driver.execute_script("return angular.element('head').scope().user;")
+    if "_id" not in user_obj:
         log(INFO, "AssertLoggedOut: All users are logged out.")
-    except TimeoutException:
+    else:
         log(INFO, "AssertLoggedOut: A user is still logged in!")
         raise AssertionError("AssertLoggedOut: Not logged out!")
 
