@@ -49,7 +49,7 @@ class TestUsers():
     @staticmethod
     def load():
         """Return the TestUser object loaded from file."""
-        f = open("TestUsers.pickle")
+        f = open("TestUsers.pickle", 'rU')
         Users = pickle.load(f)
         f.close()
         return Users
@@ -88,9 +88,11 @@ def disable_irritating_popup(driver, undo=False):
         one_month = 2592000000
         epoch_time += one_month  # Pretend last time shown was one month in future!
     driver.execute_script("window.localStorage.setItem('%s','%s');" % ("lastNotificationTime", epoch_time))
+    time.sleep(2)
 
 
-def submit_login_form(driver, username="", password="", user=None, disable_popup=True):
+def submit_login_form(driver, username="", password="", user=None, disable_popup=True,
+                      wait_dur=2):
     """Given that the browser is on the Isaac login page; fill in and submin the login form.
 
        This requires being on the login page to function. Will return 'False' if
@@ -118,7 +120,7 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
         login = driver.find_element_by_xpath("(//input[@value='Log in'])[2]")
         login.click()
         log(INFO, "Submitted login form for '%s'." % username)
-        time.sleep(1)
+        time.sleep(wait_dur)
         if disable_popup:
             disable_irritating_popup(driver)
         return True
@@ -127,7 +129,7 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
         return False
 
 
-def assert_logged_in(driver, user=None):
+def assert_logged_in(driver, user=None, wait_dur=2):
     """Assert that a user is currently logged in to Isaac.
 
        Raises an AssertionError if no user is logged in. A specific user to check
@@ -136,7 +138,7 @@ def assert_logged_in(driver, user=None):
         - 'user' is an optional User object to check if logged in. If this specific
           user is not logged in, an AssertionError will be raised.
     """
-    time.sleep(0.5)
+    time.sleep(wait_dur)
     u_email = str(driver.execute_script("return angular.element('head').scope().user.email;"))
     u_firstname = str(driver.execute_script("return angular.element('head').scope().user.givenName;"))
     if user is None:
@@ -153,13 +155,13 @@ def assert_logged_in(driver, user=None):
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
 
-def assert_logged_out(driver):
+def assert_logged_out(driver, wait_dur=2):
     """Assert that no user is logged in to Isaac.
 
        Raises an AssertionError if a user is logged in.
         - 'driver' should be a Selenium WebDriver.
     """
-    time.sleep(0.5)
+    time.sleep(wait_dur)
     user_obj = driver.execute_script("return angular.element('head').scope().user;")
     if "_id" not in user_obj:
         log(INFO, "AssertLoggedOut: All users are logged out.")
@@ -168,7 +170,8 @@ def assert_logged_out(driver):
         raise AssertionError("AssertLoggedOut: Not logged out!")
 
 
-def sign_up_to_isaac(driver, username="", firstname="", lastname="", password="", user=None, suppress=False):
+def sign_up_to_isaac(driver, username="", firstname="", lastname="", password="", user=None,
+                     suppress=False, wait_dur=2):
     """Sign a user up to Isaac.
 
        Fill out the first login form and then the subsequent registration form.
@@ -202,7 +205,7 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
         pwd.send_keys(password)
         sign_up = driver.find_element_by_xpath("(//a[@ui-sref='register'])[2]")
         sign_up.click()
-        time.sleep(1)
+        time.sleep(wait_dur)
         log(INFO, "Filled out login form to click Register.")
     except NoSuchElementException:
         log(ERROR, "No login/signup form to fill out!")
@@ -219,15 +222,12 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
         pwd2 = driver.find_element_by_xpath("//input[@id='account-password2']")
         pwd2.clear()
         pwd2.send_keys(password)
-        last_name = driver.find_element_by_xpath("//input[@id='account-lastname']")
-        last_name.clear()
-        last_name.send_keys(lastname)
         # Shouldn't need to fill in email address
         submit_button = driver.find_element_by_xpath("//input[@value='Register Now']")
         submit_button.click()
-        time.sleep(1)
+        time.sleep(wait_dur)
         new_url = driver.current_url
-        assert new_url != start_url
+        assert new_url != start_url, "Was on '%s', now still '%s'." % (start_url, new_url)
         log(INFO, "Registration form successfully submitted for '%s'." % username)
         return True
     except NoSuchElementException:
@@ -235,8 +235,9 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
             image_div(driver, "ERROR_signup_form.png")
             log(ERROR, "Can't fill out signup form for '%s'; see 'ERROR_signup_form.png'!" % username)
         return False
-    except AssertionError:
+    except AssertionError, e:
         if not suppress:
+            log(INFO, e.message)
             image_div(driver, "ERROR_signup_form.png")
             log(ERROR, "Submitting signup form failed for '%s'; see 'ERROR_signup_form.png'!" % username)
         return False

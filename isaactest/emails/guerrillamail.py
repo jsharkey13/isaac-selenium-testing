@@ -111,7 +111,7 @@ class GuerrillaInbox():
             self.unread.remove(email)
         except ValueError:
             pass
-        time.sleep(1)
+        time.sleep(2)
 
     def get_by_time(self, timestamp):
         """Get any emails with a timestamp matching that specified.
@@ -177,7 +177,7 @@ class GuerrillaEmail():
         self._select()
         del_button = self._driver.find_element_by_id("del_button")
         del_button.click()
-        time.sleep(1)
+        time.sleep(2)
 
     def _select(self):
         """Tick the checkbox next to the email, required for deletion.
@@ -191,7 +191,7 @@ class GuerrillaEmail():
             raise GuerrillaMailError
         if not tickbox.is_selected():
             tickbox.click()
-        time.sleep(0.5)
+        time.sleep(1)
 
     def view(self, images=True):
         """Open an email.
@@ -206,14 +206,14 @@ class GuerrillaEmail():
         log(INFO, "Viewing %s" % self)
         try:
             self.sender_element.click()
-            time.sleep(1)
+            time.sleep(2)
             if images:
                 show_images = self._driver.find_element_by_id("display_images")
                 show_images.click()
                 body = self._driver.find_element_by_xpath("//div[@class='email_body']")
                 height = body.size['height'] + 125
                 self._driver.execute_script("document.getElementsByClassName('email')[0].style.height = '%spx';" % height)
-                time.sleep(1)
+                time.sleep(2)
         except NoSuchElementException:
             log(ERROR, "GM - Can't view email; can't find elements required!")
             raise GuerrillaMailError
@@ -271,6 +271,6 @@ class GuerrillaEmail():
             close_button = self._driver.find_element_by_id("back_to_inbox_link")
             log(INFO, "Closing %s." % self)
             close_button.click()
-            time.sleep(1)
+            time.sleep(2)
         except (NoSuchElementException, ElementNotVisibleException):
             pass
