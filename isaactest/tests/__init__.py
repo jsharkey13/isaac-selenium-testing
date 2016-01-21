@@ -6,7 +6,7 @@ __all__ = ['TestWithDependency']
 
 
 def TestWithDependency(Name, Results, deps=[]):
-    """Declares a Regression Test item with dependencies and track results.
+    """Declares a Regression Test item with dependencies and tracks results.
 
        Use as a decorator for each regression test function to ensure the test is
        run only if the tests it depends upon have run successfully. Automatically
@@ -28,6 +28,7 @@ def TestWithDependency(Name, Results, deps=[]):
         def _decorator(*args, **kwargs):
             if all([Results[d] for d in deps]):
                 log(TEST, "Test '%s'." % Name)
+                Results[Name] = False  # If it dies; ensure this test is recorded!
                 result = test_func(*args, **kwargs)
                 if type(result) != bool:
                     log(INFO, "Test returned unexpected value. Assuming failure!")
