@@ -131,12 +131,48 @@ questionnaire(driver)  # Delete
 
 
 #####
+# Test 2.5 : Global Navigation Menu
+#####
+@TestWithDependency("GLOBAL_NAV", Results)
+def global_nav(driver):
+    assert_tab(driver, ISAAC_WEB)
+    try:
+        global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
+        global_nav.click()
+        log(INFO, "Clicked menu button.")
+        time.sleep(WAIT_DUR)
+        wait_for_xpath_element(driver, "//nav[@class='dl-nav']")
+        log(INFO, "Global navigation successfully opened.")
+    except NoSuchElementException:
+        log(ERROR, "Can't find menu button to click; can't continue!")
+        return False
+    except TimeoutException:
+        log(ERROR, "Global navigation didn't open!")
+        return False
+    time.sleep(WAIT_DUR)
+    try:
+        global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
+        global_nav.click()
+        time.sleep(WAIT_DUR)
+        wait_for_invisible_xpath(driver, "//nav[@class='dl-nav']")
+        log(INFO, "Global navigation successfuly closed.")
+        log(PASS, "Global navigation functions as expected.")
+        return True
+    except TimeoutException:
+        log(ERROR, "Global navigation didn't close!")
+        return False
+
+
+#####
 # Test 3 : Logout Button
 #####
-@TestWithDependency("LOGOUT", Results, ["LOGIN"])
+@TestWithDependency("LOGOUT", Results, ["LOGIN", "GLOBAL_NAV"])
 def logout(driver):
     assert_tab(driver, ISAAC_WEB)
     try:
+        global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
+        global_nav.click()
+        time.sleep(WAIT_DUR)
         logout_button = driver.find_element_by_xpath("//a[@ui-sref='logout']")
         logout_button.click()
     except NoSuchElementException:
