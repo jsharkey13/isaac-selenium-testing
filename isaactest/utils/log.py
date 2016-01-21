@@ -55,7 +55,7 @@ def _generate_summary(Results):
     total = len(Results)
     summary = "Testing Finished. %s of %s passed. %s errors!\n" % (passes, total, _errors)
     for k in Results:
-        status = {True: "Passed", False: "Failed", None: "Not Run"}[Results[k]]
+        status = {True: "Pass", False: "Failed", None: "Not Run"}[Results[k]]
         summary += " - %s: %s\n" % (k.ljust(25), status)
     return summary
 
@@ -72,7 +72,7 @@ def start_testing():
     _LOGFILE.write("%s \t Starting Regression Testing.\n" % log_time)
 
 
-def end_testing(Results):
+def end_testing(Results, email=True):
     """Run when testing finishes.
 
        Closes the logfile, records the time testing finishes, manages the displaying
@@ -86,4 +86,5 @@ def end_testing(Results):
     print ("%s \t " % log_time) + summary
     _LOGFILE.write(("%s \t " % log_time) + summary + "\n")
     _LOGFILE.close()
-    send_results(now.strftime("%d/%m/%Y at %H:%M"), summary)
+    if email:
+        send_results(now.strftime("%d/%m/%Y at %H:%M"), summary)
