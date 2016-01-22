@@ -9,7 +9,8 @@ from .log import log, INFO, ERROR
 import pickle
 
 __all__ = ['User', 'TestUsers', 'kill_irritating_popup', 'disable_irritating_popup',
-           'submit_login_form', 'assert_logged_in', 'assert_logged_out', 'sign_up_to_isaac']
+           'submit_login_form', 'assert_logged_in', 'assert_logged_out', 'sign_up_to_isaac',
+           'answer_numeric_q']
 
 
 class User():
@@ -106,6 +107,8 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
           and password otherwise set.
         - 'disable_popup' is an optional boolean flag to disable the questionnaire
           popup, to prevent it getting in the way of testing.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
     """
     if user is not None:
         username = user.email
@@ -137,6 +140,8 @@ def assert_logged_in(driver, user=None, wait_dur=2):
         - 'driver' should be a Selenium WebDriver.
         - 'user' is an optional User object to check if logged in. If this specific
           user is not logged in, an AssertionError will be raised.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
     """
     time.sleep(wait_dur)
     u_email = str(driver.execute_script("return angular.element('head').scope().user.email;"))
@@ -160,6 +165,8 @@ def assert_logged_out(driver, wait_dur=2):
 
        Raises an AssertionError if a user is logged in.
         - 'driver' should be a Selenium WebDriver.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
     """
     time.sleep(wait_dur)
     user_obj = driver.execute_script("return angular.element('head').scope().user;")
@@ -189,6 +196,8 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
           and password otherwise set.
         - 'suppress' is a boolean flag to silence any error message upon failure.
           It is useful for testing when the expected result is failure.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
     """
     if user is not None:
         username = user.email
@@ -240,4 +249,66 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
             log(INFO, e.message)
             image_div(driver, "ERROR_signup_form.png")
             log(ERROR, "Submitting signup form failed for '%s'; see 'ERROR_signup_form.png'!" % username)
+        return False
+
+
+def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wait_dur=2):
+    """Submit an answer to a numeric question, given a value and units.
+
+       Given a numeric question WebElement, enter an answer; optionally choosing an
+       incorrect unit for testing purposes if necessary.
+        - 'num_question' should be the WebElement of the question, probably selected
+          using '//div[@ng-switch-when='isaacNumericQuestion']' as the XPATH.
+        - 'value' should be the numeric answer in string form.
+        - 'correct_unit' should be the LaTeX of the correct unit in string form.
+        - 'get_unit_wrong' allows choosing a definitely incorrect unit for testing.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
+    """
+    try:
+        answer_box = num_question.find_element_by_xpath(".//input[@ng-model='selectedChoice.value']")
+        answer_box.clear()
+        answer_box.send_keys(value)
+        log(INFO, "Entered value '%s'." % value)
+        time.sleep(wait_dur)
+        units_dropdown = num_question.find_element_by_xpath(".//button[@ng-click='toggleUnitsDropdown()']")
+        units_dropdown.click()
+        log(INFO, "Clicked to open units dropdown.")
+        time.sleep(wait_dur)
+        if not get_unit_wrong:
+            correct_u = num_question.find_element_by_xpath(".//a[@ng-click='selectUnit(u)']//script[contains(text(), '%s')]/.." % correct_unit)
+            correct_u.click()
+            correct_u_text = str(correct_u.find_element_by_xpath("./script").get_attribute('innerHTML'))
+            log(INFO, "Selected correct unit '%s' (to match '%s')." % (correct_u_text, correct_unit))
+        else:
+            choices = num_question.find_elements_by_xpath(".//a[@ng-click='selectUnit(u)']")
+            n = 0
+            u_text = str(choices[n].find_element_by_xpath("./script").get_attribute('innerHTML'))
+            while correct_unit in u_text:
+                n += 1
+                u_text = str(choices[n].find_element_by_xpath("./script").get_attribute('innerHTML'))
+            choices[n].click()
+            log(INFO, "Selected incorrect unit '%s'." % str(u_text.encode('ascii', 'replace')))
+        time.sleep(wait_dur)
+        left = int(num_question.find_element_by_xpath(".//ul[@class='f-dropdown']").value_of_css_property('left').replace('px', ''))
+        assert left < 9000
+        log(INFO, "Selected answer, both value and unit.")
+        time.sleep(wait_dur)
+    except NoSuchElementException:
+        log(ERROR, "Can't find part of the answer fields; can't continue!")
+        return False
+    except AssertionError:
+        log(ERROR, "Units dropdown didn't disappear on clicking a unit; can't continue!")
+        return False
+    except ValueError:
+        log(ERROR, "Couldn't read the CSS property 'left' for the dropdown. This probably constitues failure!")
+        return False
+    try:
+        check_answer_button = num_question.find_element_by_xpath(".//button[@ng-click='checkAnswer()']")
+        check_answer_button.click()
+        log(INFO, "Clicked 'Check my answer'.")
+        time.sleep(wait_dur)
+        return True
+    except NoSuchElementException:
+        log(ERROR, "Couldn't click the 'Check my answer' button; can't continue!")
         return False

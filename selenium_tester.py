@@ -1,22 +1,27 @@
-# Selenium Test
+# Selenium Testing of Isaac Physics
+# Python Imports:
 import os
 import time
 import datetime
 from collections import OrderedDict
-#####
+# Custom Package Imports:
 from isaactest.emails.guerrillamail import set_guerrilla_mail_address, GuerrillaInbox
 from isaactest.utils.log import log, INFO, ERROR, PASS, start_testing, end_testing
 from isaactest.utils.isaac import submit_login_form, assert_logged_in, assert_logged_out, sign_up_to_isaac
 from isaactest.utils.isaac import kill_irritating_popup, disable_irritating_popup
 from isaactest.utils.isaac import TestUsers, User
+from isaactest.utils.isaac import answer_numeric_q
 from isaactest.utils.i_selenium import assert_tab, new_tab, close_tab, image_div, save_element_html
 from isaactest.utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
 from isaactest.tests import TestWithDependency
-#####
+# Selenium Imports:
 import selenium.webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotVisibleException
-####
+
+#####
+# Setup:
+#####
 
 
 # If we're running in a headless VM do this:
@@ -29,7 +34,7 @@ try:
     os.chdir("/isaac-selenium-testing/testing")
     # No absolutely reliable way to ensure Javascript has loaded, just wait longer
     # on a headless machine to hope for the best...
-    WAIT_DUR = 6
+    WAIT_DUR = 10
 # Otherwise do this:
 except ImportError:
     os.chdir("./testing")
@@ -45,13 +50,13 @@ GUERRILLAMAIL = "https://www.guerrillamail.com"
 # Global objects:
 def define_users():
     Users = TestUsers.load()
-    _Guerrilla = User("isaactest@sharklasers.com", "Temp",
-                      "Test", "test")
-    Users.Guerrilla = _Guerrilla
+    Guerrilla = User("isaactest@sharklasers.com", "Temp",
+                     "Test", "test")
+    Users.Guerrilla = Guerrilla
     Users.Guerrilla.new_email = "isaactesttwo@sharklasers.com"
     Users.Guerrilla.new_password = "testing123"
     return Users
-Users = define_users()  # Delete
+Users = define_users()
 Results = OrderedDict()
 
 
@@ -64,9 +69,11 @@ except Exception:
     pass
 os.chdir("test_" + RUNDATE)
 
-
-# Start testing:
+#####
+# Start Testing:
+#####
 start_testing()
+start_time = datetime.datetime.now()
 
 
 #####
@@ -76,7 +83,7 @@ def selenium_startup(Users):
     # Selenium Start-up:
     driver = selenium.webdriver.Firefox()
     # driver = selenium.webdriver.Chrome(PATH_TO_CHROMEDRIVER)
-    # driver.set_window_size(1920, 1080)
+    driver.set_window_size(1920, 1080)
     driver.maximize_window()
     log(INFO, "Opened Selenium Driver for '%s'." % driver.name.title())
     time.sleep(WAIT_DUR)
@@ -820,6 +827,7 @@ def email_change(driver, Users):
         alert = driver.switch_to.alert
         alert_text = alert.text
         alert.accept()
+        time.sleep(WAIT_DUR)
         log(INFO, "Have to accept an alert.")
         assert "You have edited your email address." in alert_text, "Alert contained unexpected message '%s'!" % alert_text
         log(INFO, "Alert said: '%s'." % alert_text)
@@ -1079,7 +1087,7 @@ def admin_page_access(driver, Users):
 
 
 #####
-# Test N : Delete A User
+# Test 24 : Delete A User
 #####
 @TestWithDependency("DELETE_USER", Results, ["LOGIN", "SIGNUP"])
 def delete_user(driver, Users):
@@ -1152,7 +1160,7 @@ def delete_user(driver, Users):
 
 
 #####
-# Test 24 : Accordion Sections Open and Close
+# Test 25 : Accordion Sections Open and Close
 #####
 @TestWithDependency("ACCORDION_BEHAVIOUR", Results)
 def accordion_behavior(driver):
@@ -1228,7 +1236,7 @@ def accordion_behavior(driver):
 
 
 #####
-# Test 25 : Quick Questions
+# Test 26 : Quick Questions
 #####
 @TestWithDependency("QUICK_QUESTIONS", Results, ["ACCORDION_BEHAVIOUR"])
 def quick_questions(driver):
@@ -1290,7 +1298,7 @@ def quick_questions(driver):
 
 
 #####
-# Test 26 : Multiple Choice Questions
+# Test 27 : Multiple Choice Questions
 #####
 @TestWithDependency("MULTIPLE_CHOICE_QUESTIONS", Results, ["ACCORDION_BEHAVIOUR"])
 def multiple_choice_questions(driver):
@@ -1377,10 +1385,10 @@ def multiple_choice_questions(driver):
 
 
 #####
-# Test 27 : Numeric Questions Correct Answers
+# Test 28 : Numeric Question Units Dropdown
 #####
-@TestWithDependency("NUMERIC_Q_CORRECT", Results)#, ["ACCORDION_BEHAVIOUR"])
-def numeric_q_correct(driver):
+@TestWithDependency("NUMERIC_Q_UNITS_SELECT", Results, ["ACCORDION_BEHAVIOUR"])
+def numeric_q_units_select(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
     driver.get(ISAAC_WEB + "/questions/_regression_test_")
@@ -1391,43 +1399,68 @@ def numeric_q_correct(driver):
         third_accordion_title.click()
         time.sleep(WAIT_DUR)
         num_question = wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']")
-        log(INFO, "Accordion opened, multiple choice question displayed.")
+        log(INFO, "Accordion opened, numeric question displayed.")
     except NoSuchElementException:
         log(ERROR, "Can't find third accordion section to open; can't continue!")
         return False
     except TimeoutException:
-        image_div(driver, "ERROR_numeric_question")
-        log(ERROR, "Accordion section did not open to display the numeric question; see 'ERROR_numeric_question.png'!")
+        image_div(driver, "ERROR_numeric_q_units_select")
+        log(ERROR, "Accordion section did not open to display the numeric question; see 'ERROR_numeric_q_units_select.png'!")
         return False
     try:
-        log(INFO, "Attempt to enter correct answer.")
-        answer_box = num_question.find_element_by_xpath("//input[@ng-model='selectedChoice.value']")
-        answer_box.send_keys("2.01")
-        time.sleep(WAIT_DUR)
-        log(INFO, "Entered correct value.")
         units_dropdown = num_question.find_element_by_xpath("//button[@ng-click='toggleUnitsDropdown()']")
         units_dropdown.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Clicked to open units dropdown.")
-        correct_unit = num_question.find_element_by_xpath("//a[@ng-click='selectUnit(u)']//script[contains(text(), '%s')]/.." % "m\,s^{-1}")
-        correct_unit.click()
-        log(INFO, "Selected correct unit.")
-        time.sleep(WAIT_DUR)
-        left = int(driver.find_element_by_xpath("//ul[@class='f-dropdown']").value_of_css_property('left').replace('px', ''))
-        assert left < 9000
-        log(INFO, "Selected correct answer, both value and unit.")
-        time.sleep(WAIT_DUR)
-    except NoSuchElementException:
-        log(ERROR, "Can't find part of the answer fields; can't continue!")
-        return False
+        left = int(float(num_question.find_element_by_xpath(".//ul[@class='f-dropdown']").value_of_css_property('left').replace('px', '')))
+        assert left > 0
+        log(INFO, "Units dropdown displayed correctly.")
     except AssertionError:
-        log(ERROR, "Units dropdown didn't disappear on clicking a unit; can't continue!")
+        log(ERROR, "Units dropdown not opened correctly!")
+        return False
+    except NoSuchElementException:
+        log(ERROR, "Can't find numeric question or units dropdown button; can't continue!")
+        return False
+    except ValueError:
+        log(ERROR, "Couldn't read the CSS property 'left' for the dropdown. This probably constitues failure!")
         return False
     try:
-        check_answer_button = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']//button[@ng-click='checkAnswer()']")
-        check_answer_button.click()
+        units_dropdown.click()
         time.sleep(WAIT_DUR)
-        log(INFO, "Clicked 'Check my answer'.")
+        log(INFO, "Clicked to close units dropdown.")
+        left = int(num_question.find_element_by_xpath(".//ul[@class='f-dropdown']").value_of_css_property('left').replace('px', ''))
+        assert left < 9000
+        log(INFO, "Units dropdown hidden correctly.")
+        log(PASS, "Numeric question units popup works correctly.")
+        return True
+    except AssertionError:
+        log(ERROR, "Units dropdown did not close correctly!")
+        return False
+    except ValueError:
+        log(ERROR, "Couldn't read the CSS property 'left' for the dropdown. This probably constitues failure!")
+        return False
+
+
+#####
+# Test 29 : Numeric Questions Correct Answers
+#####
+@TestWithDependency("NUMERIC_Q_ALL_CORRECT", Results, ["NUMERIC_Q_UNITS_SELECT"])
+def numeric_q_all_correct(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter correct answer.")
+    if not answer_numeric_q(num_question, "2.01", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h1[text()='Correct!']")
         log(INFO, "A 'Correct!' message was displayed as expected.")
         wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This is a correct choice.'])[2]")
@@ -1435,21 +1468,359 @@ def numeric_q_correct(driver):
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//strong[text()='Well done!']")
         log(INFO, "The 'Well done!' message was correctly shown.")
         time.sleep(WAIT_DUR)
-        log(PASS, "Numeric Question behavior as expected.")
+        log(PASS, "Numeric Question 'correct value, correct unit' behavior as expected.")
         return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_all_correct")
+        log(ERROR, "The messages shown for a correct answer were not all displayed; see 'ERROR_numeric_q_all_correct.png'!")
+        return False
+
+
+#####
+# Test 30 : Numeric Questions Answer Change
+#####
+@TestWithDependency("NUMERIC_Q_ANSWER_CHANGE", Results, ["NUMERIC_Q_UNITS_SELECT", "NUMERIC_Q_ALL_CORRECT"])
+def numeric_q_answer_change(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h1[text()='Correct!']")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This is a correct choice.'])[2]")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//strong[text()='Well done!']")
     except NoSuchElementException:
-        log(ERROR, "Couldn't click the 'Check my answer' button; can't continue!")
+        log(ERROR, "Can't find the numeric question; can't continue!")
         return False
     except TimeoutException:
-        image_div(driver, "ERROR_numeric_question")
-        log(ERROR, "The messages shown for a correct answer were not all displayed; see 'ERROR_numeric_question.png'!")
+        log(ERROR, "Correct answer text can't be found; can't check if it goes; can't continue!")
+        return False
+
+    try:
+        log(INFO, "Alter previously typed answer.")
+        value_box = num_question.find_element_by_xpath(".//input[@ng-model='selectedChoice.value']")
+        value_box.send_keys("00")
+    except NoSuchElementException:
+        log(ERROR, "Can't find value box to try changing answer; can't continue!")
+        return False
+
+    try:
+        wait_for_invisible_xpath(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h1[text()='Correct!']")
+        wait_for_invisible_xpath(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This is a correct choice.'])[2]")
+        wait_for_invisible_xpath(driver, "//div[@ng-switch-when='isaacNumericQuestion']//strong[text()='Well done!']")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question answer text disappears upon changing answer.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_answer_change")
+        log(ERROR, "The messages shown for an old answer do not disappear upon altering answer; see 'ERROR_numeric_q_answer_change.png'!")
         return False
 
 
 #####
-# Test 27 : Numeric Questions Help Popup
+# Test 31 : Numeric Questions Incorrect Unit, Correct Value
 #####
-@TestWithDependency("NUMERIC_Q_HELP_POPUP", Results)#, ["ACCORDION_BEHAVIOUR"])
+@TestWithDependency("NUMERIC_Q_INCORRECT_UNIT", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_incorrect_unit(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter correct value, but incorrect units.")
+    if not answer_numeric_q(num_question, "2.01", "\units{ m\,s^{-1} }", get_unit_wrong=True, wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Check your units.'])[1]")
+        log(INFO, "The 'Check your units.' message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[2]").value_of_css_property('background-color')
+        assert (bg_colour == '#be4c4c') or (bg_colour == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around units box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'incorrect unit, correct value' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_incorrect_unit")
+        log(ERROR, "The messages shown for an incorrect unit were not all displayed; see 'ERROR_numeric_q_incorrect_unit.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_incorrect_unit")
+        log(ERROR, "The units box was not highlighted red; see 'ERROR_numeric_q_incorrect_unit.png'!")
+        return False
+
+
+#####
+# Test 32 : Numeric Questions Correct Unit, Incorrect Value
+#####
+@TestWithDependency("NUMERIC_Q_INCORRECT_VALUE", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_incorrect_value(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter unknown incorrect value, to correct sig figs and correct units.")
+    if not answer_numeric_q(num_question, "4.33", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Check your working.'])[1]")
+        log(INFO, "The 'Check your working.' message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour == '#be4c4c') or (bg_colour == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'correct unit, incorrect value' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_incorrect_value")
+        log(ERROR, "The messages shown for an incorrect value were not all displayed; see 'ERROR_numeric_q_incorrect_value.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_incorrect_value")
+        log(ERROR, "The units box was not highlighted red; see 'ERROR_numeric_q_incorrect_value.png'!")
+        return False
+
+
+#####
+# Test 33 : Numeric Questions Incorrect Value, Incorrect Unit
+#####
+@TestWithDependency("NUMERIC_Q_ALL_INCORRECT", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_all_incorrect(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter unknown incorrect value, to correct sig figs and incorrect units.")
+    if not answer_numeric_q(num_question, "4.33", "\units{ m\,s^{-1} }", get_unit_wrong=True, wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Check your working.'])[1]")
+        log(INFO, "The 'Check your working.' message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        bg_colour2 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[2]").value_of_css_property('background-color')
+        assert (bg_colour2 == '#be4c4c') or (bg_colour2 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around units box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'incorrect value, incorrect unit' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_all_incorrect")
+        log(ERROR, "The messages shown for an incorrect answer were not all displayed; see 'ERROR_numeric_q_all_incorrect.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_all_incorrect")
+        log(ERROR, "The answer boxes were not highlighted red correctly; see 'ERROR_numeric_q_all_incorrect.png'!")
+        return False
+
+
+#####
+# Test 34 : Numeric Questions Incorrect Sig Figs
+#####
+@TestWithDependency("NUMERIC_Q_INCORRECT_SF", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_incorrect_sf(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter correct value with correct units to incorrect sig figs.")
+    if not answer_numeric_q(num_question, "2.0", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p/strong[text()='Significant figures']/..)[1]")
+        log(INFO, "The 'Significant figures' message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'correct value, correct unit, incorrect sig fig' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_incorrect_sf")
+        log(ERROR, "The messages shown for an incorrect sig fig answer were not all displayed; see 'ERROR_numeric_q_incorrect_sf.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_incorrect_sf")
+        log(ERROR, "The value box was not highlighted red correctly; see 'ERROR_numeric_q_incorrect_sf.png'!")
+        return False
+
+
+#####
+# Test 35 : Numeric Questions Incorrect Sig Figs, Incorrect Unit
+#####
+@TestWithDependency("NUMERIC_Q_INCORRECT_SF_U", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_incorrect_sf_u(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter correct value with incorrect units to incorrect sig figs.")
+    if not answer_numeric_q(num_question, "2.0", "\units{ m\,s^{-1} }", get_unit_wrong=True, wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p/strong[text()='Significant figures']/..)[1]")
+        log(INFO, "The 'Significant figures' message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        bg_colour2 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[2]").value_of_css_property('background-color')
+        assert (bg_colour2 == '#be4c4c') or (bg_colour2 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around units box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'correct value, incorrect unit, incorrect sig fig' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_incorrect_sf_u")
+        log(ERROR, "The messages shown for an incorrect sig fig answer were not all displayed; see 'ERROR_numeric_q_incorrect_sf_u.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_incorrect_sf_u")
+        log(ERROR, "The answer boxes were not highlighted red correctly; see 'ERROR_numeric_q_incorrect_sf_u.png'!")
+        return False
+
+
+#####
+# Test 36 : Numeric Questions Known Wrong Answer
+#####
+@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_ANS", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_known_wrong_ans(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter known (content-editor specified) wrong answer.")
+    if not answer_numeric_q(num_question, "5.00", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This is an incorrect choice.'])[1]")
+        log(INFO, "The content editor entered message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'correct value, correct unit, incorrect sig fig' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_known_wrong_ans")
+        log(ERROR, "The messages shown for a known incorrect answer were not all displayed; see 'ERROR_numeric_q_known_wrong_ans.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_known_wrong_ans")
+        log(ERROR, "The value box was not highlighted red correctly; see 'ERROR_numeric_q_known_wrong_ans.png'!")
+        return False
+
+
+#####
+# Test 37 : Numeric Questions Known Wrong Answer, Wrong Sig Figs
+#####
+@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_known_wrong_sf(driver):
+    assert_tab(driver, ISAAC_WEB)
+    time.sleep(WAIT_DUR)
+    try:
+        num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
+    except NoSuchElementException:
+        log(ERROR, "Can't find the numeric question; can't continue!")
+        return False
+
+    log(INFO, "Attempt to enter known (content-editor specified) wrong answer, to wrong sig figs.")
+    if not answer_numeric_q(num_question, "42", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+        log(ERROR, "Couldn't answer Numeric Question; can't continue!")
+        return False
+    time.sleep(WAIT_DUR)
+
+    try:
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
+        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Hello'])[1]")
+        log(INFO, "The content editor entered message was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
+        log(INFO, "The 'Please try again.' message was correctly shown.")
+        bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
+        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        log(INFO, "Red highlighting shown around value box.")
+        time.sleep(WAIT_DUR)
+        log(PASS, "Numeric Question 'correct value, correct unit, incorrect sig fig' behavior as expected.")
+        return True
+    except TimeoutException:
+        image_div(driver, "ERROR_numeric_q_known_wrong_sf")
+        log(INFO, "The sig fig warning should not have been shown. if it was, this is likely the error.")
+        log(ERROR, "The messages shown for a known incorrect answer were not all displayed; see 'ERROR_numeric_q_known_wrong_sf.png'!")
+        return False
+    except AssertionError:
+        image_div(driver, "ERROR_numeric_q_known_wrong_sf")
+        log(ERROR, "The value box was not highlighted red correctly; see 'ERROR_numeric_q_known_wrong_sf.png'!")
+        return False
+
+
+#####
+# Test M : Numeric Questions Help Popup
+#####
+@TestWithDependency("NUMERIC_Q_HELP_POPUP", Results, ["ACCORDION_BEHAVIOUR"])
 def numeric_q_help_popup(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1466,8 +1837,8 @@ def numeric_q_help_popup(driver):
         log(ERROR, "Can't find third accordion section to open; can't continue!")
         return False
     except TimeoutException:
-        image_div(driver, "ERROR_numeric_question")
-        log(ERROR, "Accordion section did not open to display the numeric question; see 'ERROR_numeric_question.png'!")
+        image_div(driver, "ERROR_numeric_q_help_popup")
+        log(ERROR, "Accordion section did not open to display the numeric question; see 'ERROR_numeric_q_help_popup.png'!")
         return False
     try:
         help_mark = driver.find_element_by_xpath("//span[@class='value-help']")
@@ -1495,6 +1866,7 @@ def numeric_q_help_popup(driver):
 "//figure[contains(@class, 'ru_figure')]/.."  # Figure container div
 "//figure[contains(@class, 'ru_figure')]/..//p"  # Figure caption
 
+fatal_error = True
 try:
     login(driver, Users)
     questionnaire(driver)
@@ -1524,8 +1896,21 @@ try:
     accordion_behavior(driver)
     quick_questions(driver)
     multiple_choice_questions(driver)
-    numeric_q_correct(driver)
+    numeric_q_units_select(driver)
+    numeric_q_all_correct(driver)
+    numeric_q_answer_change(driver)
+    numeric_q_incorrect_unit(driver)
+    numeric_q_incorrect_value(driver)
+    numeric_q_all_incorrect(driver)
+    numeric_q_incorrect_sf(driver)
+    numeric_q_incorrect_sf_u(driver)
+    numeric_q_known_wrong_ans(driver)
+    numeric_q_known_wrong_sf(driver)
     numeric_q_help_popup(driver)
+    fatal_error = False
+except Exception, e:
+    log(ERROR, "FATAL ERROR! '%s'!" % e.message)
+    raise  # This allows us to add the error to the email, but leave the traceback on stderr
 finally:
     driver.quit()
     log(INFO, "Closed Selenium and Browser.")
@@ -1534,5 +1919,6 @@ finally:
         log(INFO, "Closed the virtual display.")
     except NameError:
         pass
-    log(INFO, "Testing Finished.")
-    end_testing(Results, email=False)
+    duration = int((datetime.datetime.now() - start_time).total_seconds()/60)
+    log(INFO, "Testing Finished, took %s minutes." % duration)
+    end_testing(Results, email=False, aborted=fatal_error)
