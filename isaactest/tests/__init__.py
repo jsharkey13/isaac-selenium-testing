@@ -24,11 +24,13 @@ def TestWithDependency(Name, Results, deps=[]):
           for this test to be run. If a test name is listed in 'deps' and does not
           appear in 'Results' keys; a 'KeyError' exception will be raised.
     """
+    Results[Name] = None  # Add all defined tests to list as 'Not Run'.
+
     def _Dependency(test_func):
         def _decorator(*args, **kwargs):
             if all([Results[d] for d in deps]):
                 log(TEST, "Test '%s'." % Name)
-                Results[Name] = False  # If it dies; ensure this test is recorded!
+                Results[Name] = False  # If it dies; ensure this test marked as a fail!
                 result = test_func(*args, **kwargs)
                 if type(result) != bool:
                     log(INFO, "Test returned unexpected value. Assuming failure!")

@@ -49,11 +49,14 @@ def log(level, message):
         _LOGFILE.flush()
 
 
-def _generate_summary(Results):
+def _generate_summary(Results, aborted):
     """When testing has finished, return a string of the results in a nice format."""
     passes = len([v for v in Results.values() if v])
     total = len(Results)
-    summary = "Testing Finished. %s of %s passed. %s errors!\n" % (passes, total, _errors)
+    if not aborted:
+        summary = "Testing Finished. %s of %s passed. %s errors!\n" % (passes, total, _errors)
+    else:
+        summary = "Testing Failed. %s of %s passed. %s errors, 1 fatal!\n" % (passes, total, _errors)
     for k in Results:
         status = {True: "Pass", False: "Failed", None: "Not Run"}[Results[k]]
         summary += " - %s: %s\n" % (k.ljust(25), status)
@@ -72,7 +75,7 @@ def start_testing():
     _LOGFILE.write("%s \t Starting Regression Testing.\n" % log_time)
 
 
-def end_testing(Results, email=True):
+def end_testing(Results, email=True, aborted=False):
     """Run when testing finishes.
 
        Closes the logfile, records the time testing finishes, manages the displaying
@@ -82,7 +85,7 @@ def end_testing(Results, email=True):
     global _LOGFILE, _tests_passed, _errors
     now = datetime.datetime.now()
     log_time = "[%s]" % now.strftime("%Y-%m-%d %H:%M:%S")
-    summary = _generate_summary(Results)
+    summary = _generate_summary(Results, aborted)
     print ("%s \t " % log_time) + summary
     _LOGFILE.write(("%s \t " % log_time) + summary + "\n")
     _LOGFILE.close()
