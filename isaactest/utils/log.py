@@ -16,15 +16,6 @@ _errors = 0
 # Customise which log events are printed:
 _OUTPUT_LOGGING_LEVELS = [INFO, PASS, ERROR]
 
-""" Depricated!
-def stop(driver, message="Fatal Error! Stopping"):
-    log(FATAL, message)
-#    raw_input("Paused (Press Enter to Quit)")
-#    driver.quit()
-    end_testing()
-    raise SystemExit
-"""
-
 
 def log(level, message):
     """Log a message to stdout and to file. Not thread safe!
