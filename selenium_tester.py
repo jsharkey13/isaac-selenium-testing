@@ -57,7 +57,6 @@ def define_users():
     Users.Guerrilla.new_password = "testing123"
     return Users
 Users = define_users()
-Results = OrderedDict()
 
 
 # Open a folder just for this test:
@@ -114,7 +113,7 @@ driver, inbox = selenium_startup(Users)  # Delete
 #####
 # Test 1 : Logging In
 #####
-@TestWithDependency("LOGIN", Results)
+@TestWithDependency("LOGIN")
 def login(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -140,7 +139,7 @@ def login(driver, Users):
 #####
 # Test 2 : Questionnaire Popup
 #####
-@TestWithDependency("QUESTIONNAIRE", Results, ["LOGIN"])
+@TestWithDependency("QUESTIONNAIRE", ["LOGIN"])
 def questionnaire(driver):
     assert_tab(driver, ISAAC_WEB)
     disable_irritating_popup(driver, undo=True)  # Make sure we've not disabled it at all!
@@ -155,7 +154,7 @@ def questionnaire(driver):
 #####
 # Test 2.5 : Global Navigation Menu
 #####
-@TestWithDependency("GLOBAL_NAV", Results)
+@TestWithDependency("GLOBAL_NAV")
 def global_nav(driver):
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -188,7 +187,7 @@ def global_nav(driver):
 #####
 # Test 3 : Logout Button
 #####
-@TestWithDependency("LOGOUT", Results, ["LOGIN", "GLOBAL_NAV"])
+@TestWithDependency("LOGOUT", ["LOGIN", "GLOBAL_NAV"])
 def logout(driver):
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -216,7 +215,7 @@ def logout(driver):
 #####
 # Test 4 : 11 Login Attempts
 #####
-@TestWithDependency("LOGIN_THROTTLE", Results)
+@TestWithDependency("LOGIN_THROTTLE")
 def login_throttle(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -241,7 +240,7 @@ def login_throttle(driver, Users):
 #####
 # Test 5 : 10 Minute Lockout
 #####
-@TestWithDependency("LOGIN_TIMEOUT", Results, ["LOGIN", "LOGIN_THROTTLE"])
+@TestWithDependency("LOGIN_TIMEOUT", ["LOGIN", "LOGIN_THROTTLE"])
 def login_timeout(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     log(INFO, "Waiting for 10 minute timout to expire.")
@@ -268,7 +267,7 @@ def login_timeout(driver, Users):
 #####
 # Test 6 : Sign Up to Isaac
 #####
-@TestWithDependency("SIGNUP", Results, ["LOGIN", "LOGOUT"])
+@TestWithDependency("SIGNUP", ["LOGIN", "LOGOUT"])
 def signup(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -295,7 +294,7 @@ def signup(driver, Users):
 #####
 # Test 7 : Welcome Email Recieved
 #####
-@TestWithDependency("WELCOME_EMAIL", Results, ["SIGNUP"])
+@TestWithDependency("WELCOME_EMAIL", ["SIGNUP"])
 def welcome_email(driver, inbox):
     assert_tab(driver, GUERRILLAMAIL)
     log(INFO, "Waiting 10 seconds for page to update.")
@@ -321,7 +320,7 @@ def welcome_email(driver, inbox):
 ######
 # Test 8 : Request Verification Emails
 ######
-@TestWithDependency("REQ_VERIFY_EMAILS", Results, ["SIGNUP"])
+@TestWithDependency("REQ_VERIFY_EMAILS", ["SIGNUP"])
 def req_verify_emails(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -373,7 +372,7 @@ def req_verify_emails(driver):
 #####
 # Test 9 : Recieve Verification Emails
 #####
-@TestWithDependency("RECIEVE_VERIFY_EMAILS", Results, ["REQ_VERIFY_EMAILS"])
+@TestWithDependency("RECIEVE_VERIFY_EMAILS", ["REQ_VERIFY_EMAILS"])
 def recieve_verify_emails(driver, inbox):
     verification_email_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
@@ -401,7 +400,7 @@ def recieve_verify_emails(driver, inbox):
 #####
 # Test 10 : Verification Link Works
 #####
-@TestWithDependency("VERIFY_LINK", Results, ["RECIEVE_VERIFY_EMAILS"])
+@TestWithDependency("VERIFY_LINK", ["RECIEVE_VERIFY_EMAILS"])
 def verify_link(driver, inbox):
     assert_tab(driver, GUERRILLAMAIL)
     log(INFO, "About to check latest verification link works.")
@@ -439,7 +438,7 @@ def verify_link(driver, inbox):
 #####
 # Test 11 : Verification Banner Gone
 #####
-@TestWithDependency("VERIFY_BANNER_GONE", Results, ["VERIFY_LINK"])
+@TestWithDependency("VERIFY_BANNER_GONE", ["VERIFY_LINK"])
 def verify_banner_gone(driver):
     assert_tab(driver, ISAAC_WEB)
     try:
@@ -457,7 +456,7 @@ def verify_banner_gone(driver):
 #####
 # Test 12 : Forgot My Password Button Limit
 #####
-@TestWithDependency("PWD_RESET_THROTTLE", Results, ["LOGIN", "LOGOUT", "SIGNUP"])
+@TestWithDependency("PWD_RESET_THROTTLE", ["LOGIN", "LOGOUT", "SIGNUP"])
 def pwd_reset_throttle(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -512,7 +511,7 @@ def pwd_reset_throttle(driver, Users):
 #####
 # Test 13 : 4 password reset emails recieved
 #####
-@TestWithDependency("RECIEVE_PWD_RESET_EMAILS", Results, ["PWD_RESET_THROTTLE"])
+@TestWithDependency("RECIEVE_PWD_RESET_EMAILS", ["PWD_RESET_THROTTLE"])
 def recieve_pwd_reset_emails(driver, inbox):
     forgot_pwd_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
@@ -543,7 +542,7 @@ def recieve_pwd_reset_emails(driver, inbox):
 #####
 # Test 14 : Reset Password Link Works
 #####
-@TestWithDependency("PWD_RESET_LINK", Results, ["RECIEVE_PWD_RESET_EMAILS"])
+@TestWithDependency("PWD_RESET_LINK", ["RECIEVE_PWD_RESET_EMAILS"])
 def pwd_reset_link(driver, inbox, Users):
     assert_tab(driver, GUERRILLAMAIL)
     log(INFO, "About to check latest reset password link works.")
@@ -592,7 +591,7 @@ def pwd_reset_link(driver, inbox, Users):
 #####
 # Test 15 : Logging In With New Password
 #####
-@TestWithDependency("RESET_PWD_LOGIN", Results, ["LOGIN", "PWD_RESET_LINK"])
+@TestWithDependency("RESET_PWD_LOGIN", ["LOGIN", "PWD_RESET_LINK"])
 def reset_pwd_login(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB)
@@ -622,7 +621,7 @@ def reset_pwd_login(driver, Users):
 #####
 # Test 16 : Login Email Case Sensitivity
 #####
-@TestWithDependency("LOGIN_UPPERCASE", Results, ["LOGIN"])
+@TestWithDependency("LOGIN_UPPERCASE", ["LOGIN"])
 def login_uppercase(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -651,7 +650,7 @@ def login_uppercase(driver, Users):
 #####
 # Test 17 : Signup Email Case Sensitivity
 #####
-@TestWithDependency("SIGNUP_UPPERCASE", Results, ["LOGIN", "SIGNUP"])
+@TestWithDependency("SIGNUP_UPPERCASE", ["LOGIN", "SIGNUP"])
 def signup_uppercase(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -686,7 +685,7 @@ def signup_uppercase(driver, Users):
 #####
 # Test 18 : User Consistency
 #####
-@TestWithDependency("USER_CONSISTENCY", Results, ["LOGIN"])
+@TestWithDependency("USER_CONSISTENCY", ["LOGIN"])
 def user_consistency(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -726,7 +725,7 @@ def user_consistency(driver, Users):
 #####
 # Test 19 : User Consistency Popup
 #####
-@TestWithDependency("USER_CONSISTENCY_POPUP", Results, ["USER_CONSISTENCY"])
+@TestWithDependency("USER_CONSISTENCY_POPUP", ["USER_CONSISTENCY"])
 def user_consistency_popup(driver):
     driver.get(ISAAC_WEB + "/logout")
     log(INFO, "Logging out the user in the new tab.")
@@ -785,7 +784,7 @@ def user_consistency_popup(driver):
 #####
 # Test 20 : Change Email Address
 #####
-@TestWithDependency("EMAIL_CHANGE", Results, ["LOGIN", "GLOBAL_NAV", "SIGNUP", "RECIEVE_VERIFY_EMAILS"])
+@TestWithDependency("EMAIL_CHANGE", ["LOGIN", "GLOBAL_NAV", "SIGNUP", "RECIEVE_VERIFY_EMAILS"])
 def email_change(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -851,7 +850,7 @@ def email_change(driver, Users):
 #####
 # Test 21 : Check Change Email Emails Recieved
 #####
-@TestWithDependency("EMAIL_CHANGE_EMAILS", Results, ["EMAIL_CHANGE"])
+@TestWithDependency("EMAIL_CHANGE_EMAILS", ["EMAIL_CHANGE"])
 def email_change_emails(driver, inbox, Users):
     assert_tab(driver, GUERRILLAMAIL)
     log(INFO, "Checking if emails were sent after changing account email.")
@@ -913,7 +912,7 @@ def email_change_emails(driver, inbox, Users):
 #####
 # Test 22 : Check Login Status After Email Change
 #####
-@TestWithDependency("EMAIL_CHANGE_LOGIN_STATUS", Results, ["EMAIL_CHANGE_EMAILS"])
+@TestWithDependency("EMAIL_CHANGE_LOGIN_STATUS", ["EMAIL_CHANGE_EMAILS"])
 def email_change_login_status(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     log(INFO, "Now testing login conditions; old email should work until after verification, then new email only.")
@@ -1008,7 +1007,7 @@ def email_change_login_status(driver, Users):
 #####
 # Test 23 : Access Admin Page As Users
 #####
-@TestWithDependency("ADMIN_PAGE_ACCESS", Results, ["LOGIN", "LOGOUT"])
+@TestWithDependency("ADMIN_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def admin_page_access(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     driver.get(ISAAC_WEB + "/logout")
@@ -1089,7 +1088,7 @@ def admin_page_access(driver, Users):
 #####
 # Test 24 : Delete A User
 #####
-@TestWithDependency("DELETE_USER", Results, ["LOGIN", "SIGNUP"])
+@TestWithDependency("DELETE_USER", ["LOGIN", "SIGNUP"])
 def delete_user(driver, Users):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1162,7 +1161,7 @@ def delete_user(driver, Users):
 #####
 # Test 25 : Accordion Sections Open and Close
 #####
-@TestWithDependency("ACCORDION_BEHAVIOUR", Results)
+@TestWithDependency("ACCORDION_BEHAVIOUR")
 def accordion_behavior(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1238,7 +1237,7 @@ def accordion_behavior(driver):
 #####
 # Test 26 : Quick Questions
 #####
-@TestWithDependency("QUICK_QUESTIONS", Results, ["ACCORDION_BEHAVIOUR"])
+@TestWithDependency("QUICK_QUESTIONS", ["ACCORDION_BEHAVIOUR"])
 def quick_questions(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1300,7 +1299,7 @@ def quick_questions(driver):
 #####
 # Test 27 : Multiple Choice Questions
 #####
-@TestWithDependency("MULTIPLE_CHOICE_QUESTIONS", Results, ["ACCORDION_BEHAVIOUR"])
+@TestWithDependency("MULTIPLE_CHOICE_QUESTIONS", ["ACCORDION_BEHAVIOUR"])
 def multiple_choice_questions(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1387,7 +1386,7 @@ def multiple_choice_questions(driver):
 #####
 # Test 28 : Numeric Question Units Dropdown
 #####
-@TestWithDependency("NUMERIC_Q_UNITS_SELECT", Results, ["ACCORDION_BEHAVIOUR"])
+@TestWithDependency("NUMERIC_Q_UNITS_SELECT", ["ACCORDION_BEHAVIOUR"])
 def numeric_q_units_select(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1444,7 +1443,7 @@ def numeric_q_units_select(driver):
 #####
 # Test 29 : Numeric Questions Correct Answers
 #####
-@TestWithDependency("NUMERIC_Q_ALL_CORRECT", Results, ["NUMERIC_Q_UNITS_SELECT"])
+@TestWithDependency("NUMERIC_Q_ALL_CORRECT", ["NUMERIC_Q_UNITS_SELECT"])
 def numeric_q_all_correct(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1479,7 +1478,7 @@ def numeric_q_all_correct(driver):
 #####
 # Test 30 : Numeric Questions Answer Change
 #####
-@TestWithDependency("NUMERIC_Q_ANSWER_CHANGE", Results, ["NUMERIC_Q_UNITS_SELECT", "NUMERIC_Q_ALL_CORRECT"])
+@TestWithDependency("NUMERIC_Q_ANSWER_CHANGE", ["NUMERIC_Q_UNITS_SELECT", "NUMERIC_Q_ALL_CORRECT"])
 def numeric_q_answer_change(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1519,7 +1518,7 @@ def numeric_q_answer_change(driver):
 #####
 # Test 31 : Numeric Questions Incorrect Unit, Correct Value
 #####
-@TestWithDependency("NUMERIC_Q_INCORRECT_UNIT", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_INCORRECT_UNIT", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_incorrect_unit(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1561,7 +1560,7 @@ def numeric_q_incorrect_unit(driver):
 #####
 # Test 32 : Numeric Questions Correct Unit, Incorrect Value
 #####
-@TestWithDependency("NUMERIC_Q_INCORRECT_VALUE", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_INCORRECT_VALUE", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_incorrect_value(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1603,7 +1602,7 @@ def numeric_q_incorrect_value(driver):
 #####
 # Test 33 : Numeric Questions Incorrect Value, Incorrect Unit
 #####
-@TestWithDependency("NUMERIC_Q_ALL_INCORRECT", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_ALL_INCORRECT", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_all_incorrect(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1648,7 +1647,7 @@ def numeric_q_all_incorrect(driver):
 #####
 # Test 34 : Numeric Questions Incorrect Sig Figs
 #####
-@TestWithDependency("NUMERIC_Q_INCORRECT_SF", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_INCORRECT_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_incorrect_sf(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1690,7 +1689,7 @@ def numeric_q_incorrect_sf(driver):
 #####
 # Test 35 : Numeric Questions Incorrect Sig Figs, Incorrect Unit
 #####
-@TestWithDependency("NUMERIC_Q_INCORRECT_SF_U", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_INCORRECT_SF_U", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_incorrect_sf_u(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1735,7 +1734,7 @@ def numeric_q_incorrect_sf_u(driver):
 #####
 # Test 36 : Numeric Questions Known Wrong Answer
 #####
-@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_ANS", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_ANS", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_known_wrong_ans(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1777,7 +1776,7 @@ def numeric_q_known_wrong_ans(driver):
 #####
 # Test 37 : Numeric Questions Known Wrong Answer, Wrong Sig Figs
 #####
-@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", Results, ["NUMERIC_Q_ANSWER_CHANGE"])
+@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_known_wrong_sf(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1820,7 +1819,7 @@ def numeric_q_known_wrong_sf(driver):
 #####
 # Test M : Numeric Questions Help Popup
 #####
-@TestWithDependency("NUMERIC_Q_HELP_POPUP", Results, ["ACCORDION_BEHAVIOUR"])
+@TestWithDependency("NUMERIC_Q_HELP_POPUP", ["ACCORDION_BEHAVIOUR"])
 def numeric_q_help_popup(driver):
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
@@ -1921,4 +1920,4 @@ finally:
         pass
     duration = int((datetime.datetime.now() - start_time).total_seconds()/60)
     log(INFO, "Testing Finished, took %s minutes." % duration)
-    end_testing(Results, email=False, aborted=fatal_error)
+    end_testing(TestWithDependency.Results, email=False, aborted=fatal_error)
