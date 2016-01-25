@@ -1,8 +1,8 @@
 import selenium.webdriver
 import time
 from .log import log, INFO
-from ..utils.i_selenium import new_tab
-from ..utils.isaac import TestUsers, User
+from .i_selenium import new_tab
+from .isaac import TestUsers, User
 from ..emails.guerrillamail import GuerrillaInbox, set_guerrilla_mail_address
 
 
