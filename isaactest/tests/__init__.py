@@ -2,7 +2,6 @@ from functools import wraps
 from ..utils.log import log, TEST, INFO, ERROR
 from collections import OrderedDict
 
-
 __all__ = ['TestWithDependency']
 
 
@@ -35,19 +34,24 @@ class TestWithDependency(object):
 
     def __call__(self, test_func):
         def _decorator(*args, **kwargs):
-            if all([self.Results[d] for d in self.deps]):
+            if self.dependencies_met():
                 log(TEST, "Test '%s'." % self.Name)
                 self.Results[self.Name] = False  # If it dies; ensure this test marked as a fail!
                 result = test_func(*args, **kwargs)
                 if type(result) != bool:
                     log(INFO, "Test returned unexpected value. Assuming failure!")
                     result = False
-                self.Results[self.Name] = result
+                del self.Results[self.Name]  # This moves the entry to the end,
+                self.Results[self.Name] = result  # So it is clearer which were not run.
                 return result
             else:
                 not_met = ", ".join([d for d in self.deps if not self.Results[d]])
                 log(TEST, "Test '%s' not run, dependencies '%s' not met!" % (self.Name, not_met))
                 log(ERROR, "Test could not run!")
-                self.Results[self.Name] = None
+                del self.Results[self.Name]  # This moves the entry to the end,
+                self.Results[self.Name] = None  # So it is clearer which were not run.
                 return None
         return wraps(test_func)(_decorator)
+
+    def dependencies_met(self):
+        return all([self.Results[d] for d in self.deps])
