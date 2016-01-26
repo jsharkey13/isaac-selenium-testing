@@ -104,7 +104,7 @@ try:
     logout(driver, ISAAC_WEB, WAIT_DUR)
     login_throttle(driver, Users, ISAAC_WEB, WAIT_DUR)
     login_timeout(driver, Users, ISAAC_WEB, WAIT_DUR)
-    signup(driver, Users)
+    signup(driver, Users, ISAAC_WEB, WAIT_DUR)
     welcome_email(driver, inbox, GUERRILLAMAIL)
     req_verify_emails(driver, ISAAC_WEB, WAIT_DUR)
     recieve_verify_emails(driver, inbox, GUERRILLAMAIL)
