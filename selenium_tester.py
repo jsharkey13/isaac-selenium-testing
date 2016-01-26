@@ -80,7 +80,6 @@ Users = define_users()
 
 # Open a folder just for this test:
 RUNDATE = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-RUNDATE = ""
 try:
     os.mkdir("test_" + RUNDATE)
 except Exception:
@@ -96,7 +95,7 @@ driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR)
 # driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER)
 
 
-fatal_error = True
+fatal_error = False
 try:
     login(driver, Users, ISAAC_WEB, WAIT_DUR)
     questionnaire(driver, ISAAC_WEB)
@@ -137,8 +136,8 @@ try:
     numeric_q_known_wrong_ans(driver, ISAAC_WEB, WAIT_DUR)
     numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR)
     numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR)
-    fatal_error = False
 except Exception, e:
+    fatal_error = True
     log(ERROR, "FATAL ERROR! '%s'!" % e.message)
     raise  # This allows us to add the error to the email, but leave the traceback on stderr
 finally:
@@ -149,6 +148,6 @@ finally:
         log(INFO, "Closed the virtual display.")
     except NameError:
         pass
-    duration = int((datetime.datetime.now() - start_time).total_seconds()/60)
+    duration = int((datetime.datetime.now() - start_time).total_seconds()/60) + 1  # int(...) rounds down
     log(INFO, "Testing Finished, took %s minutes." % duration)
     end_testing(TestWithDependency.Results, email=False, aborted=fatal_error)
