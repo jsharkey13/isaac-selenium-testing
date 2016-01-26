@@ -48,6 +48,7 @@ from isaactest.tests.numeric_q_incorrect_sf_u import numeric_q_incorrect_sf_u
 from isaactest.tests.numeric_q_known_wrong_ans import numeric_q_known_wrong_ans
 from isaactest.tests.numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
 from isaactest.tests.numeric_q_help_popup import numeric_q_help_popup
+from isaactest.tests.answer_saved_login import answer_saved_login
 
 
 #####
@@ -121,7 +122,6 @@ try:
     email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR)
     email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR)
     admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR)
-    delete_user(driver, Users, ISAAC_WEB, WAIT_DUR)
     accordion_behavior(driver, ISAAC_WEB, WAIT_DUR)
     quick_questions(driver, ISAAC_WEB, WAIT_DUR)
     multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR)
@@ -136,6 +136,8 @@ try:
     numeric_q_known_wrong_ans(driver, ISAAC_WEB, WAIT_DUR)
     numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR)
     numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR)
+    answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR)
+    delete_user(driver, Users, ISAAC_WEB, WAIT_DUR)
 except Exception, e:
     fatal_error = True
     log(ERROR, "FATAL ERROR! '%s'!" % e.message)
