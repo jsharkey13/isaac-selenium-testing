@@ -14,7 +14,7 @@ __all__ = ["numeric_q_all_correct"]
 #####
 @TestWithDependency("NUMERIC_Q_ALL_CORRECT", ["NUMERIC_Q_UNITS_SELECT"])
 def numeric_q_all_correct(driver, ISAAC_WEB, WAIT_DUR):
-    """Test is numeric questions can be answered correctly.
+    """Test if numeric questions can be answered correctly.
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.
