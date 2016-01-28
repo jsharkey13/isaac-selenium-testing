@@ -2,6 +2,7 @@ import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element
+from ..utils.isaac import open_accordion_section
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -25,8 +26,7 @@ def numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR):
     log(INFO, "Got: %s" % (ISAAC_WEB + "/questions/_regression_test_"))
     time.sleep(WAIT_DUR)
     try:
-        third_accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[3]")
-        third_accordion_title.click()
+        open_accordion_section(driver, 3)
         time.sleep(WAIT_DUR)
         num_question = wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']")
         log(INFO, "Accordion opened, multiple choice question displayed.")

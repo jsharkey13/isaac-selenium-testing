@@ -252,6 +252,62 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
         return False
 
 
+def open_accordion_section(driver, n):
+    """Open the n-th accordion section on a page.
+
+       Will raise ElementNotFoundException if there are no accordion sections on
+       the page, or if n larger than the number of accordion sections.
+        - 'driver' should be a Selenium WebDriver.
+        - 'n' is the integer number of the accordion section to open counting from 1.
+    """
+    accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[%s]" % n)
+    accordion_content = accordion_title.find_element_by_xpath("./../div")
+    if accordion_content.is_displayed():
+        log(INFO, "Accordion section %s already open." % n)
+    else:
+        accordion_title.click()
+        log(INFO, "Opened accordion section %s." % n)
+        time.sleep(0.5)
+
+
+def close_accordion_section(driver, n):
+    """Close the n-th accordion section on a page.
+
+       Will raise ElementNotFoundException if there are no accordion sections on
+       the page, or if n larger than the number of accordion sections.
+        - 'driver' should be a Selenium WebDriver.
+        - 'n' is the integer number of the accordion section to close counting from 1.
+    """
+    accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[%s]" % n)
+    accordion_content = accordion_title.find_element_by_xpath("./../div")
+    if accordion_content.is_displayed():
+        accordion_title.click()
+        log(INFO, "Closed accordion section %s." % n)
+        time.sleep(0.5)
+    else:
+        log(INFO, "Accordion section %s already closed." % n)
+
+
+def wait_accordion_open(driver, n, duration=5):
+    """Wait for the n-th accordion section on a page to be open.
+
+        - 'driver' should be a Selenium WebDriver.
+        - 'n' is the integer number of the accordion section counting from 1.
+        - 'duration' is how long to wait before raising TimeoutException.
+    """
+    return wait_for_xpath_element(driver, "(//dd/a[@class='ru_accordion_titlebar']/../div)[%s]" % n, duration)
+
+
+def wait_accordion_closed(driver, n, duration=5):
+    """Wait for the n-th accordion section on a page to be closed.
+
+        - 'driver' should be a Selenium WebDriver.
+        - 'n' is the integer number of the accordion section counting from 1.
+        - 'duration' is how long to wait before raising TimeoutException.
+    """
+    return wait_for_invisible_xpath(driver, "(//dd/a[@class='ru_accordion_titlebar']/../div)[%s]" % n, duration)
+
+
 def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wait_dur=2):
     """Submit an answer to a numeric question, given a value and units.
 

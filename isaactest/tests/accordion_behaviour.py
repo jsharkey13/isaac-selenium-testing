@@ -2,6 +2,7 @@ import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
+from ..utils.isaac import open_accordion_section, close_accordion_section, wait_accordion_open, wait_accordion_closed
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -38,8 +39,7 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR):
         return False
     log(INFO, "Try closing an accordion section.")
     try:
-        first_accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[1]")
-        first_accordion_title.click()
+        close_accordion_section(driver, 1)
         time.sleep(WAIT_DUR)
         wait_for_invisible_xpath(driver, "//p[text()='This is a quick question.']")
         log(INFO, "Accordions close as expected.")
@@ -52,13 +52,11 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR):
         return False
     log(INFO, "Try reopening accordion section.")
     try:
-        first_accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[1]")
-        first_accordion_title.click()
+        open_accordion_section(driver, 1)
         time.sleep(WAIT_DUR)
         wait_for_xpath_element(driver, "//p[text()='This is a quick question.']")
         log(INFO, "Accordions open as expected.")
-        first_accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[1]")
-        first_accordion_title.click()
+        close_accordion_section(driver, 1)
         time.sleep(WAIT_DUR)
         log(INFO, "Closed accordion section; all should now be closed.")
     except NoSuchElementException:
@@ -77,10 +75,10 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR):
         for i, accordion_title in enumerate(accordion_sections):
             n = i + 1
             accordion_title.click()
-            wait_for_xpath_element(driver, "(//dd/a[@class='ru_accordion_titlebar']/../div)[%s]" % n)
+            wait_accordion_open(driver, n)
             log(INFO, "Accordion section %s correctly shown." % n)
             accordion_title.click()
-            wait_for_invisible_xpath(driver, "(//dd/a[@class='ru_accordion_titlebar']/../div)[%s]" % n)
+            wait_accordion_closed(driver, n)
             log(INFO, "Accordion section %s correctly hidden." % n)
             time.sleep(WAIT_DUR)
     except TimeoutException:

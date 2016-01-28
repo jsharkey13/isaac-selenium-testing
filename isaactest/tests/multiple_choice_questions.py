@@ -2,6 +2,7 @@ import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
+from ..utils.isaac import open_accordion_section
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -25,8 +26,7 @@ def multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR):
     log(INFO, "Got: %s" % (ISAAC_WEB + "/questions/_regression_test_"))
     time.sleep(WAIT_DUR)
     try:
-        second_accordion_title = driver.find_element_by_xpath("(//a[contains(@class, 'ru_accordion_titlebar')])[2]")
-        second_accordion_title.click()
+        open_accordion_section(driver, 2)
         time.sleep(WAIT_DUR)
         mc_question = wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']")
         log(INFO, "Accordion opened, multiple choice question displayed.")
