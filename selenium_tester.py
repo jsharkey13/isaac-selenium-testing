@@ -49,6 +49,7 @@ from isaactest.tests.numeric_q_known_wrong_ans import numeric_q_known_wrong_ans
 from isaactest.tests.numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
 from isaactest.tests.numeric_q_help_popup import numeric_q_help_popup
 from isaactest.tests.answer_saved_login import answer_saved_login
+from isaactest.tests.tab_behaviour import tab_behavior
 
 
 #####
@@ -123,6 +124,7 @@ try:
     email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR)
     admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR)
     accordion_behavior(driver, ISAAC_WEB, WAIT_DUR)
+    tab_behavior(driver, ISAAC_WEB, WAIT_DUR)
     quick_questions(driver, ISAAC_WEB, WAIT_DUR)
     multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR)
     numeric_q_units_select(driver, ISAAC_WEB, WAIT_DUR)
