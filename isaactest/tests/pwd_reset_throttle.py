@@ -38,7 +38,7 @@ def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR):
             forgot_password_button = driver.find_element_by_xpath("(//a[@ng-click='resetPassword()'])[2]")
             log(INFO, "Clicking password reset button.")
             forgot_password_button.click()
-            time.sleep(0.1)
+            time.sleep(0.5)
             image_div(driver, "reset_password_button_message_%s" % i)
             password_resets += 1
             if i <= forgot_pwd_request_limit - 1:  # i starts from 0 not 1

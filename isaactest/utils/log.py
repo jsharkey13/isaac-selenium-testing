@@ -43,11 +43,12 @@ def log(level, message):
 def _generate_summary(Results, aborted):
     """When testing has finished, return a string of the results in a nice format."""
     passes = len([v for v in Results.values() if v])
+    fails = len([v for v in Results.values() if v is False])
     total = len(Results)
     if not aborted:
-        summary = "Testing Finished. %s of %s passed. %s errors!\n" % (passes, total, _errors)
+        summary = "Testing Finished. %s of %s passed. %s failed, %s errors!\n" % (passes, total, fails, _errors)
     else:
-        summary = "Testing Failed. %s of %s passed. %s errors, 1 fatal!\n" % (passes, total, _errors)
+        summary = "Testing Failed. %s of %s passed. %s failed, %s errors, 1 fatal!\n" % (passes, total, fails, _errors)
     for k in Results:
         status = {True: "Pass", False: "Failed", None: "Not Run"}[Results[k]]
         summary += " - %s: %s\n" % (k.ljust(25), status)

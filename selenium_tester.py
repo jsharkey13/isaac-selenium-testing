@@ -7,7 +7,7 @@ import datetime
 from isaactest.utils.log import log, INFO, ERROR, start_testing, end_testing
 from isaactest.utils.initialisation import define_users, start_selenium
 from isaactest.tests import TestWithDependency
-from isaactest.utils.isaac import User, TestUsers
+from isaactest.utils.isaac import User, TestUsers  # Need this for the pickle loading
 # Test Imports:
 from isaactest.tests.login import login
 from isaactest.tests.questionnaire import questionnaire
@@ -93,7 +93,7 @@ os.chdir("test_" + RUNDATE)
 start_testing()
 start_time = datetime.datetime.now()
 driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR)
-# driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER)
+#driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER)
 
 
 fatal_error = False

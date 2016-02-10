@@ -34,6 +34,10 @@ class TestWithDependency(object):
 
     def __call__(self, test_func):
         def _decorator(*args, **kwargs):
+            if type(self.Results[self.Name]) == bool:  # Don't re-run previosuly run tests
+                log(TEST, "Test '%s'." % self.Name)
+                log(INFO, "Test has already run.")
+                return
             if self.dependencies_met():
                 log(TEST, "Test '%s'." % self.Name)
                 self.Results[self.Name] = False  # If it dies; ensure this test marked as a fail!
