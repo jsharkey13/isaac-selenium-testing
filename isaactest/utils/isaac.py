@@ -368,3 +368,94 @@ def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wa
     except NoSuchElementException:
         log(ERROR, "Couldn't click the 'Check my answer' button; can't continue!")
         return False
+
+
+def clear_question_filter(driver, wait_dur=2):
+    """Clear the filter to a blank state, with nothing selected.
+
+       Assuming this is run on the "/gameboards" page and the filter is open,
+       it will unclick both Physics and Maths if necessary to set the filter to
+       a fresh state.
+        - 'driver' should be a Selenium WebDriver.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
+    """
+    filter_blank = False
+    while not filter_blank:
+        items = driver.find_elements_by_xpath("(//*[local-name() = 'svg']//*[name()='path' and contains(@class,'enabled')])[1]")
+        if len(items) > 0:
+            items[0].click()
+            time.sleep(wait_dur)
+        else:
+            filter_blank = True
+    log(INFO, "Set tag filter to blank state!")
+    selected_levels = driver.find_elements_by_xpath("(//div[@id='difficulty-hexagons'])[1]/a[@class='ru-diff-hex']/div[@class='diff-hex-selected']/..")
+    while len(selected_levels) > 0:
+        selected_levels[0].click()
+        selected_levels = driver.find_elements_by_xpath("(//div[@id='difficulty-hexagons'])[1]/a[@class='ru-diff-hex']/div[@class='diff-hex-selected']/..")
+    log(INFO, "Set the level filter to blank state!")
+    time.sleep(wait_dur)
+
+
+def set_filter_state(driver, tag_list, level_list, wait_dur=2):
+    """Set the filter to the state specified in 'tag_list'.
+
+       After opening the filter and clearing it using 'clear_question_filter()',
+       this function can be used to set the filter to a desired state. The tags
+       should be given in hierarchical order, else it may fail!
+        - 'driver' should be a Selenium WebDriver.
+        - 'tag_list' should be a list of tag names to select using the filter,
+          in hierarchical order. '["Physics", "Mechanics", "Dynamics"]' for example.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
+    """
+    try:
+        for tag in tag_list:
+            button_name = tag
+            data_item = driver.find_element_by_xpath("(//div[@id='hexfilter-text'])[1]//p[text()='%s']/../.." % button_name).get_attribute("data-item")
+            filter_button = driver.find_element_by_xpath("(//*[local-name() = 'svg']//*[name()='path' and @data-item='%s'])[1]" % data_item)
+            filter_button.click()
+            time.sleep(wait_dur)
+        level_buttons = driver.find_elements_by_xpath("(//div[@id='difficulty-hexagons'])[1]/a[@class='ru-diff-hex']")
+        assert len(level_buttons) == 6
+        for l in level_list:
+            level_buttons[l - 1].click()
+            level_buttons = driver.find_elements_by_xpath("(//div[@id='difficulty-hexagons'])[1]/a[@class='ru-diff-hex']")
+        return True
+    except NoSuchElementException:
+        log(ERROR, "Could not set filter to desired state!")
+        return False
+    except AssertionError:
+        log(ERROR, "Couldn't find level filter buttons; couldn't set filter to desired state!")
+        return False
+    except IndexError:
+        log(ERROR, "Invalid level requested!")
+        return False
+
+
+def get_hexagon_properties(hexagon_element):
+    """Given the WedDriver element for the hexagon, return a dict of properties.
+
+       The element must be the 'a' element for the hexagon, otherwise the properties
+       cannot be found. Any unknown or unset properties will be returned as the
+       empty string.
+        - 'hexagon_element' should be a WebElement for the hexagon in question.
+    """
+    if len(hexagon_element.find_elements_by_xpath("./div[@class='ru-hex-home-content-wild']")) > 0:
+        return dict(type='Wildcard')
+    try:
+        level = int(hexagon_element.find_element_by_xpath("./div[contains(@class, 'ru-hex-level-')]").get_attribute("class").replace('ru-hex-level-', ''))
+        topic = str(hexagon_element.find_element_by_xpath("./div[@class='ru-hex-home-title']").text)
+        field = str(hexagon_element.find_element_by_xpath("./div[contains(@class, 'ru-hex-home-field')]")
+                    .get_attribute("class").replace('ru-hex-home-field', '').replace('-', '')).strip().title()
+        title = str(hexagon_element.find_element_by_xpath("./div[@class='ru-hex-home-desc']").text)
+        if len(hexagon_element.find_elements_by_xpath(".//*[local-name() = 'svg']//*[name()='path' and contains(@class, 'physics')]")) > 0:
+            subject = "Physics"
+        elif len(hexagon_element.find_elements_by_xpath(".//*[local-name() = 'svg']//*[name()='path' and contains(@class, 'maths')]")) > 0:
+            subject = "Maths"
+        else:
+            subject = ""
+        return dict(type='Question', level=level, topic=topic, field=field, title=title, subject=subject)
+    except NoSuchElementException:
+        log(ERROR, "Failed to find hexagon properties!")
+        return None
