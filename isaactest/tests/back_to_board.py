@@ -34,8 +34,8 @@ def back_to_board(driver, ISAAC_WEB, WAIT_DUR):
         url = driver.current_url
         log(INFO, "Currently on '%s', attempt to access 5 hexagons." % url)
         for i in range(5):
-            hexagons = driver.find_elements_by_xpath("//a[@class='ru-hex-home-content']")
-            hexagon = get_hexagon_properties(hexagons[i])
+            hexagons = driver.find_elements_by_xpath("//a[@class='ru-hex-home-content']")  # This has to be inside the loop
+            hexagon = get_hexagon_properties(hexagons[i])                                  # so that we don't get stale elements.
             log(INFO, "Got hexagon %s." % (i + 1))
             if hexagon["type"] == "Question":
                 hexagons[i].click()

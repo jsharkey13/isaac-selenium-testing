@@ -52,6 +52,7 @@ from isaactest.tests.answer_saved_login import answer_saved_login
 from isaactest.tests.tab_behaviour import tab_behavior
 from isaactest.tests.back_to_board import back_to_board
 from isaactest.tests.filter_behaviour import filter_behaviour
+from isaactest.tests.filter_by_concept import filter_by_concept
 
 
 #####
@@ -144,6 +145,7 @@ try:
     delete_user(driver, Users, ISAAC_WEB, WAIT_DUR)
     back_to_board(driver, ISAAC_WEB, WAIT_DUR)
     filter_behaviour(driver, ISAAC_WEB, WAIT_DUR)
+    filter_by_concept(driver, ISAAC_WEB, WAIT_DUR)
 except Exception, e:
     fatal_error = True
     log(ERROR, "FATAL ERROR! %s:'%s'!" % (type(e).__name__, e.message))
