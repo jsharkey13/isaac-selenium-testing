@@ -50,6 +50,7 @@ from isaactest.tests.numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
 from isaactest.tests.numeric_q_help_popup import numeric_q_help_popup
 from isaactest.tests.answer_saved_login import answer_saved_login
 from isaactest.tests.tab_behaviour import tab_behavior
+from isaactest.tests.back_to_board import back_to_board
 from isaactest.tests.filter_behaviour import filter_behaviour
 
 
@@ -141,6 +142,7 @@ try:
     numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR)
     answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR)
     delete_user(driver, Users, ISAAC_WEB, WAIT_DUR)
+    back_to_board(driver, ISAAC_WEB, WAIT_DUR)
     filter_behaviour(driver, ISAAC_WEB, WAIT_DUR)
 except Exception, e:
     fatal_error = True

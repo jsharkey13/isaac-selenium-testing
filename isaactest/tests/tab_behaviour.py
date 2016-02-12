@@ -29,9 +29,10 @@ def tab_behavior(driver, ISAAC_WEB, WAIT_DUR):
     log(INFO, "Got: %s" % (ISAAC_WEB + "/questions/_regression_test_"))
     time.sleep(WAIT_DUR)
     try:
+        close_accordion_section(driver, 1)
         open_accordion_section(driver, 2)
         mc_question = wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']")
-        hint_buttons = mc_question.find_elements_by_xpath(".//a[contains(text(), 'Hint ')]")
+        hint_buttons = mc_question.find_elements_by_xpath(".//a[contains(text(), 'Hint ')]/..")
         assert len(hint_buttons) == 2
     except TimeoutException:
         log(ERROR, "Can't access multiple choice question; can't continue!.")
@@ -67,7 +68,7 @@ def tab_behavior(driver, ISAAC_WEB, WAIT_DUR):
         open_accordion_section(driver, 3)
         time.sleep(WAIT_DUR)
         num_question = driver.find_element_by_xpath("//div[@ng-switch-when='isaacNumericQuestion']")
-        hint_buttons = num_question.find_elements_by_xpath(".//a[contains(text(), 'Hint ')]")
+        hint_buttons = num_question.find_elements_by_xpath(".//a[contains(text(), 'Hint ')]/..")
         log(INFO, "Try cycling through all hints.")
         for i, hint in enumerate(hint_buttons):
             n = i + 1
