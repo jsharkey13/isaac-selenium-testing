@@ -92,9 +92,13 @@ def answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR):
         log(INFO, "Now see if the 'Correct' message was preserved after logging in.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h1[text()='Correct!']")
         log(INFO, "A 'Correct!' message was retained after logging in.")
-        log(PASS, "Anonymous question answers are preserved upon logging in.")
-        return True
     except TimeoutException:
         image_div(driver, "ERROR_answer_saved_login")
         log(ERROR, "The 'Correct' message was not shown again; see 'ERROR_answer_saved_login.png'!")
         return False
+
+    driver.get(ISAAC_WEB + "/logout")
+    log(INFO, "Logging out logged in user.")
+    time.sleep(WAIT_DUR)
+    log(PASS, "Anonymous question answers are preserved upon logging in.")
+    return True

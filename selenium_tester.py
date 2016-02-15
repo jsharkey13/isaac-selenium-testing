@@ -53,6 +53,11 @@ from isaactest.tests.tab_behaviour import tab_behavior
 from isaactest.tests.back_to_board import back_to_board
 from isaactest.tests.filter_behaviour import filter_behaviour
 from isaactest.tests.filter_by_concept import filter_by_concept
+from isaactest.tests.admin_stats_summary import admin_stats_summary
+from isaactest.tests.admin_stats_analytics import admin_stats_analytics
+from isaactest.tests.admin_stats_gameboards import admin_stats_gameboards
+from isaactest.tests.admin_stats_schools import admin_stats_schools
+from isaactest.tests.admin_user_search import admin_user_search
 
 
 #####
@@ -146,6 +151,11 @@ try:
     back_to_board(driver, ISAAC_WEB, WAIT_DUR)
     filter_behaviour(driver, ISAAC_WEB, WAIT_DUR)
     filter_by_concept(driver, ISAAC_WEB, WAIT_DUR)
+    admin_stats_summary(driver, Users, ISAAC_WEB, WAIT_DUR)
+    admin_stats_analytics(driver, ISAAC_WEB, WAIT_DUR)
+    admin_stats_gameboards(driver, ISAAC_WEB, WAIT_DUR)
+    admin_stats_schools(driver, ISAAC_WEB, WAIT_DUR)
+    admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR)
 except Exception, e:
     fatal_error = True
     log(ERROR, "FATAL ERROR! %s:'%s'!" % (type(e).__name__, e.message))
