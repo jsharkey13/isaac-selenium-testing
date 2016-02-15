@@ -43,11 +43,14 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR):
         email_field = driver.find_element_by_id("user-search-email")
         email_field.send_keys(Users.Guerrilla.email)
         time.sleep(WAIT_DUR)
-        search_button = driver.find_element_by_xpath("//a[@ng-click='findUsers()']")
+        search_button = driver.find_element_by_xpath("//button[@ng-click='findUsers()']")
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
     except TimeoutException:
         log(ERROR, "Search button did not work; can't continue testing!")
+        return False
+    except NoSuchElementException:
+        log(ERROR, "Couldn't find the input fields; can't continue testing!")
         return False
     try:
         del_button_xpath = "//td[text()='%s']/..//a[contains(@ng-click, 'deleteUser')]" % Users.Guerrilla.email
@@ -78,7 +81,7 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR):
     except AssertionError, e:
         if "Alert" in e.message:
             alert = driver.switch_to.alert
-            alert.dismiss
+            alert.dismiss()
             log(ERROR, "Dismiss the alert, do not accept!")
             return False
         else:
