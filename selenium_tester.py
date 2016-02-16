@@ -58,6 +58,7 @@ from isaactest.tests.admin_stats_analytics import admin_stats_analytics
 from isaactest.tests.admin_stats_gameboards import admin_stats_gameboards
 from isaactest.tests.admin_stats_schools import admin_stats_schools
 from isaactest.tests.admin_user_search import admin_user_search
+from isaactest.tests.non_admin_user_search import non_admin_user_search
 
 
 #####
@@ -156,6 +157,7 @@ try:
     admin_stats_gameboards(driver, ISAAC_WEB, WAIT_DUR)
     admin_stats_schools(driver, ISAAC_WEB, WAIT_DUR)
     admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR)
+    non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR)
 except Exception, e:
     fatal_error = True
     log(ERROR, "FATAL ERROR! %s:'%s'!" % (type(e).__name__, e.message))

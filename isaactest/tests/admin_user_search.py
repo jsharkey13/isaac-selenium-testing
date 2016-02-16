@@ -2,7 +2,7 @@ import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.isaac import submit_login_form
 from ..utils.i_selenium import assert_tab, image_div
-from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
+from ..utils.i_selenium import wait_for_invisible_xpath
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import Select
@@ -15,7 +15,7 @@ __all__ = ["admin_user_search"]
 #####
 @TestWithDependency("ADMIN_USER_SEARCH")
 def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR):
-    """Test if admin users can delete users.
+    """Test if admin users can search for users.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.
@@ -173,7 +173,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR):
         log(INFO, "Refresh the page to clear all results.")
         time.sleep(WAIT_DUR)
     except TimeoutException:
-        image_div("ERROR_admin_user_search")
+        image_div(driver, "ERROR_admin_user_search")
         log(ERROR, "Error message unexpectedly shown; see 'ERROR_admin_user_search.png'!")
         return False
     except NoSuchElementException:
@@ -205,7 +205,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR):
         log(INFO, "Refresh the page to clear all results.")
         time.sleep(WAIT_DUR)
     except TimeoutException:
-        image_div("ERROR_admin_user_search")
+        image_div(driver, "ERROR_admin_user_search")
         log(ERROR, "Error message unexpectedly shown; see 'ERROR_admin_user_search.png'!")
         return False
     except NoSuchElementException:
