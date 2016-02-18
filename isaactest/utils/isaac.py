@@ -59,7 +59,7 @@ class TestUsers():
 def kill_irritating_popup(driver, wait_dur=60):
     """Wait for the annoying popup to popup and then close it.
 
-        If it hasn't appeared after one minute, continue with code.
+       If it hasn't appeared after one minute, continue with code.
          - 'driver' should be a Selenium WebDriver.
          - 'wait_dur' is the interger time to wait in seconds.
     """

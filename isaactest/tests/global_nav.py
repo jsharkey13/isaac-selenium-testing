@@ -2,6 +2,7 @@ import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab
 from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
+from ..utils.isaac import kill_irritating_popup
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -22,6 +23,7 @@ def global_nav(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """
     assert_tab(driver, ISAAC_WEB)
     try:
+        kill_irritating_popup(driver, wait_dur=1)
         global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
         global_nav.click()
         log(INFO, "Clicked menu button.")
