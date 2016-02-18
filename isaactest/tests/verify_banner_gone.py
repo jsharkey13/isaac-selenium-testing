@@ -13,7 +13,7 @@ __all__ = ["verify_banner_gone"]
 # Test : Verification Banner Gone
 #####
 @TestWithDependency("VERIFY_BANNER_GONE", ["VERIFY_LINK"])
-def verify_banner_gone(driver, ISAAC_WEB, WAIT_DUR):
+def verify_banner_gone(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if the banner telling users to verify their email disappears after verifying.
 
         - 'driver' should be a Selenium WebDriver.

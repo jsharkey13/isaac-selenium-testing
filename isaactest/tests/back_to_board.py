@@ -12,7 +12,7 @@ __all__ = ["back_to_board"]
 # Test : Back to Board Button
 #####
 @TestWithDependency("BACK_TO_BOARD")
-def back_to_board(driver, ISAAC_WEB, WAIT_DUR):
+def back_to_board(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether the back to board button works.
 
         - 'driver' should be a Selenium WebDriver.

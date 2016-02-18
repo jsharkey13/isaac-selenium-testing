@@ -13,7 +13,7 @@ __all__ = ["verify_link"]
 # Test : Verification Link Works
 #####
 @TestWithDependency("VERIFY_LINK", ["RECIEVE_VERIFY_EMAILS"])
-def verify_link(driver, inbox, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR):
+def verify_link(driver, inbox, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test if the verification link from the verification emails works.
 
         - 'driver' should be a Selenium WebDriver.

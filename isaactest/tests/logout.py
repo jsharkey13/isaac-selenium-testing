@@ -12,7 +12,7 @@ __all__ = ["logout"]
 # Test : Logout Button
 #####
 @TestWithDependency("LOGOUT", ["LOGIN", "GLOBAL_NAV"])
-def logout(driver, ISAAC_WEB, WAIT_DUR):
+def logout(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether users can sign out of Isaac.
 
         - 'driver' should be a Selenium WebDriver.

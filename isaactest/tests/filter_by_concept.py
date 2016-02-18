@@ -13,7 +13,7 @@ __all__ = ["filter_by_concept"]
 # Test : Check Filter by Concept Behaviour
 ######
 @TestWithDependency("FILTER_BY_CONCEPT", ["BACK_TO_BOARD"])
-def filter_by_concept(driver, ISAAC_WEB, WAIT_DUR):
+def filter_by_concept(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test the behavior of the gameboard filter for concepts.
 
         - 'driver' should be a Selenium WebDriver.

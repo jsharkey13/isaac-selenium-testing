@@ -12,7 +12,7 @@ __all__ = ["global_nav"]
 # Test : Global Navigation Menu
 #####
 @TestWithDependency("GLOBAL_NAV", ["LOGIN"])
-def global_nav(driver, ISAAC_WEB, WAIT_DUR):
+def global_nav(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether the global navigation menu works.
 
         Should be run after "LOGIN" has been run, and before "LOGOUT".

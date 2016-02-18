@@ -11,7 +11,7 @@ __all__ = ["login_timeout"]
 # Test : 10 Minute Lockout
 #####
 @TestWithDependency("LOGIN_TIMEOUT", ["LOGIN_THROTTLE"])
-def login_timeout(driver, Users, ISAAC_WEB, WAIT_DUR):
+def login_timeout(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether the login throttle lockout expires after 10 minutes.
 
         - 'driver' should be a Selenium WebDriver.

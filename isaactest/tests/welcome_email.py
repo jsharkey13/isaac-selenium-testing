@@ -10,7 +10,7 @@ __all__ = ["welcome_email"]
 # Test : Welcome Email Recieved
 #####
 @TestWithDependency("WELCOME_EMAIL", ["SIGNUP"])
-def welcome_email(driver, inbox, GUERRILLAMAIL):
+def welcome_email(driver, inbox, GUERRILLAMAIL, **kwargs):
     """Test if the registration confirmation/welcome email is recieved.
 
         - 'driver' should be a Selenium WebDriver.

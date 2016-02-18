@@ -10,7 +10,7 @@ __all__ = ["recieve_verify_emails"]
 # Test : Recieve Verification Emails
 #####
 @TestWithDependency("RECIEVE_VERIFY_EMAILS", ["REQ_VERIFY_EMAILS"])
-def recieve_verify_emails(driver, inbox, GUERRILLAMAIL):
+def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, **kwargs):
     """Test if the new verification emails are recieved.
 
         - 'driver' should be a Selenium WebDriver.

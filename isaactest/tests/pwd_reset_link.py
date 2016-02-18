@@ -12,7 +12,7 @@ __all__ = ["pwd_reset_link"]
 # Test 14 : Reset Password Link Works
 #####
 @TestWithDependency("PWD_RESET_LINK", ["RECIEVE_PWD_RESET_EMAILS"])
-def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR):
+def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test that the emailed password reset link works.
 
         - 'driver' should be a Selenium WebDriver.

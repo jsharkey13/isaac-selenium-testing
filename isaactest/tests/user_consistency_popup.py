@@ -13,7 +13,7 @@ __all__ = ["user_consistency_popup"]
 # Test : User Consistency Popup
 #####
 @TestWithDependency("USER_CONSISTENCY_POPUP", ["USER_CONSISTENCY"])
-def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR):
+def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if the user consistency popup is shown after logging out in another tab.
 
         - 'driver' should be a Selenium WebDriver.

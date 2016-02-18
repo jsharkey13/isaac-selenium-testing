@@ -12,7 +12,7 @@ __all__ = ["email_change_emails"]
 # Test : Check Change Email Emails Recieved
 #####
 @TestWithDependency("EMAIL_CHANGE_EMAILS", ["EMAIL_CHANGE"])
-def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR):
+def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test if the email change confirmation emails are recieved.
 
         - 'driver' should be a Selenium WebDriver.

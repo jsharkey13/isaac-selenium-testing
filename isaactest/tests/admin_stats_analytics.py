@@ -12,7 +12,7 @@ __all__ = ["admin_stats_analytics"]
 # Test : Admin Stats Analytics Page
 #####
 @TestWithDependency("ADMIN_STATS_ANALYTICS", ["ADMIN_STATS_SUMMARY"])
-def admin_stats_analytics(driver, ISAAC_WEB, WAIT_DUR):
+def admin_stats_analytics(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if admin stats analyitcs page works.
 
         - 'driver' should be a Selenium WebDriver.

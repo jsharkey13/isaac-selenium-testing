@@ -13,7 +13,7 @@ __all__ = ["email_change_login_status"]
 # Test : Check Login Status After Email Change
 #####
 @TestWithDependency("EMAIL_CHANGE_LOGIN_STATUS", ["EMAIL_CHANGE_EMAILS"])
-def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR):
+def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test login behavior after changing email before and after verifying new email.
 
         - 'driver' should be a Selenium WebDriver.

@@ -13,7 +13,7 @@ __all__ = ["numeric_q_incorrect_unit"]
 # Test : Numeric Questions Incorrect Unit, Correct Value
 #####
 @TestWithDependency("NUMERIC_Q_INCORRECT_UNIT", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_incorrect_unit(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_incorrect_unit(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on incorrect units.
 
         - 'driver' should be a Selenium WebDriver.

@@ -13,7 +13,7 @@ __all__ = ["numeric_q_incorrect_sf"]
 # Test : Numeric Questions Incorrect Sig Figs
 #####
 @TestWithDependency("NUMERIC_Q_INCORRECT_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on incorrect significant figures.
 
         - 'driver' should be a Selenium WebDriver.

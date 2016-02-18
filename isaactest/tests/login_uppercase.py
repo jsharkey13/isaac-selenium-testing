@@ -12,7 +12,7 @@ __all__ = ["login_uppercase"]
 # Test : Login Email Case Sensitivity
 #####
 @TestWithDependency("LOGIN_UPPERCASE", ["LOGIN"])
-def login_uppercase(driver, Users, ISAAC_WEB, WAIT_DUR):
+def login_uppercase(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if users can login with a case insensitive email address.
 
         - 'driver' should be a Selenium WebDriver.

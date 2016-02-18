@@ -12,7 +12,7 @@ __all__ = ["login_throttle"]
 # Test : 11 Login Attempts
 #####
 @TestWithDependency("LOGIN_THROTTLE", ["LOGIN"])
-def login_throttle(driver, Users, ISAAC_WEB, WAIT_DUR):
+def login_throttle(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether users are locked out after 10 failed login attempts.
 
         - 'driver' should be a Selenium WebDriver.

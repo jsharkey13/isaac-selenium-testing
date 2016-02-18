@@ -14,7 +14,7 @@ __all__ = ["answer_saved_login"]
 # Test : Anonymous Answers Preserved On Login
 #####
 @TestWithDependency("ANSWER_SAVED_LOGIN", ["SIGNUP", "NUMERIC_Q_ALL_CORRECT"])
-def answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR):
+def answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test that questions answered whilst logged out are retained once logged in.
 
         - 'driver' should be a Selenium WebDriver.

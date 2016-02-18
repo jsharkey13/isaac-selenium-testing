@@ -13,7 +13,7 @@ __all__ = ["numeric_q_known_wrong_ans"]
 # Test : Numeric Questions Known Wrong Answer
 #####
 @TestWithDependency("NUMERIC_Q_KNOWN_WRONG_ANS", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_known_wrong_ans(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_known_wrong_ans(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on content editor entered incorrect answer.
 
         - 'driver' should be a Selenium WebDriver.

@@ -12,7 +12,7 @@ __all__ = ["req_verify_emails"]
 # Test : Request Verification Emails
 ######
 @TestWithDependency("REQ_VERIFY_EMAILS", ["SIGNUP"])
-def req_verify_emails(driver, ISAAC_WEB, WAIT_DUR):
+def req_verify_emails(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test the behavior on requesting more email verification emails.
 
         - 'driver' should be a Selenium WebDriver.

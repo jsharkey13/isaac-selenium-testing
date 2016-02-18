@@ -13,7 +13,7 @@ __all__ = ["numeric_q_known_wrong_sf"]
 # Test : Numeric Questions Known Wrong Answer, Wrong Sig Figs
 #####
 @TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on content editor entered wrong answer with
        incorrect significatn figures.
 

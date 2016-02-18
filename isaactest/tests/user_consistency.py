@@ -11,7 +11,7 @@ __all__ = ["user_consistency"]
 # Test : User Consistency
 #####
 @TestWithDependency("USER_CONSISTENCY", ["LOGIN"])
-def user_consistency(driver, Users, ISAAC_WEB, WAIT_DUR):
+def user_consistency(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test that users remain logged in in new tabs.
 
         - 'driver' should be a Selenium WebDriver.

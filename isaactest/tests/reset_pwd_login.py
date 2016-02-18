@@ -12,7 +12,7 @@ __all__ = ["reset_pwd_login"]
 # Test : Logging In With New Password
 #####
 @TestWithDependency("RESET_PWD_LOGIN", ["LOGIN", "PWD_RESET_LINK"])
-def reset_pwd_login(driver, Users, ISAAC_WEB, WAIT_DUR):
+def reset_pwd_login(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if users can login with new credentials after resetting password.
 
         - 'driver' should be a Selenium WebDriver.

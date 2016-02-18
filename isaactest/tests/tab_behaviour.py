@@ -13,7 +13,7 @@ __all__ = ["tab_behavior"]
 # Test : Accordion Sections Open and Close
 #####
 @TestWithDependency("TAB_BEHAVIOUR", ["ACCORDION_BEHAVIOUR"])
-def tab_behavior(driver, ISAAC_WEB, WAIT_DUR):
+def tab_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if tabs can be used as expected.
 
         - 'driver' should be a Selenium WebDriver.

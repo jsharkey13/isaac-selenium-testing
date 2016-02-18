@@ -13,7 +13,7 @@ __all__ = ["admin_page_access"]
 # Test : Access Admin Page As Users
 #####
 @TestWithDependency("ADMIN_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
-def admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR):
+def admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test access to admin page is suitably restricted.
 
         - 'driver' should be a Selenium WebDriver.

@@ -13,7 +13,7 @@ __all__ = ["filter_behaviour"]
 # Test : Check Filter Behaviour
 ######
 @TestWithDependency("FILTER_BEHAVIOUR")
-def filter_behaviour(driver, ISAAC_WEB, WAIT_DUR):
+def filter_behaviour(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test the behavior of the gameboard filter for subjects and levels.
 
         - 'driver' should be a Selenium WebDriver.

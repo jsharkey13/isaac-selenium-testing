@@ -12,7 +12,7 @@ __all__ = ["quick_questions"]
 # Test : Quick Questions
 #####
 @TestWithDependency("QUICK_QUESTIONS", ["ACCORDION_BEHAVIOUR"])
-def quick_questions(driver, ISAAC_WEB, WAIT_DUR):
+def quick_questions(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if quick questions behave as expected.
 
         - 'driver' should be a Selenium WebDriver.

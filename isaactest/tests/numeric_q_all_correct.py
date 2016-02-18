@@ -13,7 +13,7 @@ __all__ = ["numeric_q_all_correct"]
 # Test : Numeric Questions Correct Answers
 #####
 @TestWithDependency("NUMERIC_Q_ALL_CORRECT", ["NUMERIC_Q_UNITS_SELECT"])
-def numeric_q_all_correct(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_all_correct(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if numeric questions can be answered correctly.
 
         - 'driver' should be a Selenium WebDriver.

@@ -13,7 +13,7 @@ __all__ = ["numeric_q_answer_change"]
 # Test : Numeric Questions Answer Change
 #####
 @TestWithDependency("NUMERIC_Q_ANSWER_CHANGE", ["NUMERIC_Q_UNITS_SELECT", "NUMERIC_Q_ALL_CORRECT"])
-def numeric_q_answer_change(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_answer_change(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if numeric question answers behave correctly on attempting to enter
        a new answer.
 

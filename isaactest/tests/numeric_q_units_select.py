@@ -13,7 +13,7 @@ __all__ = ["numeric_q_units_select"]
 # Test : Numeric Question Units Dropdown
 #####
 @TestWithDependency("NUMERIC_Q_UNITS_SELECT", ["ACCORDION_BEHAVIOUR"])
-def numeric_q_units_select(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_units_select(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if the units dropdown on numeric questions works as expected.
 
         - 'driver' should be a Selenium WebDriver.

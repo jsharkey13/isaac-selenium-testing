@@ -13,7 +13,7 @@ __all__ = ["accordion_behavior"]
 # Test : Accordion Sections Open and Close
 #####
 @TestWithDependency("ACCORDION_BEHAVIOUR")
-def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR):
+def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if accordions open and close as expected.
 
         - 'driver' should be a Selenium WebDriver.

@@ -10,7 +10,7 @@ __all__ = ["questionnaire"]
 # Test : Questionnaire Popup
 #####
 @TestWithDependency("QUESTIONNAIRE", ["LOGIN"])
-def questionnaire(driver, ISAAC_WEB):
+def questionnaire(driver, ISAAC_WEB, **kwargs):
     """Test if the questionnaire popup is shown.
 
     Must run immediately after the "LOGIN" test.

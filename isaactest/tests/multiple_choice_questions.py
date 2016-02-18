@@ -13,7 +13,7 @@ __all__ = ["multiple_choice_questions"]
 # Test : Multiple Choice Questions
 #####
 @TestWithDependency("MULTIPLE_CHOICE_QUESTIONS", ["ACCORDION_BEHAVIOUR"])
-def multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR):
+def multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if multiple choice questions behave as expected.
 
         - 'driver' should be a Selenium WebDriver.

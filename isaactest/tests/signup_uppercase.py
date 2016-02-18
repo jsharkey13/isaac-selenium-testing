@@ -13,7 +13,7 @@ __all__ = ["signup_uppercase"]
 # Test : Signup Email Case Sensitivity
 #####
 @TestWithDependency("SIGNUP_UPPERCASE", ["LOGIN", "SIGNUP"])
-def signup_uppercase(driver, Users, ISAAC_WEB, WAIT_DUR):
+def signup_uppercase(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if users can sign up with the uppercase form of an already existing email.
 
         - 'driver' should be a Selenium WebDriver.

@@ -14,7 +14,7 @@ __all__ = ["admin_user_search"]
 # Test : Delete A User
 #####
 @TestWithDependency("ADMIN_USER_SEARCH")
-def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR):
+def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if admin users can search for users.
 
         - 'driver' should be a Selenium WebDriver.

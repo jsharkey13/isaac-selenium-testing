@@ -13,7 +13,7 @@ __all__ = ["numeric_q_incorrect_sf_u"]
 # Test : Numeric Questions Incorrect Sig Figs, Incorrect Unit
 #####
 @TestWithDependency("NUMERIC_Q_INCORRECT_SF_U", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_incorrect_sf_u(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_incorrect_sf_u(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test the behaviour of numeric questions on incorrect significant figures and
        incorrect unit.
 

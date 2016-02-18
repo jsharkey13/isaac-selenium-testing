@@ -12,8 +12,8 @@ __all__ = ["email_change"]
 # Test : Change Email Address
 #####
 @TestWithDependency("EMAIL_CHANGE", ["LOGIN", "GLOBAL_NAV", "SIGNUP", "RECIEVE_VERIFY_EMAILS"])
-def email_change(driver, Users, ISAAC_WEB, WAIT_DUR):
-    """Test if users can chnage their email address.
+def email_change(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
+    """Test if users can change their email address.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.

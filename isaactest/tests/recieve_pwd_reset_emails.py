@@ -10,7 +10,7 @@ __all__ = ["recieve_pwd_reset_emails"]
 # Test : 4 password reset emails recieved
 #####
 @TestWithDependency("RECIEVE_PWD_RESET_EMAILS", ["PWD_RESET_THROTTLE"])
-def recieve_pwd_reset_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR):
+def recieve_pwd_reset_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test that the correct number of password reset emails are recieved after being requested.
 
         - 'driver' should be a Selenium WebDriver.

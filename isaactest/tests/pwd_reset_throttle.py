@@ -12,7 +12,7 @@ __all__ = ["pwd_reset_throttle"]
 # Test : Forgot My Password Button Limit
 #####
 @TestWithDependency("PWD_RESET_THROTTLE", ["LOGIN", "LOGOUT", "SIGNUP"])
-def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR):
+def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test that there is a limit on the number of password reset requests.
 
         - 'driver' should be a Selenium WebDriver.

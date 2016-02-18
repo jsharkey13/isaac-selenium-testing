@@ -13,7 +13,7 @@ __all__ = ["numeric_q_help_popup"]
 # Test : Numeric Questions Help Popup
 #####
 @TestWithDependency("NUMERIC_Q_HELP_POPUP", ["ACCORDION_BEHAVIOUR"])
-def numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR):
+def numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if the mouseover help popup on numeric questions works.
 
         - 'driver' should be a Selenium WebDriver.
