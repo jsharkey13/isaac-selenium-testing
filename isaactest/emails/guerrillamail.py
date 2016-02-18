@@ -1,7 +1,7 @@
 import time
 import re
-from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
-from ..utils.i_selenium import image_div
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, TimeoutException
+from ..utils.i_selenium import image_div, wait_for_xpath_element
 from ..utils.log import log, INFO, ERROR
 
 __all__ = ['set_guerrilla_mail_address', 'GuerrillaInbox', 'GuerrillaEmail']
@@ -22,6 +22,7 @@ def set_guerrilla_mail_address(driver, guerrilla_email=None):
         - 'driver' should be a Selenium WebDriver.
         - 'guerrilla_email' should optionally be a string of the email address
           desired, where only the bit before the @ is used to set the email.
+        - 'wait_dur' is the time in seconds to wait for the email to be changed.
     """
     try:
         use_alias = driver.find_element_by_id("use-alias")
@@ -35,11 +36,12 @@ def set_guerrilla_mail_address(driver, guerrilla_email=None):
             set_email.send_keys(guerrilla_email.split("@")[0])
             set_email_button = driver.find_element_by_xpath("//span[@id='inbox-id']/button[text()='Set']")
             set_email_button.click()
-            time.sleep(1)
+            wait_for_xpath_element(driver, "//div[contains(@class, 'status_alert')][text()='Email set to %s']" % guerrilla_email)
             email_box = driver.find_element_by_id("email-widget")
             if guerrilla_email != str(email_box.text):
                 log(ERROR, "GM - Failed to change GuerrillaMail email address!")
                 raise GuerrillaMailError
+            log(INFO, "Set GuerrillaMail email address to %s" % guerrilla_email)
             return guerrilla_email
         else:
             email_box = driver.find_element_by_id("email-widget")
@@ -48,7 +50,10 @@ def set_guerrilla_mail_address(driver, guerrilla_email=None):
             return guerrilla_email
     except NoSuchElementException:
         image_div(driver, "ERROR_set_guerrillamail.png")
-        log(ERROR, "GM - Can't fill out signup form; see 'ERROR_set_guerrillamail.png'!")
+        log(ERROR, "GM - Can't fill out Guerrilla Mail form; see 'ERROR_set_guerrillamail.png'!")
+        raise GuerrillaMailError
+    except TimeoutException:
+        log(ERROR, "GM - Failed to change GuerrillaMail email address!")
         raise GuerrillaMailError
 
 
