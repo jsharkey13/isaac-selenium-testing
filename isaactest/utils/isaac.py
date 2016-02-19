@@ -157,6 +157,7 @@ def assert_logged_in(driver, user=None, wait_dur=2):
             log(INFO, "AssertLoggedIn: The user '%s' is logged in." % user.firstname)
         else:
             log(INFO, "AssertLoggedIn: The user '%s' is not logged in!" % user.firstname)
+            log(INFO, "AssertLoggedIn: A user '%s' (%s) may be logged in." % (u_firstname, u_email))
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
 

@@ -24,6 +24,9 @@ def answer_saved_login(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """
     assert_tab(driver, ISAAC_WEB)
     time.sleep(WAIT_DUR)
+    driver.get(ISAAC_WEB + "/logout")
+    log(INFO, "Logging out any logged in user.")
+    time.sleep(WAIT_DUR)
     driver.get(ISAAC_WEB + "/questions/_regression_test_")
     log(INFO, "Got: %s" % (ISAAC_WEB + "/questions/_regression_test_"))
     time.sleep(WAIT_DUR)

@@ -30,6 +30,7 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         submit_login_form(driver, user=Users.Admin, wait_dur=WAIT_DUR)
         time.sleep(WAIT_DUR)
+        log(INFO, "Navigating to User Manager using the Menu.")
         global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
         global_nav.click()
         time.sleep(WAIT_DUR)
@@ -40,6 +41,7 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
     try:
         time.sleep(WAIT_DUR)
+        log(INFO, "Entering user information and clicking delete button.")
         email_field = driver.find_element_by_id("user-search-email")
         email_field.send_keys(Users.Guerrilla.email)
         time.sleep(WAIT_DUR)
