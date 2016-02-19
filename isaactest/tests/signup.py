@@ -11,7 +11,7 @@ __all__ = ["signup"]
 #####
 # Test : Sign Up to Isaac
 #####
-@TestWithDependency("SIGNUP", ["LOGIN", "LOGOUT"])
+@TestWithDependency("SIGNUP", ["LOGIN", "LOGOUT"], ["DELETE_USER"])
 def signup(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether users can sign up to Isaac using an email address.
 

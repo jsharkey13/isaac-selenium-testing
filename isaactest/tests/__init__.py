@@ -24,16 +24,24 @@ class TestWithDependency(object):
         - 'deps' is an optional list of test names that must have completed successfully
           for this test to be run. If a test name is listed in 'deps' and does not
           appear in 'Results' keys; a 'KeyError' exception will be raised.
+        - 'teardowns' is a highly optional requirement specifying any tests that
+          should be run after a test is run using 'run_test_with_deps(...)' and before
+          overall testing finishes. Specifying a complex web of teardowns may cause
+          infinite recursion and overflow or other errors. Use very sparingly!
     """
     Results = OrderedDict()
     _Tests = OrderedDict()
     _Dependencies = dict()
+    _Teardowns = dict()
+    _teardowns_to_run = set()
 
-    def __init__(self, Name, deps=[]):
+    def __init__(self, Name, deps=[], teardowns=[]):
         self.Name = Name
         self.deps = deps
+        self.teardowns = teardowns
         self.Results[Name] = None
         self._Dependencies[Name] = self.deps
+        self._Teardowns[Name] = self.teardowns
 
     def __call__(self, test_func):
         def _decorator(*args, **kwargs):
@@ -67,7 +75,7 @@ class TestWithDependency(object):
         return all([cls.Results[d] for d in cls._Dependencies[name]])
 
     @classmethod
-    def run_test_with_deps(cls, name, driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR):
+    def run_test_with_deps(cls, name, driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, run_teardowns=True):
         """Run a single test from the test suite, first running all dependencies.
 
            This ideally should not be used as a stand in to run a short list of tests
@@ -83,6 +91,9 @@ class TestWithDependency(object):
             - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.
             - 'GUERRILLAMAIL' is the string URL of GuerrillaMail.
             - 'WAIT_DUR' is the time in seconds to wait for JavaScript to run/load.
+            - 'run_teardowns' notes whether this is the last call of the recursion
+              and runs any necessary tests to cleanup. Do not pass this parameter
+              by hand without good reason.
         """
         # This is the superset of all arguments required by tests. Their "**kwargs"
         # argument allows us to pass in all arguments and any extra ones will simply
@@ -92,11 +103,19 @@ class TestWithDependency(object):
 
         # Run each of the dependency tests if necessary, and recursively run their
         # dependencies. DOES NOT CHECK FOR SUCCESS of dependencies, that is left to
-        # the main decorator above.
+        # the main decorator above. Add any teardowns to overall list.
         for t in cls._Dependencies[name]:
             if type(cls.Results[t]) != bool:
-                cls.run_test_with_deps(t, **kwargs)
+                cls._teardowns_to_run.update(cls._Teardowns[t])
+                cls.run_test_with_deps(t, run_teardowns=False, **kwargs)
+        # Run the actual test that needed to run, noting any teardowns:
+        cls._teardowns_to_run.update(cls._Teardowns[name])
         cls._Tests[name](**kwargs)
+        # If supposed to run teardowns, do that:
+        if run_teardowns:
+            for t in cls._teardowns_to_run:
+                cls.run_test_with_deps(t, run_teardowns=False, **kwargs)
+            cls._teardowns_to_run = set()
 
     @classmethod
     def run_all_tests(cls, driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR):
