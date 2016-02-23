@@ -141,6 +141,22 @@ class TestWithDependency(object):
         for test in cls._Tests:
             cls._Tests[test](**kwargs)
 
+    @classmethod
+    def dependency_graph(cls):
+        """Return the dependency graph of the tests in string form.
+
+           Produce a string form of the dependency graph suitable for using with
+           Graphviz or similar (try: http://www.webgraphviz.com/). May help to
+           visualise how the tests interdepend.
+        """
+        graph_str = "digraph selenium_tester {\n"
+        for n in cls._Dependencies:
+            graph_str += "%s;\n" % n
+            for d in cls._Dependencies[n]:
+                graph_str += "%s -> %s;\n" % (n, d)
+        graph_str += "}"
+        return graph_str
+
 
 # Import all known tests into the namespace of this file, also avoids extra imports
 # in any file using the module. It can just import TestWithDependency from this
