@@ -11,7 +11,7 @@ __all__ = ["admin_user_search"]
 
 
 #####
-# Test : Delete A User
+# Test : User Search as Admin
 #####
 @TestWithDependency("ADMIN_USER_SEARCH")
 def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):

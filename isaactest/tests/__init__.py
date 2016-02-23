@@ -169,7 +169,6 @@ from .email_change import email_change
 from .email_change_emails import email_change_emails
 from .email_change_login_status import email_change_login_status
 from .admin_page_access import admin_page_access
-from .delete_user import delete_user
 from .accordion_behaviour import accordion_behavior
 from .quick_questions import quick_questions
 from .multiple_choice_questions import multiple_choice_questions
@@ -195,3 +194,6 @@ from .admin_stats_gameboards import admin_stats_gameboards
 from .admin_stats_schools import admin_stats_schools
 from .admin_user_search import admin_user_search
 from .non_admin_user_search import non_admin_user_search
+from .delete_user import delete_user
+from .user_progress_access import user_progress_access
+from .manually_entered_links import manually_entered_links

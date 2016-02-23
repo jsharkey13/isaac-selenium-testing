@@ -11,7 +11,7 @@ __all__ = ["non_admin_user_search"]
 
 
 #####
-# Test : Delete A User
+# Test : Attempt to Use User Search as Non-Admin
 #####
 @TestWithDependency("NON_ADMIN_USER_SEARCH", ["ADMIN_USER_SEARCH"])
 def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):

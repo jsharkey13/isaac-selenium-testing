@@ -68,7 +68,7 @@ def admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     access_cases = [("Event Manager", Users.Event), ("Admin", Users.Admin)]
     for i_type, user in access_cases:
         driver.get(ISAAC_WEB + "/login")
-        log(INFO, "Got '%s'. As admin, try to use global nav." % (ISAAC_WEB + "/login"))
+        log(INFO, "Got '%s'. As '%s', try to use global nav." % (ISAAC_WEB + "/login", i_type))
         time.sleep(WAIT_DUR)
         try:
             submit_login_form(driver, user=user, wait_dur=WAIT_DUR)

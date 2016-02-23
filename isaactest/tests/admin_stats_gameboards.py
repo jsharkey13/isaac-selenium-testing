@@ -9,7 +9,7 @@ __all__ = ["admin_stats_gameboards"]
 
 
 #####
-# Test : Admin Stats Analytics Page
+# Test : Admin Stats Analytics Page - Gameboards
 #####
 @TestWithDependency("ADMIN_STATS_GAMEBOARDS", ["ADMIN_STATS_ANALYTICS"])
 def admin_stats_gameboards(driver, ISAAC_WEB, WAIT_DUR, **kwargs):

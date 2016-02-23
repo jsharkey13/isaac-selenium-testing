@@ -65,7 +65,7 @@ try:
     # TestWithDependency.run_test_with_deps("LOGIN", driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR)
 except Exception, e:
     fatal_error = True
-    log(ERROR, "FATAL ERROR! %s:'%s'!" % (type(e).__name__, e.message))
+    log(ERROR, "FATAL ERROR! %s: '%s'!" % (type(e).__name__, e.message))
     raise  # This allows us to add the error to the email, but leave the traceback on stderr
 finally:
     driver.quit()

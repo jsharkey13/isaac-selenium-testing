@@ -12,7 +12,7 @@ __all__ = ["delete_user"]
 #####
 # Test : Delete A User
 #####
-@TestWithDependency("DELETE_USER", ["LOGIN", "SIGNUP"])
+@TestWithDependency("DELETE_USER", ["LOGIN", "SIGNUP", "ADMIN_USER_SEARCH"])
 def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if admin users can delete users.
 
