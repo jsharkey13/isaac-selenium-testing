@@ -22,6 +22,8 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         - 'WAIT_DUR' is the time in seconds to wait for JavaScript to run/load.
     """
     assert_tab(driver, ISAAC_WEB)
+    driver.get(ISAAC_WEB + "/logout")
+    log(INFO, "Logging out any logged in user.")
     time.sleep(WAIT_DUR)
     log(INFO, "Attempt to delete temporary user.")
     driver.get(ISAAC_WEB + "/login")

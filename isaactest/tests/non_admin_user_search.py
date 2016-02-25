@@ -27,7 +27,7 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Test user search page as non-admin.")
 
     roles = [Users.Student, Users.Teacher, Users.Editor, Users.Event]
-    not_allowed = [Users.Student, Users.Teacher]
+    not_allowed = [Users.Student, Users.Teacher, Users.Editor]
 
     for role in roles:
         try:
@@ -37,15 +37,17 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             driver.get(ISAAC_WEB + "/admin/usermanager")
             log(INFO, "Got: %s" % (ISAAC_WEB + "/admin/usermanager"))
             time.sleep(WAIT_DUR)
-            assert submit_login_form(driver, user=role, wait_dur=WAIT_DUR)
+            assert submit_login_form(driver, user=role, wait_dur=WAIT_DUR), "Can't login to access User Manager!"
             log(INFO, "Logged in '%s' successfully." % role)
             time.sleep(WAIT_DUR)
             if role in not_allowed:
                 wait_for_xpath_element(driver, "//h1[text()='Unauthorised']")
                 log(INFO, "User '%s' not allowed access as expected." % role)
                 continue
-        except AssertionError:
-            log(ERROR, "Can't login to access User Manager!")
+            errors = driver.find_elements_by_xpath("//h1[text()='Unauthorised']")
+            assert len(errors) == 0, "Unexpected 'Unauthorised' message shown!"
+        except AssertionError, e:
+            log(ERROR, e.message)
             return False
         except TimeoutException:
             log(ERROR, "User '%s' shouldn't be able to access User Manager, but no error message shown!")
@@ -147,5 +149,8 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             log(ERROR, e.message)
             return False
 
+    driver.get(ISAAC_WEB + "/logout")
+    log(INFO, "Logging out logged in user.")
+    time.sleep(WAIT_DUR)
     log(PASS, "Search page functionality for non-admin users as expected.")
     return True
