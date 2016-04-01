@@ -30,10 +30,10 @@ except ImportError:
     os.chdir("./testing")
     PATH_TO_CHROMEDRIVER = "../chromedriver"
     # Can wait for less time on a real non-emulated browser with display:
-    WAIT_DUR = 2
+    WAIT_DUR = 3
 
 # Some important global constants and objects:
-ISAAC_WEB = "https://staging.isaacphysics.org"
+ISAAC_WEB = "https://test.isaacphysics.org"
 GUERRILLAMAIL = "https://www.guerrillamail.com"
 Users = define_users()
 

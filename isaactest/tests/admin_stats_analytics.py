@@ -37,8 +37,11 @@ def admin_stats_analytics(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         locations_button = driver.find_element_by_xpath("//a[@ng-click='getLocationData()']")
         locations_button.click()
         log(INFO, "Click 'Generate Location Data' button.")
-        wait_for_xpath_element(driver, "//div[@class='angular-google-map']", 25)
+        wait_for_xpath_element(driver, "//div[@class='angular-google-map']", 60)
         log(INFO, "Google Map of location data loaded successfully.")
+    except TimeoutException:
+        log(ERROR, "Google Map didn't load!")
+        return False
     except NoSuchElementException:
         log(ERROR, "Can't find 'Generate Location Data' button; can't continue testing!")
         return False
