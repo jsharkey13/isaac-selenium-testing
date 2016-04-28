@@ -167,7 +167,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         wait_for_invisible_xpath(driver, "//div[@class='toast-message']/h4", 0.5)
         time.sleep(WAIT_DUR)
         results = driver.find_elements_by_xpath("//table//tr")
-        assert len(results) > 40, "Expected at least 40 users, got '%s'!" % len(results)
+        assert len(results) > 5, "Expected at least 5 users, got '%s'!" % len(results)
         log(INFO, "Wildcard search works as expected.")
         driver.refresh()
         log(INFO, "Refresh the page to clear all results.")

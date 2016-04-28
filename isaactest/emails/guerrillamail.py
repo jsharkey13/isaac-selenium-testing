@@ -49,7 +49,7 @@ def set_guerrilla_mail_address(driver, guerrilla_email=None):
             log(INFO, "Set GuerrillaMail email address to %s" % guerrilla_email)
             return guerrilla_email
     except NoSuchElementException:
-        image_div(driver, "ERROR_set_guerrillamail.png")
+        image_div(driver, "ERROR_set_guerrillamail")
         log(ERROR, "GM - Can't fill out Guerrilla Mail form; see 'ERROR_set_guerrillamail.png'!")
         raise GuerrillaMailError
     except TimeoutException:
@@ -232,7 +232,7 @@ class GuerrillaEmail():
         log(INFO, "Imaging %s." % self)
         if fname is None:
             fname = (self.subject + "_" + self.time).lstrip().replace(" ", "_").replace(":", "")
-            fname = re.sub(_SAFENAMECHARS, '', fname) + ".png"
+            fname = re.sub(_SAFENAMECHARS, '', fname)
         self.view()
         try:
             email = self._driver.find_element_by_xpath("//div[@class='email']")
@@ -255,7 +255,7 @@ class GuerrillaEmail():
         log(INFO, "Saving HTML of %s." % self)
         if fname is None:
             fname = (self.subject + "_" + self.time).lstrip().replace(" ", "_").replace(":", "")
-            fname = re.sub(_SAFENAMECHARS, '', fname) + ".html"
+        fname = re.sub(_SAFENAMECHARS, '', fname) + ".html"
         self.view()
         try:
             body_element = self.get_email_body_element()
