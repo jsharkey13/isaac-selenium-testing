@@ -48,7 +48,9 @@ def numeric_q_answer_change(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         wait_for_invisible_xpath(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h1[text()='Correct!']")
         wait_for_invisible_xpath(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This is a correct choice.'])[2]")
         wait_for_invisible_xpath(driver, "//div[@ng-switch-when='isaacNumericQuestion']//strong[text()='Well done!']")
-        time.sleep(WAIT_DUR)
+        log(INFO, "'Correct' message disappeared.")
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
+        time.sleep(60)
         log(PASS, "Numeric Question answer text disappears upon changing answer.")
         return True
     except TimeoutException:

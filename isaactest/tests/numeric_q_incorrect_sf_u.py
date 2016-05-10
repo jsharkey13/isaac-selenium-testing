@@ -49,7 +49,8 @@ def numeric_q_incorrect_sf_u(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         bg_colour2 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[2]").value_of_css_property('background-color')
         assert (bg_colour2 == '#be4c4c') or (bg_colour2 == 'rgba(190, 76, 76, 1)')
         log(INFO, "Red highlighting shown around units box.")
-        time.sleep(WAIT_DUR)
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
+        time.sleep(60)
         log(PASS, "Numeric Question 'correct value, incorrect unit, incorrect sig fig' behavior as expected.")
         return True
     except TimeoutException:

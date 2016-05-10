@@ -45,7 +45,8 @@ def numeric_q_known_wrong_ans(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
         assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
         log(INFO, "Red highlighting shown around value box.")
-        time.sleep(WAIT_DUR)
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
+        time.sleep(60)
         log(PASS, "Numeric Question 'correct value, correct unit, incorrect sig fig' behavior as expected.")
         return True
     except TimeoutException:

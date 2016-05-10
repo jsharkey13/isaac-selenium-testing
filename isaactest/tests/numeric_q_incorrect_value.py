@@ -45,7 +45,8 @@ def numeric_q_incorrect_value(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         bg_colour = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
         assert (bg_colour == '#be4c4c') or (bg_colour == 'rgba(190, 76, 76, 1)')
         log(INFO, "Red highlighting shown around value box.")
-        time.sleep(WAIT_DUR)
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
+        time.sleep(60)
         log(PASS, "Numeric Question 'correct unit, incorrect value' behavior as expected.")
         return True
     except TimeoutException:

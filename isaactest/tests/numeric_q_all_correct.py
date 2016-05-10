@@ -42,7 +42,8 @@ def numeric_q_all_correct(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "The editor entered explanation text was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//strong[text()='Well done!']")
         log(INFO, "The 'Well done!' message was correctly shown.")
-        time.sleep(WAIT_DUR)
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
+        time.sleep(60)
         log(PASS, "Numeric Question 'correct value, correct unit' behavior as expected.")
         return True
     except TimeoutException:
