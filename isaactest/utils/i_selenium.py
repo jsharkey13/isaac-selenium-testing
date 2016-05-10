@@ -32,10 +32,17 @@ def new_tab(driver):
         time.sleep(1)
     elif driver.name == 'chrome':
         old_handles = set(driver.window_handles)
-        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 't')
-        new_handles = set(driver.window_handles)
-        new = new_handles.difference(old_handles).pop()
-        driver.switch_to.window(new)
+        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 't')  # Sometimes this stops working.
+        try:
+            new_handles = set(driver.window_handles)
+            new = new_handles.difference(old_handles).pop()  # (This then pops from empty set and breaks)
+            driver.switch_to.window(new)
+        except KeyError:
+            log(INFO, "New Tab: Ctrl-t failed to open a new tab. Falling back to JavaScript!")
+            driver.execute_script("window.open('about:blank');")  # If so use this instead!
+            new_handles = set(driver.window_handles)
+            new = new_handles.difference(old_handles).pop()  # If this breaks, nothing can be done anyway!
+            driver.switch_to.window(new)
         time.sleep(1)
     else:
         return
