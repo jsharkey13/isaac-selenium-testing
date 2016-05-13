@@ -102,4 +102,5 @@ def user_progress_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(PASS, "Access to another users progress page restricted appropriately.")
         return True
     else:
+        log(ERROR, "Access not appropriately restricted! Fail!")
         return False
