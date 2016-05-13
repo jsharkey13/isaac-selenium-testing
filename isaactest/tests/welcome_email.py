@@ -10,7 +10,7 @@ __all__ = ["welcome_email"]
 # Test : Welcome Email Recieved
 #####
 @TestWithDependency("WELCOME_EMAIL", ["SIGNUP"])
-def welcome_email(driver, inbox, GUERRILLAMAIL, **kwargs):
+def welcome_email(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test if the registration confirmation/welcome email is recieved.
 
         - 'driver' should be a Selenium WebDriver.
@@ -18,9 +18,7 @@ def welcome_email(driver, inbox, GUERRILLAMAIL, **kwargs):
         - 'GUERRILLAMAIL' is the string URL of GuerrillaMail.
     """
     assert_tab(driver, GUERRILLAMAIL)
-    log(INFO, "Waiting 10 seconds for page to update.")
-    time.sleep(11)
-    inbox.refresh()
+    inbox.wait_for_email(WAIT_DUR)
 
     log(INFO, "GuerrillaMail: Access welcome email in inbox.")
     try:

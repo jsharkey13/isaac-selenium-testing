@@ -20,10 +20,7 @@ def recieve_pwd_reset_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """
     forgot_pwd_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
-    log(INFO, "Waiting 10 seconds for page to update.")
-    time.sleep(11)
-    inbox.refresh()
-    time.sleep(WAIT_DUR)
+    inbox.wait_for_email(WAIT_DUR)
 
     forgot_password_emails_recieved = 0
     log(INFO, "Checking if password reset emails recieved.")

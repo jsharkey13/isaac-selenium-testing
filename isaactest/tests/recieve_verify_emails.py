@@ -1,4 +1,3 @@
-import time
 from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab, image_div
 from ..tests import TestWithDependency
@@ -10,7 +9,7 @@ __all__ = ["recieve_verify_emails"]
 # Test : Recieve Verification Emails
 #####
 @TestWithDependency("RECIEVE_VERIFY_EMAILS", ["REQ_VERIFY_EMAILS"])
-def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, **kwargs):
+def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test if the new verification emails are recieved.
 
         - 'driver' should be a Selenium WebDriver.
@@ -19,9 +18,7 @@ def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, **kwargs):
     """
     verification_email_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
-    log(INFO, "Waiting 10 seconds for page to update.")
-    time.sleep(11)
-    inbox.refresh()
+    inbox.wait_for_email(WAIT_DUR)
 
     verification_emails_recived = 0
     log(INFO, "Checking if verification emails recieved.")

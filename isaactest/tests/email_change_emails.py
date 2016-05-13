@@ -23,11 +23,8 @@ def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR, **kwargs)
     """
     assert_tab(driver, GUERRILLAMAIL)
     log(INFO, "Checking if emails were sent after changing account email.")
-    log(INFO, "Wating 10 seconds for emails to arrive.")
-    time.sleep(11)
+    inbox.wait_for_email(WAIT_DUR)
 
-    inbox.refresh()
-    time.sleep(WAIT_DUR)
     try:
         old_warning_email = inbox.get_by_subject("Change in Isaac Physics email address requested!")[0]
         log(INFO, "Old warning email recieved and has expected subject line.")
@@ -47,9 +44,7 @@ def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR, **kwargs)
         return False
     time.sleep(WAIT_DUR)
     set_guerrilla_mail_address(driver, Users.Guerrilla.new_email)
-    log(INFO, "Wating 10 seconds for emails to arrive.")
-    time.sleep(11)
-    inbox.refresh()
+    inbox.wait_for_email(WAIT_DUR)
 
     try:
         new_verify_email = inbox.get_by_subject("Verify your email")[0]

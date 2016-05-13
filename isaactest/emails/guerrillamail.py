@@ -141,6 +141,41 @@ class GuerrillaInbox():
             matches = [e for e in self.emails if subject in e.subject]
         return matches
 
+    def wait_for_email(self, wait_dur, refresh_time=10, cycles=3):
+        """Wait for emails to be received, then refresh inbox object.
+
+           This function pauses for 'wait_dur' amount of time, then waits for up
+           to 'refresh_time' for new emails to arrive. If none arrive; it waits
+           twice as long the next time, three times the third time etc. It will
+           do this looping 'cycles' many times.
+            - 'wait_dur' indicates how long to pause before waiting for emails.
+            - 'refresh_time' should be the refresh period of the email service,
+              or however long to wait in cycles.
+            - 'cycles' is how many times to loop before aborting, remembering that
+              the overall wait duration gets longer nonlinearly as cycles increases.
+        """
+        total_wait = wait_dur
+        log(INFO, "Waiting for email.")
+        time.sleep(wait_dur)
+        for i in range(1, cycles + 1):
+            try:
+                total_wait += refresh_time * i
+                wait_for_xpath_element(self._driver, "//div[contains(@class,'status_alert') and contains(text(), 'New Mail')]", refresh_time*i)
+                log(INFO, "Email(s) received!")
+                self.refresh()
+                return
+            except TimeoutException:
+                if i == 1:  # I.e. wait for first refresh_time to be safe,
+                    self.refresh()  # Then if have unread emails, use those.
+                    if len(self.unread) > 0:
+                        log(INFO, "Waited for %s+%s seconds, no new mail but have unread emails: use these!" % (wait_dur, total_wait))
+                        return
+                if i != cycles:
+                    log(INFO, "Waited for %s+%s seconds, no email! Increment wait duration." % (wait_dur, total_wait))
+                else:
+                    log(ERROR, "Waited for %s+%s seconds. Stopped waiting!" % (wait_dur, total_wait))
+                    raise
+
 
 class GuerrillaEmail():
     """A class to abstract away GuerrillaMail emails.
