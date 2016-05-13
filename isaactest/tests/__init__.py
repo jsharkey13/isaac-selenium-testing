@@ -209,6 +209,7 @@ from .admin_stats_analytics import admin_stats_analytics
 from .admin_stats_gameboards import admin_stats_gameboards
 from .admin_stats_schools import admin_stats_schools
 from .admin_user_search import admin_user_search
+from .user_role_change import user_role_change
 from .non_admin_user_search import non_admin_user_search
 from .delete_user import delete_user
 from .user_progress_access import user_progress_access
