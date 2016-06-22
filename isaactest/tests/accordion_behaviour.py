@@ -69,8 +69,8 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Check all accordion sections work.")
     try:
         accordion_sections = driver.find_elements_by_xpath("//a[contains(@class, 'ru_accordion_titlebar')]")
-        assert len(accordion_sections) == 4
-        log(INFO, "4 accordion sections on page as expected.")
+        assert len(accordion_sections) == 5, "Expected 5 accordion sections, got %s!" % len(accordion_sections)
+        log(INFO, "5 accordion sections on page as expected.")
         log(INFO, "Try to open each accordion section in turn.")
         for i, accordion_title in enumerate(accordion_sections):
             n = i + 1
@@ -84,5 +84,7 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     except TimeoutException:
         log(ERROR, "Couldn't open all accordion sections!")
         return False
+    except AssertionError, e:
+        log(ERROR, e.message)
     log(PASS, "Accordion behavior is as expected.")
     return True

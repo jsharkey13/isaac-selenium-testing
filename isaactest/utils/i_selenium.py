@@ -179,6 +179,7 @@ def save_element_html(element, fname):
           automatically appended.
     """
     element_html = str(element.get_attribute('innerHTML'))
+    fname = fname + ".html"
     with open(fname, "w") as f:
         f.write(element_html)
     log(INFO, "Saved element HTML as '%s'." % fname)
