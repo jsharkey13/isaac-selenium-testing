@@ -4,7 +4,7 @@ from ..utils.isaac import assert_logged_out
 from ..utils.i_selenium import assert_tab, image_div
 from ..tests import TestWithDependency
 from selenium.common.exceptions import NoSuchElementException
-__all__ = ['progress_page']
+__all__ = ['save_board_add']
 
 @TestWithDependency('SAVE_BOARD_USE', ['LOGIN'])
 def save_board_use(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
