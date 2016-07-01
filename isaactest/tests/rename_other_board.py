@@ -20,10 +20,16 @@ def rename_other_board(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         title = driver.find_element_by_xpath("//h2[@ng-click='editedGameBoardTitle=(user._id == gameBoard.ownerUserId ? (gameBoard.title || generateGameBoardTitle(gameBoard)) : null)']")
         title.click()
-        log(ERROR, "Element is clickable")
-        return False
-    except WebDriverException:
-        log(PASS, "Element is not clickable")
+        time.sleep(WAIT_DUR)
+        # if click is successful, class changes to ng-binding ng-hide
+        assert title.get_attribute("class") == "ng-binding"
+        log(PASS, "Unable to rename other user's board.")
         return True
+    except AssertionError:
+        log(ERROR, "Able to click another user's board name.")
+        return False
+    except NoSuchElementException:
+        log(INFO, "Could not find the title element.")
+        return False
 
 
