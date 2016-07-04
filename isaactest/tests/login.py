@@ -24,7 +24,7 @@ def login(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         login_tab = driver.find_element_by_xpath("//a[@id='login-tab']")
         login_tab.click()
-        submit_login_form(driver, user=Users.Student, disable_popup=False, wait_dur=WAIT_DUR)
+        submit_login_form(driver, user=Users.Student, disable_popup=True, wait_dur=WAIT_DUR)
     except NoSuchElementException:
         log(ERROR, "Couldn't click login tab; can't login!")
         return False

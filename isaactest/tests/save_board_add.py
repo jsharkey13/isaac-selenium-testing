@@ -8,7 +8,7 @@ __all__ = ['save_board_add']
 
 @TestWithDependency('SAVE_BOARD_ADD', ['LOGIN'])
 def save_board_add(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test whether users can sign out of Isaac.
+    """Test whether users can save a board by clicking 'add to my board'
     
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.

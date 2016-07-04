@@ -8,7 +8,7 @@ __all__ = ['logout_mobile']
 
 @TestWithDependency('LOGOUT_MOBILE', ['LOGIN_MOBILE'])
 def logout_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test whether users can sign out of Isaac.
+    """Test whether users can sign out of Isaac on a mobile device.
     
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.

@@ -13,7 +13,7 @@ __all__ = ["login_mobile"]
 #####
 @TestWithDependency("LOGIN_MOBILE")
 def login_mobile(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test whether users can sign in to Isaac.
+    """Test whether users can sign in to Isaac on a mobile device.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.

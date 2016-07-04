@@ -14,7 +14,7 @@ __all__ = ["global_nav_mobile"]
 #####
 @TestWithDependency("GLOBAL_NAV_MOBILE")
 def global_nav_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test whether the global navigation menu works.
+    """Test whether the global navigation menu works on a mobile device.
 
         Should be run after "LOGIN" has been run, and before "LOGOUT".
         - 'driver' should be a Selenium WebDriver.

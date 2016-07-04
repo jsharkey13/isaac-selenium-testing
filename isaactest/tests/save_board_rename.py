@@ -8,7 +8,7 @@ __all__ = ['progress_page']
 
 @TestWithDependency('SAVE_BOARD_RENAME', ['LOGIN'])
 def save_board_rename(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test whether users can sign out of Isaac.
+    """Test whether users can save their own board by renaming it.
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.
