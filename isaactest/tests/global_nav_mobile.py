@@ -1,8 +1,8 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.i_selenium import assert_tab
+from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
-from ..utils.isaac import kill_irritating_popup
+from ..utils.isaac import snooze_email_verification
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -12,7 +12,7 @@ __all__ = ["global_nav_mobile"]
 #####
 # Test : Global Navigation Menu
 #####
-@TestWithDependency("GLOBAL_NAV_MOBILE")
+@TestWithDependency("GLOBAL_NAV_MOBILE", ["ACCEPT_COOKIES", "GLOBAL_NAV"])
 def global_nav_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether the global navigation menu works.
 
@@ -22,15 +22,15 @@ def global_nav_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         - 'WAIT_DUR' is the time in seconds to wait for JavaScript to run/load.
     """
     assert_tab(driver, ISAAC_WEB)
+    window_size = driver.get_window_size()
     driver.set_window_size(360, 640)
     driver.refresh()
-    try:
-        cookie_message = driver.find_element_by_xpath("//a[contains(@class, 'cookies-accepted')]")
-        cookie_message.click()
-        time.sleep(WAIT_DUR)
-    except NoSuchElementException:
-        log(ERROR, "Unable to accept cookies!")
+
+    # The Email Verification warning obstructs the menu. If it's there, snooze it!
+    if not snooze_email_verification(driver):
+        log(ERROR, "Can't continue with this test since the banner obstructs the menu!")
         return False
+
     try:
         time.sleep(WAIT_DUR)
         global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
@@ -74,11 +74,15 @@ def global_nav_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         my_isaac.click()
         time.sleep(WAIT_DUR)
         wait_for_xpath_element(driver, "//ul[@class='dl-level2 dl-clone']")
-        my_account = driver.find_element_by_xpath("(//a[contains(text(), 'My Account')])[2]")
-        my_account.click()
-        log(INFO, "Selected My Account from the menu!")
-        log(PASS, "Global navigation functions as expected.")
+        driver.find_element_by_xpath("(//a[contains(text(), 'My Account')])[2]")
+        log(INFO, "Can access My Account button in the menu!")
+        driver.set_window_size(window_size["width"], window_size["height"])
+        driver.maximize_window()
+        driver.refresh()
+        time.sleep(WAIT_DUR)
+        log(PASS, "Global navigation on mobile functions as expected.")
         return True
     except NoSuchElementException:
-        log(ERROR, "Cannot navigate to My Account")
+        image_div(driver, "ERROR_global_nav_mobile")
+        log(ERROR, "Cannot access sub-menus! See 'ERROR_global_nav_mobile.png'!")
         return False

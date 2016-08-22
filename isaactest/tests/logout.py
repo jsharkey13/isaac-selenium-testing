@@ -21,15 +21,18 @@ def logout(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """
     assert_tab(driver, ISAAC_WEB)
     try:
+        log(INFO, "Opening menu to click logout button.")
         global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
         global_nav.click()
         time.sleep(WAIT_DUR)
+        log(INFO, "Clicking logout button.")
         logout_button = driver.find_element_by_xpath("//a[@ui-sref='logout']")
         logout_button.click()
     except NoSuchElementException:
         image_div(driver, "ERROR_logout_failure")
         log(ERROR, "Can't find logout button; can't logout, see 'ERROR_logout_failure.png'!")
         return False
+
     time.sleep(WAIT_DUR)
     try:
         assert_logged_out(driver, wait_dur=WAIT_DUR)

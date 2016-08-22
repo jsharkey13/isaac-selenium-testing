@@ -92,48 +92,32 @@ def disable_irritating_popup(driver, undo=False):
     time.sleep(2)
 
 
-def submit_login_form(driver, username="", password="", user=None, disable_popup=True,
-                      wait_dur=2):
-    """Given that the browser is on the Isaac login page; fill in and submin the login form.
+def snooze_email_verification(driver):
+    """Snooze the email verification warning.
 
-       This requires being on the login page to function. Will return 'False' if
-       it cannot submit the form.
+       To prevent the banner from getting in the way of tests, snooze the email
+       verification warning. On mobile devices the banner obstructs the menu fully
+       and prevents tests from passing.
         - 'driver' should be a Selenium WebDriver.
-        - 'username' is the username to use. It will be overridden if a 'user' is
-          specified at all.
-        - 'password' is the password to use. It will be overridden if a 'user' is
-          specified at all.
-        - 'user' is the User object to use to login. It will override any username
-          and password otherwise set.
-        - 'disable_popup' is an optional boolean flag to disable the questionnaire
-          popup, to prevent it getting in the way of testing.
-        - 'wait_dur' ensures JavaScript elements have time to react given different
-          browser speeds.
     """
-    if user is not None:
-        username = user.email
-        password = user.password
     try:
-        user = driver.find_element_by_xpath("(//input[@name='email'])[2]")
-        user.clear()
-        user.send_keys(username)
-        pwd = driver.find_element_by_xpath("(//input[@name='password'])[2]")
-        pwd.clear()
-        pwd.send_keys(password)
-        login = driver.find_element_by_xpath("(//input[@value='Log in'])[2]")
-        login.click()
-        log(INFO, "Submitted login form for '%s'." % username)
-        time.sleep(wait_dur)
-        if disable_popup:
-            disable_irritating_popup(driver)
+        banner_xpath = "//div[@data-alert]/div[contains(@ng-if, 'emailVerificationStatus')]/div[3]/a"
+        snooze_link = wait_for_xpath_element(driver, banner_xpath, duration=5)
+        log(INFO, "Snoozing email verification warning. (It obstructs menu on mobile).")
+        snooze_link.click()
+        try:
+            wait_for_invisible_xpath(driver, "//div[@data-alert]/div[contains(@ng-if, 'emailVerificationStatus')]/div[3]/a")
+            return True
+        except TimeoutException:
+            log(ERROR, "Email verification snooze button doesn't work!")
+            return False
+    except TimeoutException:
+        # If it's not there in the first place, we don't need to snooze it!
         return True
-    except NoSuchElementException:
-        log(ERROR, "No login form to fill out!")
-        return False
 
 
-def submit_login_form_mobile(driver, username="", password="", user=None, disable_popup=True,
-                      wait_dur=2):
+def submit_login_form(driver, username="", password="", user=None, disable_popup=True,
+                      wait_dur=2, mobile=False):
     """Given that the browser is on the Isaac login page; fill in and submin the login form.
 
        This requires being on the login page to function. Will return 'False' if
@@ -153,14 +137,16 @@ def submit_login_form_mobile(driver, username="", password="", user=None, disabl
     if user is not None:
         username = user.email
         password = user.password
+    # There are two login form boxes on each page, irritatingly. Pick correct one:
+    i = 1 if mobile else 2
     try:
-        user = driver.find_element_by_xpath("(//input[@name='email'])[1]")
+        user = driver.find_element_by_xpath("(//input[@name='email'])[%s]" % i)
         user.clear()
         user.send_keys(username)
-        pwd = driver.find_element_by_xpath("(//input[@name='password'])[1]")
+        pwd = driver.find_element_by_xpath("(//input[@name='password'])[%s]" % i)
         pwd.clear()
         pwd.send_keys(password)
-        login = driver.find_element_by_xpath("(//input[@value='Log in'])[1]")
+        login = driver.find_element_by_xpath("(//input[@value='Log in'])[%s]" % i)
         login.click()
         log(INFO, "Submitted login form for '%s'." % username)
         time.sleep(wait_dur)
@@ -282,7 +268,7 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
         return True
     except NoSuchElementException:
         if not suppress:
-            image_div(driver, "ERROR_signup_form.png")
+            image_div(driver, "ERROR_signup_form")
             log(ERROR, "Can't fill out signup form for '%s'; see 'ERROR_signup_form.png'!" % username)
         return False
     except AssertionError, e:

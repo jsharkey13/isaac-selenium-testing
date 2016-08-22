@@ -163,10 +163,14 @@ class TestWithDependency(object):
 # file and these imports will declare all the requisite tests.
 from .login import login
 from .questionnaire import questionnaire
+from .accept_cookies import accept_cookies
 from .global_nav import global_nav
+from .global_nav_mobile import global_nav_mobile
 from .logout import logout
 from .login_throttle import login_throttle
 from .login_timeout import login_timeout
+from .login_mobile import login_mobile
+from .logout_mobile import logout_mobile
 from .signup import signup
 from .welcome_email import welcome_email
 from .req_verify_emails import req_verify_emails
@@ -190,6 +194,7 @@ from .quick_questions import quick_questions
 from .multiple_choice_questions import multiple_choice_questions
 from .numeric_q_units_select import numeric_q_units_select
 from .numeric_q_all_correct import numeric_q_all_correct
+from .numeric_q_answer_reloaded import numeric_q_answer_reloaded
 from .numeric_q_answer_change import numeric_q_answer_change
 from .numeric_q_incorrect_unit import numeric_q_incorrect_unit
 from .numeric_q_incorrect_value import numeric_q_incorrect_value
@@ -198,6 +203,7 @@ from .numeric_q_incorrect_sf import numeric_q_incorrect_sf
 from .numeric_q_incorrect_sf_u import numeric_q_incorrect_sf_u
 from .numeric_q_known_wrong_ans import numeric_q_known_wrong_ans
 from .numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
+from .numeric_q_units_none import numeric_q_units_none
 from .numeric_q_help_popup import numeric_q_help_popup
 from .answer_saved_login import answer_saved_login
 from .tab_behaviour import tab_behavior
