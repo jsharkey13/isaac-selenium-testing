@@ -15,7 +15,7 @@ __all__ = ["numeric_q_known_wrong_sf"]
 @TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on content editor entered wrong answer with
-       incorrect significatn figures.
+       incorrect significant figures.
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.

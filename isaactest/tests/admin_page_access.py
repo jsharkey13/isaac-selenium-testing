@@ -32,15 +32,17 @@ def admin_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Test if logged out user can access '/admin'.")
         driver.get(ISAAC_WEB + "/admin")
         time.sleep(WAIT_DUR)
-        assert "/login?target=%2Fadmin" in driver.current_url
+        url_redirected = ("/login?target=%2Fadmin" in driver.current_url) or ("/login?target=~2Fadmin" in driver.current_ur)
+        assert url_redirected, "Expected '/login?target=%2Fadmin' (or '~2Fadmin') in URL, found '%s'!" % driver.current_url
         log(INFO, "Logged out users can't access admin page.")
         time.sleep(WAIT_DUR)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logging out to start from same initial page each time.")
         time.sleep(WAIT_DUR)
-    except AssertionError:
+    except AssertionError, e:
         admin_access_fail = True
         image_div(driver, "ERROR_unexpected_admin_access")
+        log(INFO, e.message)
         log(ERROR, "Logged out user accessed '/admin'; see 'ERROR_unexpected_admin_access.png'!")
 
     access_cases = [("Student", Users.Student), ("Teacher", Users.Teacher), ("Content Editor", Users.Editor)]

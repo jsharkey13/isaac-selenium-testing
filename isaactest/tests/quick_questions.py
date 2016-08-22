@@ -43,7 +43,7 @@ def quick_questions(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         show.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Check answer was shown.")
-        wait_for_xpath_element(driver, "//p[text()='This is the answer.']")
+        wait_for_xpath_element(driver, "//p[contains(text(), 'This is the answer.')]")
         log(INFO, "Answer was displayed correctly.")
     except NoSuchElementException:
         log(ERROR, "Couldn't find 'Show answer' button to click; can't continue!")

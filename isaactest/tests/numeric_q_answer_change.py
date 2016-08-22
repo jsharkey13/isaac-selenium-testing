@@ -38,7 +38,7 @@ def numeric_q_answer_change(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
 
     try:
         log(INFO, "Alter previously typed answer.")
-        value_box = num_question.find_element_by_xpath(".//input[@ng-model='selectedChoice.value']")
+        value_box = num_question.find_element_by_xpath(".//input[@ng-model='ctrl.selectedValue']")
         value_box.send_keys("00")
     except NoSuchElementException:
         log(ERROR, "Can't find value box to try changing answer; can't continue!")

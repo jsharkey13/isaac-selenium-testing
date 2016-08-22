@@ -363,23 +363,28 @@ def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wa
           browser speeds.
     """
     try:
-        answer_box = num_question.find_element_by_xpath(".//input[@ng-model='selectedChoice.value']")
+        answer_box = num_question.find_element_by_xpath(".//input[@ng-model='ctrl.selectedValue']")
         answer_box.clear()
         answer_box.send_keys(value)
         log(INFO, "Entered value '%s'." % value)
         time.sleep(wait_dur)
-        units_dropdown = num_question.find_element_by_xpath(".//button[@ng-click='toggleUnitsDropdown()']")
+        units_dropdown = num_question.find_element_by_xpath(".//button[@ng-click='ctrl.showUnitsDropdown()']")
         units_dropdown.click()
         log(INFO, "Clicked to open units dropdown.")
         time.sleep(wait_dur)
-        if not get_unit_wrong:
-            correct_u = num_question.find_element_by_xpath(".//a[@ng-click='selectUnit(u)']//script[contains(text(), '%s')]/.." % correct_unit)
+        if correct_unit == "None" and not get_unit_wrong:
+            correct_u = num_question.find_element_by_xpath(".//a[contains(@ng-click,'ctrl.selectedUnits') and text()='None']")
+            correct_u.click()
+            correct_u_text = str(correct_u.get_attribute('innerHTML'))
+            log(INFO, "Selected correct unit '%s' (to match '%s')." % (correct_u_text, correct_unit))
+        elif not get_unit_wrong:
+            correct_u = num_question.find_element_by_xpath(".//a[contains(@ng-click,'ctrl.selectedUnits')]//script[contains(text(), '%s')]/.." % correct_unit)
             correct_u.click()
             correct_u_text = str(correct_u.find_element_by_xpath("./script").get_attribute('innerHTML'))
             log(INFO, "Selected correct unit '%s' (to match '%s')." % (correct_u_text, correct_unit))
         else:
-            choices = num_question.find_elements_by_xpath(".//a[@ng-click='selectUnit(u)']")
-            n = 0
+            choices = num_question.find_elements_by_xpath(".//a[contains(@ng-click,'ctrl.selectedUnits')]")
+            n = 1  # Skip the "None" option, which is element 0
             u_text = str(choices[n].find_element_by_xpath("./script").get_attribute('innerHTML'))
             while correct_unit in u_text:
                 n += 1

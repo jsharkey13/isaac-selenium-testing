@@ -38,7 +38,7 @@ def numeric_q_units_select(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Accordion section did not open to display the numeric question; see 'ERROR_numeric_q_units_select.png'!")
         return False
     try:
-        units_dropdown = num_question.find_element_by_xpath("//button[@ng-click='toggleUnitsDropdown()']")
+        units_dropdown = num_question.find_element_by_xpath("//button[@ng-click='ctrl.showUnitsDropdown()']")
         units_dropdown.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Clicked to open units dropdown.")
