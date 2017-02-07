@@ -209,7 +209,8 @@ from .answer_saved_login import answer_saved_login
 from .tab_behaviour import tab_behavior
 from .back_to_board import back_to_board
 from .filter_behaviour import filter_behaviour
-from .filter_by_concept import filter_by_concept
+#from .filter_by_concept import filter_by_concept  # This feature has been removed!
+from .save_board_add import save_board_add
 from .admin_stats_summary import admin_stats_summary
 from .admin_stats_analytics import admin_stats_analytics
 from .admin_stats_gameboards import admin_stats_gameboards

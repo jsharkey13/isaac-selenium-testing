@@ -23,6 +23,8 @@ def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     driver.get(ISAAC_WEB + "/logout")
     log(INFO, "Logging out the user in the new tab.")
     time.sleep(WAIT_DUR)
+    non_isaac_url = "http://www.bbc.co.uk"
+
     try:
         assert_logged_out(driver, wait_dur=WAIT_DUR)
         time.sleep(WAIT_DUR)
@@ -30,11 +32,12 @@ def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     except AssertionError:
         image_div(driver, "ERROR_logout_failure")
         close_tab(driver)
+        driver.get(non_isaac_url)
+        log(INFO, "[Navigating away from Isaac (to '%s') to avoid muddling tabs.]" % non_isaac_url)
         time.sleep(WAIT_DUR)
         log(ERROR, "Couldn't logout in new tab; see 'ERROR_logout_failure.png'!")
         return False
 
-    non_isaac_url = "http://www.bbc.co.uk"
     driver.get(non_isaac_url)
     log(INFO, "Navigating away from Isaac (to '%s') to avoid muddling tabs." % non_isaac_url)
     time.sleep(WAIT_DUR)
@@ -45,6 +48,7 @@ def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "User consistency popup shown.")
         image_div(driver, "user_consistency_popup", consistency_popup)
         save_element_html(consistency_popup, "user_consistency_popup")
+        time.sleep(WAIT_DUR)
     except TimeoutException:
         image_div(driver, "ERROR_user_consistency_not_shown")
         close_tab(driver)
@@ -55,20 +59,25 @@ def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         continue_button = driver.find_element_by_xpath("//div[@id='isaacModal']//div[@isaac-modal='userConsistencyError']//button[text()='Continue']")
         continue_button.click()
+        log(INFO, "User Consistency popup closed.")
+        time.sleep(WAIT_DUR)
+        driver.refresh()
         time.sleep(WAIT_DUR)
         assert_logged_out(driver, wait_dur=WAIT_DUR)
-        time.sleep(WAIT_DUR)
-        assert_tab(driver, non_isaac_url)
-        close_tab(driver)
-        log(PASS, "User consistency popup shown and forced logout.")
-        return True
+    except AssertionError:
+        log(ERROR, "User inconsistency did not force logout!")
+        return False
     except NoSuchElementException:
-        close_tab(driver)
         time.sleep(WAIT_DUR)
         log(ERROR, "Cannot click 'Continue' button; see 'user_consistency_popup.png'!")
         return False
-    except AssertionError:
-        close_tab(driver)
+
+    try:
+        assert_tab(driver, non_isaac_url)
         time.sleep(WAIT_DUR)
-        log(ERROR, "User inconsistency did not force logout!")
-        return False
+        close_tab(driver)
+    except AssertionError:
+        log(ERROR, "Can't find non-Isaac tab to close!")
+
+    log(PASS, "User consistency popup shown and forced logout.")
+    return True

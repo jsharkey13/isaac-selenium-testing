@@ -53,6 +53,11 @@ def user_progress_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             time.sleep(WAIT_DUR)
             assert_logged_in(driver, user, wait_dur=WAIT_DUR)
             log(INFO, "Try loading progress page; no errors will be shown but have to wait to see if data loads.")
+            #
+            # FIXME - This page now behaves correctly!
+            # FIXME - There is no loading wheel, but there is no data either.
+            # FIXME - We should upadte the test to reflect this or it will fail unnecessarily!
+            #
             # Oddly, we now *want* a TimeoutException for success; it should load endlessly
             wait_for_invisible_xpath(driver, "//div[@loading-overlay]", 30)
             # If we don't get a TimeoutException, then things have gone wrong

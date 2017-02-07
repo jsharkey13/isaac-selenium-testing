@@ -24,14 +24,14 @@ def back_to_board(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Got: %s" % ISAAC_WEB)
     time.sleep(WAIT_DUR)
     try:
-        questions_tab = driver.find_element_by_xpath("//a[@ui-sref='gameBoards']")
+        questions_tab = driver.find_element_by_xpath("//a[@ui-sref='gameBoards({filter: true})']")
         questions_tab.click()
         time.sleep(WAIT_DUR)
     except NoSuchElementException:
         log(ERROR, "Can't find 'Questions' tab link; can't continue!")
         return False
     try:
-        url = driver.current_url
+        url = str(driver.current_url).replace("?filter=true", "").replace("?filter", "")  # Ignore whether the filter state is set!
         log(INFO, "Currently on '%s', attempt to access 5 hexagons." % url)
         for i in range(5):
             hexagons = driver.find_elements_by_xpath("//a[@class='ru-hex-home-content']")  # This has to be inside the loop
@@ -45,7 +45,8 @@ def back_to_board(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
                 back_to_board_button.click()
                 log(INFO, "Clicked back to board button.")
                 time.sleep(WAIT_DUR)
-                assert driver.current_url == url, "Expected to end on '%s', actually ended on '%s'!" % (url, driver.current_url)
+                new_url = str(driver.current_url).replace("?filter=true", "").replace("?filter", "")
+                assert new_url == url, "Expected to end on '%s', actually ended on '%s'!" % (url, new_url)
         log(PASS, "Back to board button worked as expected.")
         return True
     except NoSuchElementException:
