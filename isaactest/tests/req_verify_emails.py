@@ -52,6 +52,7 @@ def req_verify_emails(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
                     log(PASS, "Email verification link shows warning on 5th click, success on others.")
                     return True
                 else:
+                    log(ERROR, "Popup text was: '%s'!" % popup_text)
                     log(ERROR, "Warning not shown after %s requests!" % verification_requests)
                     return False
     except TimeoutException:

@@ -19,13 +19,19 @@ def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     verification_email_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
     inbox.wait_for_email(WAIT_DUR)
+    inbox.wait_for_email(WAIT_DUR)  # Just to be safe; can be quite slow and need 4 emails!
 
     verification_emails_recived = 0
     log(INFO, "Checking if verification emails recieved.")
     try:
         verification_emails = inbox.get_by_subject("Verify your email")
         verification_emails_recived = len(verification_emails)
-        assert verification_emails_recived == verification_email_request_limit
+        assert verification_emails_recived > 0
+        if verification_emails_recived != verification_email_request_limit:
+            log(ERROR, "Expected %s verification emails, received %s!" % (verification_email_request_limit, verification_emails_recived))
+            log(ERROR, "Will have to use last received verification email, not the last requested!")
+        else:
+            log(INFO, "Received all %s verification emails." % verification_email_request_limit)
         for email in verification_emails:
             email.image()
             email.save_html_body()
@@ -33,5 +39,5 @@ def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
         return True
     except AssertionError:
         image_div(driver, "ERROR_recieve_verification")
-        log(ERROR, "Expected %s verification emails, recieved %s. See 'ERROR_recieve_verification.png'!" % (verification_email_request_limit, verification_emails_recived))
+        log(ERROR, "Expected %s verification emails, no emails received! See 'ERROR_recieve_verification.png'!" % (verification_email_request_limit))
         return False

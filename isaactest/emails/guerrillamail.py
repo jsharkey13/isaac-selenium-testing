@@ -141,7 +141,7 @@ class GuerrillaInbox():
             matches = [e for e in self.emails if subject in e.subject]
         return matches
 
-    def wait_for_email(self, wait_dur, refresh_time=10, cycles=3):
+    def wait_for_email(self, wait_dur, refresh_time=11, cycles=10):
         """Wait for emails to be received, then refresh inbox object.
 
            This function pauses for 'wait_dur' amount of time, then waits for up
@@ -161,6 +161,7 @@ class GuerrillaInbox():
             try:
                 total_wait += refresh_time * i
                 wait_for_xpath_element(self._driver, "//div[contains(@class,'status_alert') and contains(text(), 'New Mail')]", refresh_time*i)
+                time.sleep(wait_dur)
                 log(INFO, "Email(s) received!")
                 self.refresh()
                 return
@@ -168,12 +169,12 @@ class GuerrillaInbox():
                 if i == 1:  # I.e. wait for first refresh_time to be safe,
                     self.refresh()  # Then if have unread emails, use those.
                     if len(self.unread) > 0:
-                        log(INFO, "Waited for %s+%s seconds, no new mail but have unread emails: use these!" % (wait_dur, total_wait))
+                        log(INFO, "Waited for %s+%s seconds, no new mail but have unread emails: use these!" % (wait_dur, total_wait - wait_dur))
                         return
                 if i != cycles:
-                    log(INFO, "Waited for %s+%s seconds, no email! Increment wait duration." % (wait_dur, total_wait))
+                    log(INFO, "Waited for %s+%s seconds, no email! Increment wait duration." % (wait_dur, total_wait - wait_dur))
                 else:
-                    log(ERROR, "Waited for %s+%s seconds. Stopped waiting!" % (wait_dur, total_wait))
+                    log(ERROR, "Waited for %s seconds. Stopped waiting!" % total_wait)
                     raise
 
 
