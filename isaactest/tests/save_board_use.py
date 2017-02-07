@@ -1,6 +1,5 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.isaac import assert_logged_out
 from ..utils.i_selenium import assert_tab, image_div
 from ..tests import TestWithDependency
 from selenium.common.exceptions import NoSuchElementException
