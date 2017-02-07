@@ -32,7 +32,7 @@ def user_progress_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Test if logged out user can access '/progress/1'.")
         driver.get(ISAAC_WEB + "/progress/1")
         time.sleep(WAIT_DUR)
-        assert "/login?target=%2Fprogress%2F1" in driver.current_url
+        assert (("/login?target=%2Fprogress%2F1" in driver.current_url) or ("/login?target=~2Fprogress~2F1" in driver.current_url))
         log(INFO, "Logged out users can't access progress pages.")
         time.sleep(WAIT_DUR)
         driver.get(ISAAC_WEB + "/logout")
