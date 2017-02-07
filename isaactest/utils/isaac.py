@@ -88,7 +88,7 @@ def disable_irritating_popup(driver, undo=False):
         epoch_time = int((datetime.datetime.now() - datetime.datetime(1970, 1, 1)).total_seconds() * 1000)
         one_month = 2592000000
         epoch_time += one_month  # Pretend last time shown was one month in future!
-    driver.execute_script("window.localStorage.setItem('%s','%s');" % ("lastNotificationTime", epoch_time))
+    driver.execute_script("window.localStorage.setItem('%s', %s);" % ("lastNotificationTime", epoch_time))
     time.sleep(2)
 
 
@@ -196,11 +196,11 @@ def assert_logged_out(driver, wait_dur=2):
           browser speeds.
     """
     time.sleep(wait_dur)
-    user_obj = driver.execute_script("return angular.element('head').scope().user;")
-    if "_id" not in user_obj:
+    user_id = driver.execute_script("return angular.element('head').scope().user._id;")
+    if user_id is None:
         log(INFO, "AssertLoggedOut: All users are logged out.")
     else:
-        log(INFO, "AssertLoggedOut: A user is still logged in!")
+        log(ERROR, "AssertLoggedOut: A user (%s) is still logged in!" % user_id)
         raise AssertionError("AssertLoggedOut: Not logged out!")
 
 
