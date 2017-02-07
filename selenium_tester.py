@@ -18,6 +18,7 @@ from isaactest.utils.isaac import User, TestUsers  # Need this for the pickle lo
 try:
     from pyvirtualdisplay import Display
     PATH_TO_CHROMEDRIVER = "/usr/local/bin/chromedriver"
+    PATH_TO_GECKODRIVER = "/usr/local/bin/geckodriver"
     virtual_display = Display(visible=False, size=(1920, 1080))
     virtual_display.start()
     time.sleep(5)
@@ -29,6 +30,7 @@ try:
 except ImportError:
     os.chdir("./testing")
     PATH_TO_CHROMEDRIVER = "../chromedriver"
+    PATH_TO_GECKODRIVER = "../geckodriver"
     # Can wait for less time on a real non-emulated browser with display:
     WAIT_DUR = 3
 
@@ -52,7 +54,7 @@ os.chdir("test_" + RUNDATE)
 #####
 start_testing()
 start_time = datetime.datetime.now()
-driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR)
+driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_GECKODRIVER)
 #driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER)
 
 
@@ -75,6 +77,6 @@ finally:
         log(INFO, "Closed the virtual display.")
     except NameError:
         pass
-    duration = int((datetime.datetime.now() - start_time).total_seconds()/60) + 1  # int(...) rounds down
+    duration = int((datetime.datetime.now() - start_time).total_seconds()/60.0 + 0.5)  # int(...) rounds down
     log(INFO, "Testing Finished, took %s minutes." % duration)
     end_testing(TestWithDependency.Results, email=False, aborted=fatal_error)

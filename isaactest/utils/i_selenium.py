@@ -9,7 +9,12 @@ from .log import log, INFO, ERROR
 
 __all__ = ['new_tab', 'change_tab', 'assert_tab', 'close_tab', 'image_div',
            'wait_for_xpath_element', 'wait_for_invisible_xpath', 'save_element_html',
-           'AssertTabError']
+           'AssertTabError', 'NoWebDriverException']
+
+
+class NoWebDriverException(Exception):
+    """The error raised when no webdriver executable path is given."""
+    pass
 
 
 class AssertTabError(Exception):
@@ -25,12 +30,7 @@ def new_tab(driver):
         - 'driver' should be a Selenium WebDriver, currently Chrome and Firefox
           are supported.
     """
-    if driver.name == 'firefox':
-        main_window = driver.current_window_handle  # Hack to make currently displayed tab
-        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 't')
-        driver.switch_to_window(main_window)  # the same one the driver is focused on!
-        time.sleep(1)
-    elif driver.name == 'chrome':
+    if (driver.name.lower() == 'firefox') or (driver.name.lower() == 'chrome'):
         old_handles = set(driver.window_handles)
         driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 't')  # Sometimes this stops working.
         try:
@@ -45,6 +45,7 @@ def new_tab(driver):
             driver.switch_to.window(new)
         time.sleep(1)
     else:
+        log(ERROR, "Unknown WebDriver type (%s); can't open a new tab!" % driver.name)
         return
     log(INFO, "Opened new tab.")
 
@@ -57,14 +58,7 @@ def change_tab(driver):
         - 'driver' should be a Selenium WebDriver, currently Chrome and Firefox
           are supported.
     """
-    if driver.name == 'firefox':
-        main_window = driver.current_window_handle  # Hack to make currently displayed tab
-        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + Keys.TAB)
-        time.sleep(0.5)
-        driver.switch_to_window(main_window)  # the same one the driver is focused on!
-        url = driver.current_url
-        time.sleep(0.5)
-    elif driver.name == 'chrome':
+    if (driver.name.lower() == 'firefox') or (driver.name.lower() == 'chrome'):
         handles = driver.window_handles
         if len(handles) > 1:
             current_handle = driver.current_window_handle
@@ -72,10 +66,12 @@ def change_tab(driver):
             pos = pos % len(handles)
             driver.switch_to.window(handles[pos])
             time.sleep(0.5)
-            driver.get_screenshot_as_base64()  # Awful hack to make current focused tab the one displayed!
+            if driver.name.lower() == 'chrome':
+                driver.get_screenshot_as_base64()  # Awful hack to make current focused tab the one displayed!
             time.sleep(0.5)
         url = driver.current_url
     else:
+        log(ERROR, "Unknown WebDriver type (%s); can't change tabs!" % driver.name)
         return
     log(INFO, "Changed tab to %s." % url)
 
@@ -90,25 +86,22 @@ def close_tab(driver):
         - 'driver' should be a Selenium Webdriver, currently Chrome and Firefox
           are supported.
     """
-    if driver.name == 'firefox':
-        main_window = driver.current_window_handle  # Hack to make currently displayed tab
-        old_url = driver.current_url
-        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 'w')
+    old_url = driver.current_url
+    if driver.name.lower() == 'firefox':
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.5)
-        driver.switch_to_window(main_window)  # the same one the driver is focused on!
-        new_url = driver.current_url
-        time.sleep(0.5)
-    elif driver.name == 'chrome':
-        old_url = driver.current_url
+    elif driver.name.lower() == 'chrome':
         driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 'w')
         time.sleep(0.5)
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.5)
         driver.get_screenshot_as_base64()  # Awful hack to make current focused tab the one displayed!
         time.sleep(0.5)
-        new_url = driver.current_url
     else:
+        log(ERROR, "Unknown WebDriver type (%s); can't close tab!" % driver.name)
         return
+    new_url = driver.current_url
     log(INFO, "Closed tab %s. Now on %s" % (old_url, new_url))
 
 

@@ -1,7 +1,7 @@
 import selenium.webdriver
 import time
 from .log import log, INFO
-from .i_selenium import new_tab
+from .i_selenium import new_tab, NoWebDriverException
 from .isaac import TestUsers, User
 from ..emails.guerrillamail import GuerrillaInbox, set_guerrilla_mail_address
 
@@ -17,7 +17,7 @@ def define_users():
     return Users
 
 
-def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER=None):
+def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
     """Start the Selenium WebDriver of choice.
 
        Start a Selenium WebDriver then return it and a GuerrillaInbox object. If
@@ -33,10 +33,12 @@ def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIV
           be used.
     """
     # Selenium Start-up:
-    if PATH_TO_CHROMEDRIVER is not None:
-        driver = selenium.webdriver.Chrome(PATH_TO_CHROMEDRIVER)
+    if "chrome" in PATH_TO_DRIVER:
+        driver = selenium.webdriver.Chrome(PATH_TO_DRIVER)
+    elif "gecko" in PATH_TO_DRIVER:
+        driver = selenium.webdriver.Firefox(executable_path=PATH_TO_DRIVER)
     else:
-        driver = selenium.webdriver.Firefox()
+        raise NoWebDriverException
     driver.set_window_size(1920, 1080)
     driver.maximize_window()
     log(INFO, "Opened Selenium Driver for '%s'." % driver.name.title())
