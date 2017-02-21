@@ -43,7 +43,7 @@ def numeric_q_units_none(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
         log(INFO, "The 'Please try again.' message was correctly shown.")
         bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
-        assert (bg_colour1 == '#be4c4c') or (bg_colour1 == 'rgba(190, 76, 76, 1)')
+        assert bg_colour1 in ['#be4c4c', 'rgba(190, 76, 76, 1)', 'rgb(190, 76, 76)']
         log(INFO, "Red highlighting shown around value box.")
         log(INFO, "Avoid rate limiting: wait 1 minute.")
         time.sleep(60)
