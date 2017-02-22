@@ -53,25 +53,26 @@ def user_progress_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             time.sleep(WAIT_DUR)
             assert_logged_in(driver, user, wait_dur=WAIT_DUR)
             log(INFO, "Try loading progress page; no errors will be shown but have to wait to see if data loads.")
-            #
-            # FIXME - This page now behaves correctly!
-            # FIXME - There is no loading wheel, but there is no data either.
-            # FIXME - We should upadte the test to reflect this or it will fail unnecessarily!
-            #
-            # Oddly, we now *want* a TimeoutException for success; it should load endlessly
-            wait_for_invisible_xpath(driver, "//div[@loading-overlay]", 30)
-            # If we don't get a TimeoutException, then things have gone wrong
-            progress_access_fail = True
-            log(ERROR, "User of type '%s' accessed another users progress page!" % i_type)
-        except TimeoutException:
-            log(INFO, "'%s' users given endless loading screen as expected; can't access page." % i_type)
-            driver.get(ISAAC_WEB + "/logout")
-            log(INFO, "Logged out '%s' user." % i_type)
-            time.sleep(WAIT_DUR)
-            continue
+            wait_for_invisible_xpath(driver, "//div[@loading-overlay]", 60)
         except AssertionError:
             log(ERROR, "Couldn't log user in to test '/progress/1' access!")
             return False
+        except TimeoutException:
+            log(ERROR, "'%s' users given endless loading screen; can't tell if can access page. Can't continue!" % i_type)
+            return False
+
+        try:
+            title = str(wait_for_xpath_element(driver, "(//h1)[1]").text)
+            title = title.strip()
+            assert title == "Progress for user:", "Title is '%s', expected 'Progress for user:' without a name!"
+            log(INFO, "'%s' users given blank info as expected; can't access page." % i_type)
+        except TimeoutException:
+            log(ERROR, "No title found on page after loading finished! Can't continue!")
+            return False
+        except AssertionError:
+            log(ERROR, "User of type '%s' accessed another users progress page!" % i_type)
+            progress_access_fail = True
+
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)
         time.sleep(WAIT_DUR)
