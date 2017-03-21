@@ -58,7 +58,7 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             name_field = driver.find_element_by_id("user-search-familyName")
             name_field.send_keys(Users.Student.lastname)
             time.sleep(WAIT_DUR)
-            search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+            search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
             search_button.click()
             wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
             expected_results = driver.find_elements_by_xpath("//table//tr/td[text()='%s']" % Users.Student.email)
@@ -84,7 +84,7 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         try:
             log(INFO, "Test wildcard searches.")
             time.sleep(WAIT_DUR)
-            search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+            search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
             search_button.click()
             popup = wait_for_xpath_element(driver, "//div[@class='toast-message']", 2)
             error_title = str(popup.find_element_by_xpath(".//h4").text)
@@ -120,7 +120,7 @@ def non_admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             time.sleep(WAIT_DUR)
             role_dropdown.select_by_value("STUDENT")
             log(INFO, "Selected role 'STUDENT'.")
-            search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+            search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
             search_button.click()
             popup = wait_for_xpath_element(driver, "//div[@class='toast-message']", 2)
             error_title = str(popup.find_element_by_xpath(".//h4").text)

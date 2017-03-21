@@ -48,7 +48,7 @@ def user_role_change(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Can't find 'familyName' search box; can't continue testing!")
         return False
     try:
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         user_select_box = driver.find_element_by_xpath("//table//tr/td[text()='%s']/../td[1]/input" % Users.Student.email)
@@ -153,7 +153,7 @@ def user_role_change(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         name_field = driver.find_element_by_id("user-search-familyName")
         name_field.send_keys(Users.Student.lastname)
         time.sleep(WAIT_DUR)
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         user_edit_button = driver.find_element_by_xpath("//table//tr/td[text()='%s']/../td[2]/a[2]" % Users.Student.email)

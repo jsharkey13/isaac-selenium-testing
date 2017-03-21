@@ -47,7 +47,7 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         email_field = driver.find_element_by_id("user-search-email")
         email_field.send_keys(Users.Guerrilla.email)
         time.sleep(WAIT_DUR)
-        search_button = driver.find_element_by_xpath("//button[@ng-click='findUsers()']")
+        search_button = driver.find_element_by_xpath("//button[@type='submit']")
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
     except TimeoutException:

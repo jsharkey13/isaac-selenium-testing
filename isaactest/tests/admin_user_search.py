@@ -44,7 +44,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         name_field = driver.find_element_by_id("user-search-familyName")
         name_field.send_keys(Users.Student.lastname)
         time.sleep(WAIT_DUR)
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         expected_results = driver.find_elements_by_xpath("//table//tr/td[text()='%s']" % Users.Student.email)
@@ -73,7 +73,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         email_field = driver.find_element_by_id("user-search-email")
         email_field.send_keys(Users.Teacher.email)
         time.sleep(WAIT_DUR)
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         expected_results = driver.find_elements_by_xpath("//table//tr/td[text()='%s']" % Users.Teacher.email)
@@ -103,7 +103,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         time.sleep(WAIT_DUR)
         school_dropdown.select_by_value("A Manually Entered School")
         time.sleep(WAIT_DUR)
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         expected_results = driver.find_elements_by_xpath("//table//tr/td[text()='%s']" % Users.Admin.email)
@@ -132,7 +132,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         urn_field = driver.find_element_by_id("user-school-urn")
         urn_field.send_keys("133801")
         time.sleep(WAIT_DUR)
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//h3[contains(text(), 'Manage Users ()')]")
         expected_results = driver.find_elements_by_xpath("//table//tr/td[text()='%s']" % Users.Editor.email)
@@ -162,7 +162,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         text += str(driver.find_element_by_id("user-search-email").text)
         text += str(driver.find_element_by_id("user-school-urn").text)
         assert text == "", "Expected form fields to be blank initially, got '%s'!" % text
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//div[@class='toast-message']/h4", 0.5)
         time.sleep(WAIT_DUR)
@@ -193,7 +193,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         role_dropdown = Select(driver.find_element_by_id("user-search-role"))
         time.sleep(WAIT_DUR)
         role_dropdown.select_by_value("STUDENT")
-        search_button = driver.find_elements_by_xpath("//button[@ng-click='findUsers()']")[0]
+        search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
         wait_for_invisible_xpath(driver, "//div[@class='toast-message']/h4", 0.5)
         time.sleep(WAIT_DUR)
