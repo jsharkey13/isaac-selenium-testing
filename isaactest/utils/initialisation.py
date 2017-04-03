@@ -34,7 +34,7 @@ def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
     """
     # Selenium Start-up:
     if "chrome" in PATH_TO_DRIVER:
-        driver = selenium.webdriver.Chrome(PATH_TO_DRIVER)
+        driver = selenium.webdriver.Chrome(executable_path=PATH_TO_DRIVER)
     elif "gecko" in PATH_TO_DRIVER:
         driver = selenium.webdriver.Firefox(executable_path=PATH_TO_DRIVER)
     else:

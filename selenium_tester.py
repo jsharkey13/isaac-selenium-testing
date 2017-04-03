@@ -55,7 +55,7 @@ os.chdir("test_" + RUNDATE)
 start_testing()
 start_time = datetime.datetime.now()
 driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_GECKODRIVER)
-#driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER)
+#driver, inbox = start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_CHROMEDRIVER) # https://bugs.chromium.org/p/chromedriver/issues/detail?id=1625
 
 
 fatal_error = False
