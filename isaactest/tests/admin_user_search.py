@@ -86,7 +86,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Search button did not work; can't continue testing!")
         return False
     except NoSuchElementException:
-        log(ERROR, "Can't find 'familyName' search box; can't continue testing!")
+        log(ERROR, "Can't find 'email' search box; can't continue testing!")
         return False
     except IndexError:
         log(ERROR, "Can't find the 'Search' button; can't continue!")
@@ -116,7 +116,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Search button did not work; can't continue testing!")
         return False
     except NoSuchElementException:
-        log(ERROR, "Can't find 'familyName' search box; can't continue testing!")
+        log(ERROR, "Can't find 'schoolOther' box / expected school name; can't continue testing!")
         return False
     except IndexError:
         log(ERROR, "Can't find the 'Search' button; can't continue!")
@@ -145,7 +145,7 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Search button did not work; can't continue testing!")
         return False
     except NoSuchElementException:
-        log(ERROR, "Can't find 'familyName' search box; can't continue testing!")
+        log(ERROR, "Can't find 'schoolURN' search box; can't continue testing!")
         return False
     except IndexError:
         log(ERROR, "Can't find the 'Search' button; can't continue!")
