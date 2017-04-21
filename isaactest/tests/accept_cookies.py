@@ -3,7 +3,7 @@ from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab
 from ..utils.i_selenium import wait_for_xpath_element, wait_for_invisible_xpath
 from ..tests import TestWithDependency
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 
 __all__ = ["accept_cookies"]
 
@@ -24,9 +24,17 @@ def accept_cookies(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
     try:
         wait_for_xpath_element(driver, "//div[@data-alert and contains(@class, 'cookies-message')]")
+        time.sleep(WAIT_DUR)
         log(INFO, "Clicking 'Accept' on the cookies message.")
         cookie_message = driver.find_element_by_xpath("//a[contains(@class, 'cookies-accepted')]")
         cookie_message.click()
+        # Geckodriver has been having issues clicking this: try clicking twice?
+        try:
+            time.sleep(0.1)
+            cookie_message.click()
+            log(INFO, "Required two clicks to accept cookie banner!")
+        except StaleElementReferenceException:  # But don't fail if it worked first time!
+            pass
     except TimeoutException:
         log(ERROR, "WARNING: Can't find cookies message! Has it already been accepted?!")
         pass
