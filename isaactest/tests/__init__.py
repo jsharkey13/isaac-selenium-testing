@@ -221,3 +221,4 @@ from .non_admin_user_search import non_admin_user_search
 from .delete_user import delete_user
 from .user_progress_access import user_progress_access
 from .manually_entered_links import manually_entered_links
+from .hsts_header import hsts_header
