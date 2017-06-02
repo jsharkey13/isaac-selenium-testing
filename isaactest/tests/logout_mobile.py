@@ -56,4 +56,6 @@ def logout_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     except AssertionError:
         image_div(driver, 'ERROR_mobile_logout_failure')
         log(ERROR, "Couldn't logout; see 'ERROR_mobile_logout_failure.png'!")
+        driver.set_window_size(window_size["width"], window_size["height"])
+        driver.maximize_window()
         return False

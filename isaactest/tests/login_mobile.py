@@ -49,7 +49,11 @@ def login_mobile(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     except NoSuchElementException:
         image_div(driver, "ERROR_mobile_login")
         log(ERROR, "Cannot find mobile login button. See 'ERROR_mobile_login.png'!")
+        driver.set_window_size(window_size["width"], window_size["height"])
+        driver.maximize_window()
         return False
     except AssertionError:
         log(ERROR, "Failed to log in on mobile!")
+        driver.set_window_size(window_size["width"], window_size["height"])
+        driver.maximize_window()
         return False

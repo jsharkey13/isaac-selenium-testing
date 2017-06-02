@@ -85,4 +85,6 @@ def global_nav_mobile(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     except NoSuchElementException:
         image_div(driver, "ERROR_global_nav_mobile")
         log(ERROR, "Cannot access sub-menus! See 'ERROR_global_nav_mobile.png'!")
+        driver.set_window_size(window_size["width"], window_size["height"])
+        driver.maximize_window()
         return False
