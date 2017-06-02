@@ -12,7 +12,7 @@ __all__ = ["email_change_emails"]
 # Test : Check Change Email Emails Recieved
 #####
 @TestWithDependency("EMAIL_CHANGE_EMAILS", ["EMAIL_CHANGE"])
-def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR, **kwargs):
+def email_change_emails(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """Test if the email change confirmation emails are recieved.
 
         - 'driver' should be a Selenium WebDriver.
@@ -55,7 +55,7 @@ def email_change_emails(driver, inbox, Users, GUERRILLAMAIL, WAIT_DUR, **kwargs)
         time.sleep(WAIT_DUR)
         email_body = new_verify_email.get_email_body_element()
         verification_link = email_body.find_element_by_xpath(".//a[text()='Verify your email address']")
-        Users.Guerrilla.verify_link = str(verification_link.get_attribute("href"))
+        Users.Guerrilla.verify_link = str(verification_link.get_attribute("href")).replace("https://localhost:8080/isaac-api", ISAAC_WEB)
         log(INFO, "Copied verification link.")
         new_verify_email.close()
         time.sleep(WAIT_DUR)

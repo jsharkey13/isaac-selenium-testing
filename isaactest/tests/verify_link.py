@@ -1,9 +1,8 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.i_selenium import assert_tab, close_tab, image_div
+from ..utils.i_selenium import assert_tab, new_tab, close_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element
 from ..tests import TestWithDependency
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 __all__ = ["verify_link"]
@@ -31,11 +30,13 @@ def verify_link(driver, inbox, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **kwargs):
         time.sleep(WAIT_DUR)
         email_body = verification_email.get_email_body_element()
         verification_link = email_body.find_element_by_xpath(".//a[text()='Verify your email address']")
-        verification_link.send_keys(Keys.CONTROL + Keys.ENTER)
-        log(INFO, "Opening verification link from email in new tab.")
+        verification_url = str(verification_link.get_attribute("href")).replace("https://localhost:8080/isaac-api", ISAAC_WEB)
         time.sleep(WAIT_DUR)
         verification_email.close()
         time.sleep(WAIT_DUR)
+        new_tab(driver)
+        log(INFO, "Opening verification link from email in new tab.")
+        driver.get(verification_url)
         assert_tab(driver, ISAAC_WEB + "/verifyemail")
         log(INFO, "Verification URL: '%s'." % driver.current_url)
         wait_for_xpath_element(driver, "//h2[@ng-if='verificationState==verificationStates.SUCCESS']")

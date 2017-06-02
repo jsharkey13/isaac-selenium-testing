@@ -1,8 +1,7 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.i_selenium import assert_tab, close_tab, image_div
+from ..utils.i_selenium import assert_tab, new_tab, close_tab, image_div
 from ..tests import TestWithDependency
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
 __all__ = ["pwd_reset_link"]
@@ -30,13 +29,17 @@ def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **k
         log(INFO, "Selecting most recent password reset email '%s'." % reset_email)
         time.sleep(WAIT_DUR)
         email_body = reset_email.get_email_body_element()
-        verification_link = email_body.find_element_by_xpath(".//a[text()='Click Here']")
-        verification_link.send_keys(Keys.CONTROL + Keys.ENTER)
-        log(INFO, "Opening reset password link from email in new tab.")
+        reset_link = email_body.find_element_by_xpath(".//a[text()='Click Here']")
         reset_email.close()
         time.sleep(WAIT_DUR)
+        reset_url = str(reset_link.get_attribute("href")).replace("https://localhost:8080/isaac-api", ISAAC_WEB)
+        log(INFO, "Reset Password URL: '%s'." % reset_url)
+        time.sleep(WAIT_DUR)
+        new_tab(driver)
+        log(INFO, "Opening verification link from email in new tab.")
+        driver.get(reset_url)
+        time.sleep(WAIT_DUR)
         assert_tab(driver, ISAAC_WEB + "/resetpassword")
-        log(INFO, "Reset Password URL: '%s'." % driver.current_url)
     except NoSuchElementException:
         log(ERROR, "Can't access reset password link in email; can't continue!")
         return False
@@ -48,6 +51,7 @@ def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **k
         pwd2.clear()
         pwd2.send_keys(Users.Guerrilla.new_password)
         change_password = driver.find_element_by_xpath("//button[@ng-click='resetPassword()']")
+        log(INFO, "Submitting new password.")
         change_password.click()
         time.sleep(WAIT_DUR)
     except NoSuchElementException:
