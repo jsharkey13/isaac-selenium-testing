@@ -184,7 +184,7 @@ def image_div(driver, fname, div_element=None):
        Save an image of the whole page, unless a 'div_element' is specified, in
        which case attempt to image it.
         - 'driver' should be a Selenium WebDriver.
-        - 'fname' should the the string filename to save the png to, '.png' is
+        - 'fname' should be the string filename to save the png to, '.png' is
           automatically appended.
         - 'div_element' is the WebDriver element to image. Recommended to be a div element,
           since these have reliable heights and widths. If the element has no
