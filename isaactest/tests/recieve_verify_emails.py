@@ -18,12 +18,12 @@ def recieve_verify_emails(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
     """
     verification_email_request_limit = 4
     assert_tab(driver, GUERRILLAMAIL)
-    inbox.wait_for_email(WAIT_DUR)
-    inbox.wait_for_email(WAIT_DUR)  # Just to be safe; can be quite slow and need 4 emails!
+    inbox.wait_for_email(WAIT_DUR, expected=verification_email_request_limit)
 
-    verification_emails_recived = 0
-    log(INFO, "Checking if verification emails recieved.")
     try:
+        verification_emails_recived = 0
+        log(INFO, "Checking if verification emails recieved.")
+
         verification_emails = inbox.get_by_subject("Verify your email")
         verification_emails_recived = len(verification_emails)
         assert verification_emails_recived > 0

@@ -58,9 +58,7 @@ def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
     time.sleep(WAIT_DUR)
     inbox = GuerrillaInbox(driver)
     time.sleep(WAIT_DUR)
-    # Delete GuerrillaMail welcome:
-    initial_emails = inbox.get_by_subject("Welcome to Guerrilla Mail")
-    for e in initial_emails:
-        inbox.delete_email(e)
+    # Delete GuerrillaMail welcome and clear inbox:
+    inbox.delete_emails()
     time.sleep(WAIT_DUR)
     return driver, inbox
