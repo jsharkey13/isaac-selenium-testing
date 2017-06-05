@@ -10,7 +10,7 @@ def define_users():
     """Set up the TestUser object and add the temporary email address to it."""
     Users = TestUsers.load()
     Guerrilla = User("isaactest@sharklasers.com", "Temp",
-                     "Test", "test")
+                     "Test", "testing")
     Users.Guerrilla = Guerrilla
     Users.Guerrilla.new_email = "isaactesttwo@sharklasers.com"
     Users.Guerrilla.new_password = "testing123"
