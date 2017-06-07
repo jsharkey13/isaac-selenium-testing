@@ -102,21 +102,20 @@ class GuerrillaInbox():
             log(ERROR, "GM - No email elements on page; failed to find inbox!")
             raise GuerrillaMailError
 
-    def delete_email(self, email):
-        """Delete a GuerillaMail email.
+    def delete_emails(self):
+        """Clear a GuerillaMail inbox.
 
            This must be run whilst on the GuerrillaMail tab. It will remove the
            email from the emails and unread lists.
             - 'email' should be a GuerrillaEmail object to be deleted.
         """
-        log(INFO, "Deleting %s." % email)
-        email._delete()
-        try:
-            self.emails.remove(email)
-            self.unread.remove(email)
-        except ValueError:
-            pass
+        log(INFO, "Deleting %d emails." % len(self.emails))
+        for email in self.emails:
+            email._select()
+        del_button = self._driver.find_element_by_id("del_button")
+        del_button.click()
         time.sleep(2)
+        self.refresh()
 
     def get_by_time(self, timestamp):
         """Get any emails with a timestamp matching that specified.
@@ -141,7 +140,7 @@ class GuerrillaInbox():
             matches = [e for e in self.emails if subject in e.subject]
         return matches
 
-    def wait_for_email(self, wait_dur, refresh_time=11, cycles=10):
+    def wait_for_email(self, wait_dur, refresh_time=11, cycles=5, expected=1):
         """Wait for emails to be received, then refresh inbox object.
 
            This function pauses for 'wait_dur' amount of time, then waits for up
@@ -153,6 +152,9 @@ class GuerrillaInbox():
               or however long to wait in cycles.
             - 'cycles' is how many times to loop before aborting, remembering that
               the overall wait duration gets longer nonlinearly as cycles increases.
+            - 'expected' is how many emails are expected to arrive in one go. Setting
+              this higher should allow catching of cases when more than one email
+              is expected and they arrive at different times.
         """
         total_wait = wait_dur
         log(INFO, "Waiting for email.")
@@ -164,18 +166,17 @@ class GuerrillaInbox():
                 time.sleep(wait_dur)
                 log(INFO, "Email(s) received!")
                 self.refresh()
-                return
+                if len(self.unread) >= expected:
+                    log(INFO, "Waited for %s+%s seconds, have expected number of unread emails: use these!" % (wait_dur, total_wait - wait_dur))
+                    return
             except TimeoutException:
-                if i == 1:  # I.e. wait for first refresh_time to be safe,
-                    self.refresh()  # Then if have unread emails, use those.
-                    if len(self.unread) > 0:
-                        log(INFO, "Waited for %s+%s seconds, no new mail but have unread emails: use these!" % (wait_dur, total_wait - wait_dur))
-                        return
+                self.refresh()  # Check count of existing unread emails, if enough - use those.
+                if len(self.unread) >= expected:
+                    log(INFO, "Waited for %s+%s seconds, have expected number of unread emails: use these!" % (wait_dur, total_wait - wait_dur))
+                    return
                 if i != cycles:
                     log(INFO, "Waited for %s+%s seconds, no email! Increment wait duration." % (wait_dur, total_wait - wait_dur))
-                else:
-                    log(ERROR, "Waited for %s seconds. Stopped waiting!" % total_wait)
-                    raise
+        log(ERROR, "Waited for %s seconds. Not enough email. Stopped waiting!" % total_wait)
 
 
 class GuerrillaEmail():
@@ -211,14 +212,6 @@ class GuerrillaEmail():
     def __repr__(self):
         """Set Python's representation to be the string form for easier viewing."""
         return str(self)
-
-    def _delete(self):
-        """Delete the email. Do not run by hand, but use GuerrillaInobx.delete(email)."""
-        self.close()
-        self._select()
-        del_button = self._driver.find_element_by_id("del_button")
-        del_button.click()
-        time.sleep(2)
 
     def _select(self):
         """Tick the checkbox next to the email, required for deletion.

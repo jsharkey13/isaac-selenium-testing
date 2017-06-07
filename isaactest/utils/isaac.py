@@ -56,6 +56,45 @@ class TestUsers():
         return Users
 
 
+class MobileIsaac(object):
+    """A context manager to help test Isaac in mobile mode.
+
+       To use Isaac in mobile mode, it suffices to put the code inside a with block:
+
+           with MobileIsaac(driver) as mobile_driver:
+               ...
+
+       and then use `mobile_driver` instead of the standard driver object (though
+       this isn't technically neccesary)."""
+
+    def __init__(self, driver):
+        """Create using a WebDriver object.
+
+           Keep an internal reference to the WebDriver object, which is requred
+           to resize the screen down and restore the window to the old saved
+           dimensions once the context block is exited."""
+        self.driver = driver
+        self.window_size = driver.get_window_size()
+
+    def __enter__(self):
+        """This class is just a transparent proxy to the ordinary driver object.
+
+           By returning the driver in the __enter__() method, simply pass all
+           behavior on to it. To initialise, resize the window to be the size of
+           a small mobile screen."""
+        self.driver.set_window_size(360, 640)
+        self.driver.refresh()
+        log(INFO, "Resized window to mobile size.")
+        return self.driver
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        """On exit, just restore the screen to the size it was and maximise if possible."""
+        self.driver.set_window_size(self.window_size["width"], self.window_size["height"])
+        self.driver.maximize_window()
+        self.driver.refresh()
+        log(INFO, "Restored window dimensions.")
+
+
 def kill_irritating_popup(driver, wait_dur=60):
     """Wait for the annoying popup to popup and then close it.
 

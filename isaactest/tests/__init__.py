@@ -183,6 +183,7 @@ from .pwd_reset_link import pwd_reset_link
 from .reset_pwd_login import reset_pwd_login
 from .login_uppercase import login_uppercase
 from .signup_uppercase import signup_uppercase
+from .account_settings import account_settings
 from .user_consistency import user_consistency
 from .user_consistency_popup import user_consistency_popup
 from .email_change import email_change
