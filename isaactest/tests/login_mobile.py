@@ -1,6 +1,6 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.isaac import submit_login_form, assert_logged_in, snooze_email_verification
+from ..utils.isaac import MobileIsaac, submit_login_form, assert_logged_in, snooze_email_verification
 from ..utils.i_selenium import assert_tab, image_div
 from ..tests import TestWithDependency
 from selenium.common.exceptions import NoSuchElementException
@@ -25,43 +25,29 @@ def login_mobile(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Logging out any logged in user.")
     time.sleep(WAIT_DUR)
 
-    window_size = driver.get_window_size()
-    try:
-        log(INFO, "Resizing window to mobile size.")
-        driver.set_window_size(360, 640)
-        driver.refresh()
-        time.sleep(WAIT_DUR)
+    with MobileIsaac(driver) as mobile_driver:
 
+        time.sleep(WAIT_DUR)
         # The Email Verification warning obstructs the menu. If it's there, snooze it!
-        if not snooze_email_verification(driver):
+        if not snooze_email_verification(mobile_driver):
             log(ERROR, "Can't continue with this test since the banner obstructs the menu!")
-            driver.set_window_size(window_size["width"], window_size["height"])
-            driver.maximize_window()
             return False
 
         try:
-            login_tab = driver.find_element_by_xpath("//div[@id='mobile-login']")
+            login_tab = mobile_driver.find_element_by_xpath("//div[@id='mobile-login']")
             login_tab.click()
             time.sleep(WAIT_DUR)
-            submit_login_form(driver, user=Users.Student, wait_dur=WAIT_DUR, mobile=True)
+            submit_login_form(mobile_driver, user=Users.Student, wait_dur=WAIT_DUR, mobile=True)
             time.sleep(WAIT_DUR)
-            assert_logged_in(driver, user=Users.Student, wait_dur=WAIT_DUR)
+            assert_logged_in(mobile_driver, user=Users.Student, wait_dur=WAIT_DUR)
             log(INFO, "Login succeeded on mobile site.")
         except NoSuchElementException:
-            image_div(driver, "ERROR_mobile_login")
+            image_div(mobile_driver, "ERROR_mobile_login")
             log(ERROR, "Cannot find mobile login button. See 'ERROR_mobile_login.png'!")
             return False
         except AssertionError:
             log(ERROR, "Failed to log in on mobile!")
             return False
-    finally:
-        # Wrap the mobile-resized code in a try...finally block with no except.
-        # This ensures that no matter what happens the window gets restored to
-        # the correct size, and that returns and exceptions correctly propagate.
-        driver.set_window_size(window_size["width"], window_size["height"])
-        driver.maximize_window()
-        driver.refresh()
-        log(INFO, "Restoring window dimensions.")
 
     log(PASS, "Mobile login works as expected!")
     return True
