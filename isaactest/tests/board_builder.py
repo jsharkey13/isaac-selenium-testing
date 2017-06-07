@@ -28,7 +28,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         assert submit_login_form(driver, user=Users.Admin, wait_dur=WAIT_DUR), "Can't access User Admin; can't continue testing!"
 
         log(INFO, "Test subject field filtering")
-        subject_field = Select(driver.find_element_by_xpath('//select[@ng-model=\'questionSearchSubject\']'))
+        subject_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchSubject"]'))
 
         subject_field.select_by_visible_text('Mathematics')
         time.sleep(WAIT_DUR)
@@ -43,7 +43,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             lambda question_result_text: '"physics" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Test level field filtering")
-        level_field = Select(driver.find_element_by_xpath('//select[@ng-model=\'questionSearchLevel\']'))
+        level_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchLevel"]'))
         level_field.select_by_visible_text('2')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
@@ -51,7 +51,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             lambda question_result_text: '"level 2" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Test query field filtering")
-        query_field = driver.find_element_by_xpath('//input[@ng-model=\'questionSearchText\']')
+        query_field = driver.find_element_by_xpath('//input[@ng-model="questionSearchText"]')
         query_field.send_keys('toboggan')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
@@ -59,14 +59,14 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             lambda question_result_text: '"toboggan" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Check book links work")
-        mastering_physics_link = driver.find_element_by_xpath('//a[text() = \'Mastering Physics\']')
+        mastering_physics_link = driver.find_element_by_xpath('//a[text() = "Mastering Physics"]')
         mastering_physics_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
             lambda question_result: all(keyword in question_result.text.lower() for keyword in ['book', 'physics', 'physics_skills_14']),
             lambda question_result_text: '"book", "physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
 
-        mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = \'Mastering Chemistry\']')
+        mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = "Mastering Chemistry"]')
         mastering_chemistry_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
@@ -100,22 +100,22 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         time.sleep(WAIT_DUR) # wait while exception toast is in view
 
         log(INFO, "Set title")
-        title_field = driver.find_element_by_xpath('//input[@ng-model=\'currentGameBoard.title\']')
+        title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
         title_field.send_keys('Test Board')
 
         log(INFO, "Set ID")
-        id_field = driver.find_element_by_xpath('//input[@ng-model=\'currentGameBoard.id\']')
+        id_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.id"]')
         id_field.send_keys(random_id) 
 
         log(INFO, "Make a wild card selection")
-        wildcard_field = Select(driver.find_element_by_xpath('//select[@ng-model=\'userSelectedBoardWildCardId\']'))
+        wildcard_field = Select(driver.find_element_by_xpath('//select[@ng-model="userSelectedBoardWildCardId"]'))
         wildcard_field.select_by_visible_text('About Us')
         time.sleep(WAIT_DUR)
-        about_us_hex = driver.find_elements_by_xpath('//div[@class=\'ru-hex-home-title\' and text() = \'About Us\']')
+        about_us_hex = driver.find_elements_by_xpath('//div[@class="ru-hex-home-title" and text() = "About Us"]')
         assert len(about_us_hex), 'Not able to see chosen wildcard'
 
         log(INFO, "Save the board")
-        save_button  = driver.find_element_by_xpath('//button[@type=\'submit\' and text() = \'Save this board\']')
+        save_button  = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
         time.sleep(WAIT_DUR)
         alert = driver.switch_to.alert
@@ -125,9 +125,9 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Use a URL to populate board builder fields")
         time.sleep(WAIT_DUR)
         driver.get(ISAAC_WEB + '/game_builder?query="physics_skills_14"&subject=physics&level=any&sort=title')
-        subject_field = Select(driver.find_element_by_xpath('//select[@ng-model=\'questionSearchSubject\']'))
-        level_field = Select(driver.find_element_by_xpath('//select[@ng-model=\'questionSearchLevel\']'))
-        query_field = driver.find_element_by_xpath('//input[@ng-model=\'questionSearchText\']')
+        subject_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchSubject"]'))
+        level_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchLevel"]'))
+        query_field = driver.find_element_by_xpath('//input[@ng-model="questionSearchText"]')
         time.sleep(WAIT_DUR)
         question_results_text = [question_result.text for question_result in driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li")]
         assert subject_field.first_selected_option.text == 'Physics', 'Subject field value "{}" does not match expected "{}"'.format(subject_field.first_selected_option.text, 'Physics')
@@ -136,13 +136,13 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         assert question_results_text == sorted(question_results_text), 'Question results were not sorted as was expected\n{}'.format(question_results_text)
 
         log(INFO, "Try to save board with a pre-existing ID")
-        title_field = driver.find_element_by_xpath('//input[@ng-model=\'currentGameBoard.title\']')
+        title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
         title_field.send_keys('Test Duplicate ID Board')
         question_checkboxes = driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li//input[@type='checkbox' and @ng-model='enabledQuestions[question.id]']")
         question_checkboxes[0].click()
-        id_field = driver.find_element_by_xpath('//input[@ng-model=\'currentGameBoard.id\']')
+        id_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.id"]')
         id_field.send_keys(random_id) #re-use ID used earlier
-        save_button  = driver.find_element_by_xpath('//button[@type=\'submit\' and text() = \'Save this board\']')
+        save_button  = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
         alert = driver.switch_to.alert
         assert 'save' in alert.text, 'Alert text did not contain "save"'
@@ -151,6 +151,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         assert driver.find_elements_by_xpath('//h4[text() = "Save Operation Failed"]')[0].is_displayed(), 'Error not displayed when expected after saving with same ID'
 
         return True
+
     except AssertionError as e:
         log(ERROR, "Asserton Error: {}".format(e))
         return False
