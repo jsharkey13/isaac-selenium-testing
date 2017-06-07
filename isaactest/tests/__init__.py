@@ -207,6 +207,8 @@ from .numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
 from .numeric_q_units_none import numeric_q_units_none
 from .numeric_q_help_popup import numeric_q_help_popup
 from .answer_saved_login import answer_saved_login
+from .concept_index_page import concept_index_page
+from .concept_pages import concept_pages
 from .tab_behaviour import tab_behavior
 from .back_to_board import back_to_board
 from .filter_behaviour import filter_behaviour
