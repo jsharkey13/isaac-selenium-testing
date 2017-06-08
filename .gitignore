@@ -1,5 +1,6 @@
 *.pickle
 *.pyc
+*.dot
 .vagrant/
 .idea/
 testing/

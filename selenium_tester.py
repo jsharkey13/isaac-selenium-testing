@@ -9,6 +9,8 @@ from isaactest.utils.initialisation import define_users, start_selenium
 from isaactest.tests import TestWithDependency
 from isaactest.utils.isaac import User, TestUsers  # Need this for the pickle loading
 
+with open("test_dependencies.dot", "w") as f:
+    f.write(TestWithDependency.dependency_graph())
 
 #####
 # Setup:
