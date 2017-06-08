@@ -9,12 +9,14 @@ from selenium.webdriver.support.ui import Select
 
 __all__ = ['board_builder']
 
+
 def check_all_results(driver, assertion, failure_message_formatter, allow_empty=False):
     question_results = driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li")
     if not allow_empty:
         assert len(question_results), 'No question results found for assertion with message:\n{}'.format(failure_message_formatter('""'))
     for question_result in question_results:
         assert assertion(question_result), failure_message_formatter(question_result.text)
+
 
 @TestWithDependency('BOARD_BUILDER')
 def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
@@ -33,51 +35,51 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         subject_field.select_by_visible_text('Mathematics')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: 'maths' in question_result.text.lower(),
-            lambda question_result_text: '"maths" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: 'maths' in question_result.text.lower(),
+                          lambda question_result_text: '"maths" was not found in "{}"'.format(question_result_text.lower()))
 
         subject_field.select_by_visible_text('Physics')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: 'physics' in question_result.text.lower(),
-            lambda question_result_text: '"physics" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: 'physics' in question_result.text.lower(),
+                          lambda question_result_text: '"physics" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Test level field filtering")
         level_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchLevel"]'))
         level_field.select_by_visible_text('2')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: 'level 2' in question_result.text.lower(),
-            lambda question_result_text: '"level 2" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: 'level 2' in question_result.text.lower(),
+                          lambda question_result_text: '"level 2" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Test query field filtering")
         query_field = driver.find_element_by_xpath('//input[@ng-model="questionSearchText"]')
         query_field.send_keys('toboggan')
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: 'toboggan' in question_result.text.lower(),
-            lambda question_result_text: '"toboggan" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: 'toboggan' in question_result.text.lower(),
+                          lambda question_result_text: '"toboggan" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Check book links work")
         mastering_physics_link = driver.find_element_by_xpath('//a[text() = "Mastering Physics"]')
         mastering_physics_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: all(keyword in question_result.text.lower() for keyword in ['book', 'physics', 'physics_skills_14']),
-            lambda question_result_text: '"book", "physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: all(keyword in question_result.text.lower() for keyword in ['book', 'physics', 'physics_skills_14']),
+                          lambda question_result_text: '"book", "physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
 
         mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = "Mastering Chemistry"]')
         mastering_chemistry_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-            lambda question_result: all(keyword in question_result.text.lower() for keyword in ['chemistry', 'chemistry_16']), 
-            lambda question_result_text: '"chemistry" or "chemistry_16" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: all(keyword in question_result.text.lower() for keyword in ['chemistry', 'chemistry_16']),
+                          lambda question_result_text: '"chemistry" or "chemistry_16" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Build a board")
         question_checkboxes = driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li//input[@type='checkbox' and @ng-model='enabledQuestions[question.id]']")
         for i in xrange(10):
             element = question_checkboxes[i]
-            driver.execute_script("arguments[0].scrollIntoView(true);", element);
+            driver.execute_script("arguments[0].scrollIntoView(true);", element)
             element.click()
         time.sleep(1)
         assert not len(driver.find_elements_by_xpath('//h4[text() = "Too Many Questions"]')), 'Error displayed when not expected'
@@ -93,11 +95,11 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Try to add two other questions")
         for i in [10, 11]:
             element = question_checkboxes[i]
-            driver.execute_script("arguments[0].scrollIntoView(true);", element);
+            driver.execute_script("arguments[0].scrollIntoView(true);", element)
             element.click()
         time.sleep(1)
         assert driver.find_elements_by_xpath('//h4[text() = "Too Many Questions"]')[0].is_displayed(), 'Error not displayed when expected after removing a question and then adding again'
-        time.sleep(WAIT_DUR) # wait while exception toast is in view
+        time.sleep(WAIT_DUR)  # Wait while exception toast is in view
 
         log(INFO, "Set title")
         title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
@@ -105,7 +107,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
 
         log(INFO, "Set ID")
         id_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.id"]')
-        id_field.send_keys(random_id) 
+        id_field.send_keys(random_id)
 
         log(INFO, "Make a wild card selection")
         wildcard_field = Select(driver.find_element_by_xpath('//select[@ng-model="userSelectedBoardWildCardId"]'))
@@ -115,7 +117,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         assert len(about_us_hex), 'Not able to see chosen wildcard'
 
         log(INFO, "Save the board")
-        save_button  = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
+        save_button = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
         time.sleep(WAIT_DUR)
         alert = driver.switch_to.alert
@@ -141,8 +143,8 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         question_checkboxes = driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li//input[@type='checkbox' and @ng-model='enabledQuestions[question.id]']")
         question_checkboxes[0].click()
         id_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.id"]')
-        id_field.send_keys(random_id) #re-use ID used earlier
-        save_button  = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
+        id_field.send_keys(random_id)  # Re-use ID used earlier
+        save_button = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
         alert = driver.switch_to.alert
         assert 'save' in alert.text, 'Alert text did not contain "save"'
@@ -150,6 +152,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         time.sleep(1)
         assert driver.find_elements_by_xpath('//h4[text() = "Save Operation Failed"]')[0].is_displayed(), 'Error not displayed when expected after saving with same ID'
 
+        log(PASS, "Board builder functions as expected.")
         return True
 
     except AssertionError as e:
