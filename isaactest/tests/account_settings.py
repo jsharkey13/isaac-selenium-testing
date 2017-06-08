@@ -13,7 +13,7 @@ __all__ = ["account_settings"]
 #####
 # Test : Update Account Settings
 #####
-@TestWithDependency("ACCOUNT_SETTINGS")#, ["SIGNUP"])
+@TestWithDependency("ACCOUNT_SETTINGS", ["SIGNUP"])
 def account_settings(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test if users account settings can be accessed and changed.
 

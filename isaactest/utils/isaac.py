@@ -321,7 +321,7 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
 def open_accordion_section(driver, n):
     """Open the n-th accordion section on a page.
 
-       Will raise ElementNotFoundException if there are no accordion sections on
+       Will raise NoSuchElementException if there are no accordion sections on
        the page, or if n larger than the number of accordion sections.
         - 'driver' should be a Selenium WebDriver.
         - 'n' is the integer number of the accordion section to open counting from 1.
@@ -334,12 +334,13 @@ def open_accordion_section(driver, n):
         accordion_title.click()
         log(INFO, "Opened accordion section %s." % n)
         time.sleep(0.5)
+    return accordion_title.find_element_by_xpath("./..")
 
 
 def close_accordion_section(driver, n):
     """Close the n-th accordion section on a page.
 
-       Will raise ElementNotFoundException if there are no accordion sections on
+       Will raise NoSuchElementException if there are no accordion sections on
        the page, or if n larger than the number of accordion sections.
         - 'driver' should be a Selenium WebDriver.
         - 'n' is the integer number of the accordion section to close counting from 1.
