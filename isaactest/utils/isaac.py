@@ -334,6 +334,7 @@ def open_accordion_section(driver, n):
         accordion_title.click()
         log(INFO, "Opened accordion section %s." % n)
         time.sleep(0.5)
+    return accordion_title.find_element_by_xpath("./..")
 
 
 def close_accordion_section(driver, n):
