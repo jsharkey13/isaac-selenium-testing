@@ -4,7 +4,7 @@ from ..utils.log import log, INFO, ERROR, PASS
 from ..utils.i_selenium import assert_tab, image_div, wait_for_invisible_xpath, wait_for_xpath_element
 from ..utils.isaac import submit_login_form
 from ..tests import TestWithDependency
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotVisibleException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotVisibleException, NoAlertPresentException
 from selenium.webdriver.support.ui import Select
 
 __all__ = ['board_builder']
@@ -23,7 +23,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         random_id = ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890') for _ in range(8))
 
-        log(INFO, "Log in as user and go to page")
+        log(INFO, "Log in as an admin user and go to page")
         assert_tab(driver, ISAAC_WEB)
         driver.get(ISAAC_WEB + '/logout')
         driver.get(ISAAC_WEB + '/game_builder')
@@ -65,8 +65,8 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         mastering_physics_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
-                          lambda question_result: all(keyword in question_result.text.lower() for keyword in ['book', 'physics', 'physics_skills_14']),
-                          lambda question_result_text: '"book", "physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
+                          lambda question_result: all(keyword in question_result.text.lower() for keyword in ['physics', 'physics_skills_14']),
+                          lambda question_result_text: '"physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
 
         mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = "Mastering Chemistry"]')
         mastering_chemistry_link.click()
@@ -77,17 +77,25 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
 
         log(INFO, "Build a board")
         question_checkboxes = driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li//input[@type='checkbox' and @ng-model='enabledQuestions[question.id]']")
-        for i in xrange(10):
+        for i in range(10):
             element = question_checkboxes[i]
             driver.execute_script("arguments[0].scrollIntoView(true);", element)
             element.click()
-        time.sleep(1)
-        assert not len(driver.find_elements_by_xpath('//h4[text() = "Too Many Questions"]')), 'Error displayed when not expected'
+        try:
+            wait_for_xpath_element(driver, "//h4[text() = 'Too Many Questions']", 5)
+            log(ERROR, "Did not expect error message to be displayed!")
+            return False
+        except TimeoutException:
+            pass # Exception occurs only if no error message shown.
 
         log(INFO, "Try to tick an eleventh checkbox")
         question_checkboxes[10].click()
-        time.sleep(1)
-        assert driver.find_elements_by_xpath('//h4[text() = "Too Many Questions"]')[0].is_displayed(), 'Error not displayed when expected'
+        try:
+            wait_for_xpath_element(driver, "//h4[text() = 'Too Many Questions']", 5)
+        except TimeoutException:
+            log(ERROR, 'Too Many Questions error not displayed before timeout')
+            return False
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
 
         log(INFO, "Remove one question")
         question_checkboxes[9].click()
@@ -97,9 +105,12 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             element = question_checkboxes[i]
             driver.execute_script("arguments[0].scrollIntoView(true);", element)
             element.click()
-        time.sleep(1)
-        assert driver.find_elements_by_xpath('//h4[text() = "Too Many Questions"]')[0].is_displayed(), 'Error not displayed when expected after removing a question and then adding again'
-        time.sleep(WAIT_DUR)  # Wait while exception toast is in view
+        try:
+            wait_for_xpath_element(driver, "//h4[text() = 'Too Many Questions']", 5)
+        except TimeoutException:
+            log(ERROR, 'Too Many Questions error not displayed before timeout')
+            return False
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
 
         log(INFO, "Set title")
         title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
@@ -120,9 +131,13 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         save_button = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
         time.sleep(WAIT_DUR)
-        alert = driver.switch_to.alert
-        assert 'save' in alert.text, 'Alert text did not contain "save"'
-        alert.accept()
+        try:
+            alert = driver.switch_to.alert
+            assert 'save' in alert.text, 'Alert text did not contain "save"'
+            alert.accept()
+        except NoAlertPresentException as e:
+            log(ERROR, 'Save alert not present (1)')
+            return False
 
         log(INFO, "Use a URL to populate board builder fields")
         time.sleep(WAIT_DUR)
@@ -146,11 +161,18 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         id_field.send_keys(random_id)  # Re-use ID used earlier
         save_button = driver.find_element_by_xpath('//button[@type="submit" and text() = "Save this board"]')
         save_button.click()
-        alert = driver.switch_to.alert
-        assert 'save' in alert.text, 'Alert text did not contain "save"'
-        alert.accept()
-        time.sleep(1)
-        assert driver.find_elements_by_xpath('//h4[text() = "Save Operation Failed"]')[0].is_displayed(), 'Error not displayed when expected after saving with same ID'
+        try:
+            alert = driver.switch_to.alert
+            assert 'save' in alert.text, 'Alert text did not contain "save"'
+            alert.accept()
+            wait_for_xpath_element(driver, '//h4[text() = "Save Operation Failed"]', 5)
+        except NoAlertPresentException as e:
+            log(ERROR, 'Save alert not present (1)')
+            return False
+        except TimeoutException:
+            log(ERROR, 'Error not displayed when expected after saving with same ID')
+            return False
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
 
         log(PASS, "Board builder functions as expected.")
         return True
@@ -158,6 +180,6 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     except AssertionError as e:
         log(ERROR, "Asserton Error: {}".format(e))
         return False
-    except Exception as e:
-        log(ERROR, "Exception: {}".fomrat(e))
+    except NoSuchElementException as e:
+        log(ERROR, "No Such Element Exception: {}".format(e))
         return False
