@@ -29,7 +29,7 @@ sudo apt-get -y install python-imaging
 
 # Firefox needs the GeckoDriver executable:
 cd /tmp
-wget "https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz"
+wget "https://github.com/mozilla/geckodriver/releases/download/v0.17.0/geckodriver-v0.17.0-linux64.tar.gz"
 tar -xvzf geckodriver*
 mv geckodriver /usr/local/bin
 cd /usr/local/bin
@@ -40,7 +40,7 @@ sudo chmod +x geckodriver
 sudo apt-get -y install unzip
 # Get and extract the ChromeDriver executable:
 cd /tmp
-wget "https://chromedriver.storage.googleapis.com/2.27/chromedriver_linux64.zip"
+wget "https://chromedriver.storage.googleapis.com/2.30/chromedriver_linux64.zip"
 unzip chromedriver_linux64.zip
 mv chromedriver /usr/local/bin
 cd /usr/local/bin
