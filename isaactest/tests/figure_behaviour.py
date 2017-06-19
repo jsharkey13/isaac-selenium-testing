@@ -1,6 +1,6 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.i_selenium import assert_tab, wait_for_xpath_element
+from ..utils.i_selenium import assert_tab
 from ..utils.isaac import open_accordion_section, wait_accordion_open
 from ..tests import TestWithDependency
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
@@ -11,7 +11,7 @@ __all__ = ["figure_behaviour"]
 #####
 # Test : Figure Numbering and Referencing on Question Pages
 #####
-@TestWithDependency("FIGURE_BEHAVIOUR", ["ACCORDION_BEHAVIOUR", "TAB_BEHAVIOR", "QUICK_QUESTIONS"])
+@TestWithDependency("FIGURE_BEHAVIOUR", ["ACCORDION_BEHAVIOUR", "TAB_BEHAVIOUR", "QUICK_QUESTIONS"])
 def figure_behaviour(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test whether the figure numbering and referencing work as expected.
 
