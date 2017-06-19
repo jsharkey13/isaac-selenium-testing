@@ -68,6 +68,12 @@ def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         wait_for_xpath_element(driver, "//h2[@ng-if='verificationState==verificationStates.SUCCESS']")
         time.sleep(WAIT_DUR)
         log(INFO, "Verification of new email address succeeded.")
+        # Update the credentials immediately to avoid any errors preventing update
+        # and breaking subsequent tests:
+        log(INFO, "Updating internal credentials to reflect new email address!")
+        Users.Guerrilla.old_email = Users.Guerrilla.email
+        Users.Guerrilla.email = Users.Guerrilla.new_email
+        #
         close_tab(driver)
     except TimeoutException:
         image_div(driver, "ERROR_change_email_verify_fail")
@@ -90,6 +96,10 @@ def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     except TimeoutException:
         image_div(driver, "ERROR_logged_in_unexpectedly")
         log(ERROR, "Login suceeded with old email after verification of new email; see 'ERROR_logged_in_unexpectedly.png'!")
+        # Restore internal credentials to old working versions for later tests:
+        log(INFO, "Reverting update to internal credentials as old email still working!")
+        Users.Guerrilla.email = Users.Guerrilla.old_email
+        #
         return False
     driver.get(ISAAC_WEB + "/login")
     log(INFO, "Got: %s" % (ISAAC_WEB + "/login"))
@@ -105,7 +115,5 @@ def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Login failed with new email after verification of new email; see 'ERROR_not_logging_in.png'!")
         return False
     time.sleep(WAIT_DUR)
-    Users.Guerrilla.old_email = Users.Guerrilla.email
-    Users.Guerrilla.email = Users.Guerrilla.new_email
     log(PASS, "Old login worked until verification of new, then stopped. New didn't work until verification.")
     return True
