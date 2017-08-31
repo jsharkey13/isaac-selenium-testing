@@ -167,8 +167,8 @@ from .accept_cookies import accept_cookies
 from .global_nav import global_nav
 from .global_nav_mobile import global_nav_mobile
 from .logout import logout
-#from .login_throttle import login_throttle
-#from .login_timeout import login_timeout
+from .login_throttle import login_throttle
+from .login_timeout import login_timeout
 from .login_mobile import login_mobile
 from .logout_mobile import logout_mobile
 from .signup import signup
