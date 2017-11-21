@@ -23,7 +23,7 @@ def user_consistency_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     driver.get(ISAAC_WEB + "/logout")
     log(INFO, "Logging out the user in the new tab.")
     time.sleep(WAIT_DUR)
-    non_isaac_url = "http://www.bbc.co.uk"
+    non_isaac_url = "https://www.bbc.co.uk"
 
     try:
         assert_logged_out(driver, wait_dur=WAIT_DUR)
