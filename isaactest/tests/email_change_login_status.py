@@ -88,6 +88,9 @@ def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
     ###
     assert_tab(driver, ISAAC_WEB)
+    driver.get(ISAAC_WEB + "/login")
+    log(INFO, "Got: %s" % (ISAAC_WEB + "/login"))
+    time.sleep(WAIT_DUR)
     submit_login_form(driver, user=Users.Guerrilla, wait_dur=WAIT_DUR)
     log(INFO, "Submitted login form with old credentials.")
     try:
