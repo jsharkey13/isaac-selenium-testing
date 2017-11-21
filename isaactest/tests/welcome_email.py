@@ -22,7 +22,7 @@ def welcome_email(driver, inbox, GUERRILLAMAIL, WAIT_DUR, **kwargs):
 
     log(INFO, "GuerrillaMail: Access welcome email in inbox.")
     try:
-        welcome_emails = inbox.get_by_subject("Welcome to Isaac Physics!")
+        welcome_emails = inbox.get_by_subject("Welcome to Isaac!")
         assert len(welcome_emails) == 1, "Expected to recieve a welcome email, recieved %s emails!" % len(welcome_emails)
         welcome_email = welcome_emails[0]
         log(INFO, "Got welcome email as expected.")
