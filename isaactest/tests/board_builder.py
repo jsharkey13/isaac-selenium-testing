@@ -1,10 +1,10 @@
 import time
 import random
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.i_selenium import assert_tab, image_div, wait_for_invisible_xpath, wait_for_xpath_element
+from ..utils.i_selenium import assert_tab, wait_for_invisible_xpath, wait_for_xpath_element
 from ..utils.isaac import submit_login_form
 from ..tests import TestWithDependency
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotVisibleException, NoAlertPresentException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, NoAlertPresentException
 from selenium.webdriver.support.ui import Select
 
 __all__ = ['board_builder']
@@ -86,7 +86,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             log(ERROR, "Did not expect error message to be displayed!")
             return False
         except TimeoutException:
-            pass # Exception occurs only if no error message shown.
+            pass  # Exception occurs only if no error message shown.
 
         log(INFO, "Try to tick an eleventh checkbox")
         question_checkboxes[10].click()
@@ -95,7 +95,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         except TimeoutException:
             log(ERROR, 'Too Many Questions error not displayed before timeout')
             return False
-        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']")  # Wait while exception toast is in view
 
         log(INFO, "Remove one question")
         question_checkboxes[9].click()
@@ -110,7 +110,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         except TimeoutException:
             log(ERROR, 'Too Many Questions error not displayed before timeout')
             return False
-        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']")  # Wait while exception toast is in view
 
         log(INFO, "Set title")
         title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
@@ -172,7 +172,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         except TimeoutException:
             log(ERROR, 'Error not displayed when expected after saving with same ID')
             return False
-        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']") # Wait while exception toast is in view
+        wait_for_invisible_xpath(driver, "//h4[text() = 'Too Many Questions']")  # Wait while exception toast is in view
 
         log(PASS, "Board builder functions as expected.")
         return True
