@@ -92,7 +92,8 @@ def close_tab(driver):
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.5)
     elif driver.name.lower() == 'chrome':
-        driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 'w')
+        # driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL + 'w')  # This no longer works!
+        driver.close()
         time.sleep(0.5)
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.5)
