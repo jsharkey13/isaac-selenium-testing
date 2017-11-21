@@ -29,7 +29,7 @@ def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **k
         log(INFO, "Selecting most recent password reset email '%s'." % reset_email)
         time.sleep(WAIT_DUR)
         email_body = reset_email.get_email_body_element()
-        reset_link = email_body.find_element_by_xpath(".//a[text()='Click Here']")
+        reset_link = email_body.find_element_by_xpath(".//a[text()='click here']")
         reset_email.close()
         time.sleep(WAIT_DUR)
         reset_url = str(reset_link.get_attribute("href")).replace("https://localhost:8080/isaac-api", ISAAC_WEB)
