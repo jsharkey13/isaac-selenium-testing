@@ -179,19 +179,23 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
     # There are two login form boxes on each page, irritatingly. Pick correct one:
     i = 1 if mobile else 2
     try:
-        user = driver.find_element_by_xpath("(//input[@name='email'])[%s]" % i)
-        user.clear()
-        user.send_keys(username)
+        email_input = driver.find_element_by_xpath("(//input[@name='email'])[%s]" % i)
+        email_input.clear()
+        email_input.send_keys(username)
         pwd = driver.find_element_by_xpath("(//input[@name='password'])[%s]" % i)
         pwd.clear()
         pwd.send_keys(password)
         login = driver.find_element_by_xpath("(//input[@value='Log in'])[%s]" % i)
         login.click()
         log(INFO, "Submitted login form for '%s'." % username)
-        time.sleep(wait_dur)
+        # time.sleep(wait_dur)
         if disable_popup:
             disable_irritating_popup(driver)
-        return True
+        try:
+            assert_logged_in(driver, user=user)
+            return True
+        except AssertionError:
+            return False
     except NoSuchElementException:
         log(ERROR, "No login form to fill out!")
         return False
@@ -211,18 +215,20 @@ def assert_logged_in(driver, user=None, wait_dur=2):
     time.sleep(wait_dur)
     u_email = str(driver.execute_script("return angular.element('head').scope().user.email;"))
     u_firstname = str(driver.execute_script("return angular.element('head').scope().user.givenName;"))
+    u_id = str(driver.execute_script("return angular.element('head').scope().user._id;"))
     if user is None:
-        if ((u_email is not None) and (u_firstname is not None)):
+        if ((u_email is not 'None') and (u_firstname is not 'None') and (u_id is not 'None')):
             log(INFO, "AssertLoggedIn: A user is logged in.")
         else:
             log(INFO, "AssertLoggedIn: No user is logged in!")
             raise AssertionError("AssertLoggedIn: Not logged in!")
     else:
-        if ((u_email == user.email) and (u_firstname == user.firstname)):
+        if ((u_email == user.email) and (u_firstname == user.firstname) and (u_id is not 'None')):
             log(INFO, "AssertLoggedIn: The user '%s' is logged in." % user.firstname)
         else:
             log(INFO, "AssertLoggedIn: The user '%s' is not logged in!" % user.firstname)
-            log(INFO, "AssertLoggedIn: A user '%s' (%s) may be logged in." % (u_firstname, u_email))
+            if u_id is not 'None':
+                log(INFO, "AssertLoggedIn: A user '%s' (%s) may be logged in." % (u_firstname, u_email))
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
 
@@ -235,8 +241,8 @@ def assert_logged_out(driver, wait_dur=2):
           browser speeds.
     """
     time.sleep(wait_dur)
-    user_id = driver.execute_script("return angular.element('head').scope().user._id;")
-    if user_id is None:
+    user_id = str(driver.execute_script("return angular.element('head').scope().user._id;"))
+    if user_id is 'None':
         log(INFO, "AssertLoggedOut: All users are logged out.")
     else:
         log(ERROR, "AssertLoggedOut: A user (%s) is still logged in!" % user_id)
