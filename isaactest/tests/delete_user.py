@@ -43,7 +43,7 @@ def delete_user(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
     try:
         time.sleep(WAIT_DUR)
-        log(INFO, "Entering user information and clicking delete button.")
+        log(INFO, "Entering user information (%s) to search and delete account." % Users.Guerrilla.email)
         email_field = driver.find_element_by_id("user-search-email")
         email_field.send_keys(Users.Guerrilla.email)
         time.sleep(WAIT_DUR)
