@@ -46,7 +46,7 @@ def multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Can't select incorrect answer on multiple choice question; can't continue!")
         return False
     try:
-        check_answer_button = mc_question.find_element_by_xpath("//button[@ng-click='checkAnswer()']")
+        check_answer_button = mc_question.find_element_by_xpath("//button[text()='Check my answer']")
         check_answer_button.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Clicked 'Check my answer'.")
@@ -79,7 +79,7 @@ def multiple_choice_questions(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "The 'incorrect' message was not hidden after choosing a new answer!")
         return False
     try:
-        check_answer_button = mc_question.find_element_by_xpath("//button[@ng-click='checkAnswer()']")
+        check_answer_button = mc_question.find_element_by_xpath("//button[text()='Check my answer']")
         check_answer_button.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Clicked 'Check my answer'.")

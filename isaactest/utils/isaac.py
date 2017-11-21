@@ -432,7 +432,7 @@ def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wa
         log(ERROR, "Couldn't read the CSS property 'left' for the dropdown. This probably constitues failure!")
         return False
     try:
-        check_answer_button = num_question.find_element_by_xpath(".//button[@ng-click='checkAnswer()']")
+        check_answer_button = num_question.find_element_by_xpath(".//button[text()='Check my answer']")
         check_answer_button.click()
         log(INFO, "Clicked 'Check my answer'.")
         time.sleep(wait_dur)
