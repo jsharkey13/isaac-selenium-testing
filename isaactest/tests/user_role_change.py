@@ -78,6 +78,16 @@ def user_role_change(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         elevate_button.click()
         log(INFO, "Click the promote to 'Teacher' button.")
         time.sleep(WAIT_DUR)
+        #
+        alert = driver.switch_to.alert
+        alert_text = alert.text
+        log(INFO, "Alert, with message: '%s'." % alert_text)
+        expected = "Are you really sure you want to promote unverified user: (%s)?" % Users.Student.email
+        assert expected in alert_text, "Alert contained unexpected message '%s'!" % alert_text
+        alert.accept()
+        log(INFO, "Accepted the alert.")
+        time.sleep(WAIT_DUR)
+        #
         driver.find_elements_by_xpath("//table//tr/td[text()='%s']/../td[contains(text(),'TEACHER')]" % Users.Student.email)[0]
         # Do something odd here: we need to ensure no error message is displayed. Wait for one, and use the
         # Timeout exception to indicate success!
