@@ -3,7 +3,7 @@ import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from .i_selenium import wait_for_xpath_element, wait_for_invisible_xpath, image_div
 from .log import log, INFO, ERROR
 import pickle
@@ -500,7 +500,7 @@ def set_filter_state(driver, tag_list, level_list, wait_dur=2):
             level_buttons[l - 1].click()
             level_buttons = driver.find_elements_by_xpath("(//div[@id='difficulty-hexagons'])[1]/a[@class='ru-diff-hex']")
         return True
-    except NoSuchElementException:
+    except (NoSuchElementException, StaleElementReferenceException):
         log(ERROR, "Could not set filter to desired state!")
         return False
     except AssertionError:
