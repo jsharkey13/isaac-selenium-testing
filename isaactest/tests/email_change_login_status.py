@@ -91,7 +91,7 @@ def email_change_login_status(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     driver.get(ISAAC_WEB + "/login")
     log(INFO, "Got: %s" % (ISAAC_WEB + "/login"))
     time.sleep(WAIT_DUR)
-    submit_login_form(driver, user=Users.Guerrilla, wait_dur=WAIT_DUR)
+    submit_login_form(driver, username=Users.Guerrilla.old_email, password=Users.Guerrilla.password, wait_dur=WAIT_DUR)
     log(INFO, "Submitted login form with old credentials.")
     try:
         wait_for_xpath_element(driver, "//strong[text()='Incorrect credentials provided.']", 5)
