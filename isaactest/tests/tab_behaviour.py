@@ -43,7 +43,7 @@ def tab_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         log(INFO, "Attempt to access Hint 1.")
         hint_buttons[0].click()
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[text()='This is Hint 1.']")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[contains(text(), 'This is Hint 1.')]")
         log(INFO, "Hint 1 opens correctly. Try clicking the tab again.")
         hint_buttons[0].click()
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[text()='This is Hint 1.']")
