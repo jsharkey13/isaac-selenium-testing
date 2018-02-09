@@ -41,12 +41,14 @@ def tab_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Expected 2 hint tabs, found %s! Can't continue!" % len(hint_buttons))
         return False
     try:
+        time.sleep(WAIT_DUR / 10.0)  # Don't need to wait ages, but race condition occasionally!
         log(INFO, "Attempt to access Hint 1.")
         hint_buttons[0].click()
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[contains(text(), 'This is Hint 1.')]")
         log(INFO, "Hint 1 opens correctly. Try clicking the tab again.")
         hint_buttons[0].click()
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[text()='This is Hint 1.']")
+        time.sleep(WAIT_DUR / 10.0)
         log(INFO, "Hint 1 remains open. Try clicking Hint 2.")
         hint_buttons[1].click()
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacMultiChoiceQuestion']//p[contains(text(), 'This is Hint 2. It contains a figure!')]")
@@ -74,6 +76,7 @@ def tab_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
             n = i + 1
             hint.click()
             wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//p[contains(text(), 'This is Hint %s.')]" % n)
+            time.sleep(WAIT_DUR / 10.0)
         log(INFO, "All numeric question hints loaded successfully.")
         log(PASS, "Tab behaviour as expected.")
         return True
