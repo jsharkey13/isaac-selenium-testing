@@ -217,17 +217,17 @@ def assert_logged_in(driver, user=None, wait_dur=2):
     u_firstname = str(driver.execute_script("return angular.element('head').scope().user.givenName;"))
     u_id = str(driver.execute_script("return angular.element('head').scope().user._id;"))
     if user is None:
-        if ((u_email is not 'None') and (u_firstname is not 'None') and (u_id is not 'None')):
+        if ((u_email != 'None') and (u_firstname != 'None') and (u_id != 'None')):
             log(INFO, "AssertLoggedIn: A user is logged in.")
         else:
             log(INFO, "AssertLoggedIn: No user is logged in!")
             raise AssertionError("AssertLoggedIn: Not logged in!")
     else:
-        if ((u_email == user.email) and (u_firstname == user.firstname) and (u_id is not 'None')):
+        if ((u_email == user.email) and (u_firstname == user.firstname) and (u_id != 'None')):
             log(INFO, "AssertLoggedIn: The user '%s' is logged in." % user.firstname)
         else:
             log(INFO, "AssertLoggedIn: The user '%s' is not logged in!" % user.firstname)
-            if u_id is not 'None':
+            if u_id != 'None':
                 log(INFO, "AssertLoggedIn: A user '%s' (%s) may be logged in." % (u_firstname, u_email))
             raise AssertionError("AssertLoggedIn: Not logged in!")
 
@@ -242,7 +242,7 @@ def assert_logged_out(driver, wait_dur=2):
     """
     time.sleep(wait_dur)
     user_id = str(driver.execute_script("return angular.element('head').scope().user._id;"))
-    if user_id is 'None':
+    if user_id == 'None':
         log(INFO, "AssertLoggedOut: All users are logged out.")
     else:
         log(ERROR, "AssertLoggedOut: A user (%s) is still logged in!" % user_id)
