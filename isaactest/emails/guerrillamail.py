@@ -140,7 +140,7 @@ class GuerrillaInbox():
             matches = [e for e in self.emails if subject in e.subject]
         return matches
 
-    def wait_for_email(self, wait_dur, refresh_time=11, cycles=5, expected=1):
+    def wait_for_email(self, wait_dur, refresh_time=15, cycles=5, expected=1):
         """Wait for emails to be received, then refresh inbox object.
 
            This function pauses for 'wait_dur' amount of time, then waits for up
@@ -241,6 +241,7 @@ class GuerrillaEmail():
         try:
             self.sender_element.click()
             time.sleep(2)
+            wait_for_xpath_element(self._driver, "//div[@class='email_body']", duration=15)
             if images:
                 show_images = self._driver.find_element_by_id("display_images")
                 show_images.click()
