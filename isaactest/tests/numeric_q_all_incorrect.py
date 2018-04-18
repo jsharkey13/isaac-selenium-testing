@@ -36,8 +36,8 @@ def numeric_q_all_incorrect(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
 
     try:
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
-        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='Incorrect']")
+        log(INFO, "An 'Incorrect' message was displayed as expected.")
         wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Check your working.'])[1]")
         log(INFO, "The 'Check your working.' message was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")

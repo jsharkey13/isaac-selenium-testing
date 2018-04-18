@@ -6,15 +6,16 @@ from ..utils.i_selenium import wait_for_xpath_element
 from ..tests import TestWithDependency
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-__all__ = ["numeric_q_incorrect_sf"]
+__all__ = ["numeric_q_known_wrong_sf_tagged"]
 
 
 #####
-# Test : Numeric Questions Incorrect Sig Figs
+# Test : Numeric Questions Known Wrong Answer, Wrong Sig Figs
 #####
-@TestWithDependency("NUMERIC_Q_INCORRECT_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
-def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test numeric question behaviour on incorrect significant figures.
+@TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF_TAGGED", ["NUMERIC_Q_ANSWER_CHANGE"])
+def numeric_q_known_wrong_sf_tagged(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
+    """Test numeric question behaviour on content editor entered wrong answer with
+       significant figures tag added to explanation.
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.
@@ -29,8 +30,8 @@ def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Can't find the numeric question; can't continue!")
         return False
 
-    log(INFO, "Attempt to enter correct value with correct units to incorrect sig figs.")
-    if not answer_numeric_q(num_question, "2.0", "\units{ m\,s^{-1} }", wait_dur=WAIT_DUR):
+    log(INFO, "Attempt to enter known (content-editor specified) wrong answer, tagged as 'sig_figs'.")
+    if not answer_numeric_q(num_question, "12345", "None", wait_dur=WAIT_DUR):
         log(ERROR, "Couldn't answer Numeric Question; can't continue!")
         return False
     time.sleep(WAIT_DUR)
@@ -38,8 +39,8 @@ def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='Significant Figures']")
         log(INFO, "A 'Sig Figs' banner was displayed instead of 'Incorrect'.")
-        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p/strong[text()='Significant figures']/..)[1]")
-        log(INFO, "The 'Significant figures' message was correctly shown.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This should say \"Significant Figures\" above!'])[1]")
+        log(INFO, "The content editor entered message was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")
         log(INFO, "The 'Please try again.' message was correctly shown.")
         bg_colour1 = num_question.find_element_by_xpath("(.//div[@class='ru-answer-block-panel'])[1]").value_of_css_property('background-color')
@@ -50,10 +51,11 @@ def numeric_q_incorrect_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(PASS, "Numeric Question 'correct value, correct unit, incorrect sig fig' behavior as expected.")
         return True
     except TimeoutException:
-        image_div(driver, "ERROR_numeric_q_incorrect_sf")
-        log(ERROR, "The messages shown for an incorrect sig fig answer were not all displayed; see 'ERROR_numeric_q_incorrect_sf.png'!")
+        image_div(driver, "ERROR_numeric_q_known_wrong_sf")
+        log(INFO, "The sig fig warning should not have been shown. if it was, this is likely the error.")
+        log(ERROR, "The messages shown for a known incorrect answer were not all displayed; see 'ERROR_numeric_q_known_wrong_sf.png'!")
         return False
     except AssertionError:
-        image_div(driver, "ERROR_numeric_q_incorrect_sf")
-        log(ERROR, "The value box was not highlighted red correctly; see 'ERROR_numeric_q_incorrect_sf.png'!")
+        image_div(driver, "ERROR_numeric_q_known_wrong_sf")
+        log(ERROR, "The value box was not highlighted red correctly; see 'ERROR_numeric_q_known_wrong_sf.png'!")
         return False

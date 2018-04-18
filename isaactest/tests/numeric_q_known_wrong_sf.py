@@ -15,7 +15,7 @@ __all__ = ["numeric_q_known_wrong_sf"]
 @TestWithDependency("NUMERIC_Q_KNOWN_WRONG_SF", ["NUMERIC_Q_ANSWER_CHANGE"])
 def numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     """Test numeric question behaviour on content editor entered wrong answer with
-       incorrect significant figures.
+       incorrect significant figures (custom answer should override sig fig message).
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.
@@ -37,8 +37,8 @@ def numeric_q_known_wrong_sf(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
 
     try:
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
-        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='Incorrect']")
+        log(INFO, "An 'Incorrect' message was displayed as expected.")
         wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='Hello'])[1]")
         log(INFO, "The content editor entered message was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")

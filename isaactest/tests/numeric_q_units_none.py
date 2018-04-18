@@ -36,8 +36,8 @@ def numeric_q_units_none(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
 
     try:
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
-        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='Incorrect']")
+        log(INFO, "An 'Incorrect' message was displayed as expected.")
         wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p[text()='This answer required no units!'])[1]")
         log(INFO, "The content editor entered message was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")

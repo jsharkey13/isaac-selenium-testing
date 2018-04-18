@@ -37,8 +37,8 @@ def numeric_q_incorrect_sf_u(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
 
     try:
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='incorrect']")
-        log(INFO, "A 'incorrect' message was displayed as expected.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h2[text()='Significant Figures']")
+        log(INFO, "A 'Sig Figs' banner was displayed instead of 'Incorrect'.")
         wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacNumericQuestion']//p/strong[text()='Significant figures']/..)[1]")
         log(INFO, "The 'Significant figures' message was correctly shown.")
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']//h5[text()='Please try again.']")

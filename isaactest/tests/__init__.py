@@ -204,6 +204,7 @@ from .numeric_q_incorrect_sf import numeric_q_incorrect_sf
 from .numeric_q_incorrect_sf_u import numeric_q_incorrect_sf_u
 from .numeric_q_known_wrong_ans import numeric_q_known_wrong_ans
 from .numeric_q_known_wrong_sf import numeric_q_known_wrong_sf
+from .numeric_q_known_wrong_sf_tagged import numeric_q_known_wrong_sf_tagged
 from .numeric_q_units_none import numeric_q_units_none
 from .numeric_q_help_popup import numeric_q_help_popup
 from .answer_saved_login import answer_saved_login
