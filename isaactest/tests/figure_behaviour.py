@@ -25,27 +25,27 @@ def figure_behaviour(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
 
     try:
-        log(INFO, "Figure numbering examples in accordion 6.")
-        accordion_6 = open_accordion_section(driver, 6)
-        wait_accordion_open(driver, 6)
+        log(INFO, "Figure numbering examples in accordion 7.")
+        accordion_7 = open_accordion_section(driver, 7)
+        wait_accordion_open(driver, 7)
         time.sleep(WAIT_DUR)
 
         log(INFO, "Checking \\ref{...} gets correctly transformed.")
-        intro_text_p = accordion_6.find_elements_by_xpath(".//p")[0]
+        intro_text_p = accordion_7.find_elements_by_xpath(".//p")[0]
         intro_text = str(intro_text_p.text)
         assert "Figure" in intro_text and "\\ref" not in intro_text, "Expected figure references to be expanded!"
         assert "Figure 2, Figure 3 and Figure 4" in intro_text, "Expected figure references in order, found '%s'!" % intro_text
 
         log(INFO, "References work as expected, checking figure numbering for side by side figs.")
-        figure_titles = accordion_6.find_elements_by_xpath(".//figcaption/div/strong")
+        figure_titles = accordion_7.find_elements_by_xpath(".//figcaption/div/strong")
         assert len(figure_titles) == 7, "Expected to find 7 figures in last accordion section!"
         side_by_side_figs = [str(element.text) for element in figure_titles[:3]]
         expected_side_by_side = ["Figure 2", "Figure 3", "Figure 4"]
         assert side_by_side_figs == expected_side_by_side, "Expected figure numbering in order for side by side figures, found '%s'!" % side_by_side_figs
 
         log(INFO, "Side by side figures numbered correctly, checking figures in tabs.")
-        tab_buttons = accordion_6.find_elements_by_xpath(".//dd[@ng-click='activateTab($index)']")
-        assert len(tab_buttons) == 3, "Expected to find 3 tabs in accordion section 6, found %d!" % len(tab_buttons)
+        tab_buttons = accordion_7.find_elements_by_xpath(".//dd[@ng-click='activateTab($index)']")
+        assert len(tab_buttons) == 3, "Expected to find 3 tabs in accordion section 7, found %d!" % len(tab_buttons)
         fig_title_5 = str(tab_buttons[0].find_element_by_xpath("../..//div[contains(@class, 'active')]//figcaption/div/strong").text)
         assert fig_title_5 == "Figure 5", "Expected figure in first tab to be figure 5, found '%s'!" % fig_title_5
         log(INFO, "Changing to tab 2.")
@@ -80,7 +80,7 @@ def figure_behaviour(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Accordion section didn't open; can't continue!")
         return False
     except IndexError:
-        log(ERROR, "Can't find intro text in accordion section 6!")
+        log(ERROR, "Can't find intro text in accordion section 7!")
         return False
     except AssertionError as e:
         log(ERROR, e.message)
