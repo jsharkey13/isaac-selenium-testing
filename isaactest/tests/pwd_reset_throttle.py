@@ -56,7 +56,8 @@ def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
                     raise TimeoutException("Password reset error message not shown after %s requests." % password_resets)
                 log(INFO, "Password reset error message shown after %s attempts." % password_resets)
                 break
-            time.sleep(WAIT_DUR)
+            log(INFO, "Waiting 20 seconds.")
+            time.sleep(20)  # Must wait long enough to ensure emails arrive in order!
         log(PASS, "Password reset error message shown after %s requests." % password_resets)
         return True
     except AssertionError:
