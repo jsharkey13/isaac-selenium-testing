@@ -51,7 +51,7 @@ def _generate_summary(Results, aborted):
         summary = "Testing Failed. %s of %s passed. %s failed, %s errors, 1 fatal!\n" % (passes, total, fails, _errors)
     for k in Results:
         status = {True: "Pass", False: "Failed", None: "Not Run"}[Results[k]]
-        summary += " - %s: %s\n" % (k.ljust(25), status)
+        summary += " - %s: %s\n" % (k.ljust(32), status)
     return summary
 
 
