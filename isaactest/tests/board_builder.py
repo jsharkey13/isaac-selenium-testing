@@ -61,14 +61,14 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
                           lambda question_result_text: '"toboggan" was not found in "{}"'.format(question_result_text.lower()))
 
         log(INFO, "Check book links work")
-        mastering_physics_link = driver.find_element_by_xpath('//a[text() = "Mastering Physics"]')
+        mastering_physics_link = driver.find_element_by_xpath('//a[text() = "Pre-University Physics"]')
         mastering_physics_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
                           lambda question_result: all(keyword in question_result.text.lower() for keyword in ['physics', 'physics_skills_14']),
                           lambda question_result_text: '"physics" or "physics_skills_14" was not found in "{}"'.format(question_result_text.lower()))
 
-        mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = "Mastering Chemistry"]')
+        mastering_chemistry_link = driver.find_element_by_xpath('//a[text() = "Physical Chemistry"]')
         mastering_chemistry_link.click()
         time.sleep(WAIT_DUR)
         check_all_results(driver,
