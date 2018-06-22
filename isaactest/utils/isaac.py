@@ -1,7 +1,7 @@
 import time
 import datetime
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from .i_selenium import wait_for_xpath_element, wait_for_invisible_xpath, image_div
@@ -93,6 +93,18 @@ class MobileIsaac(object):
         self.driver.maximize_window()
         self.driver.refresh()
         log(INFO, "Restored window dimensions.")
+
+
+def _date_parse(date):
+    """Allow dates to be entered as integer tuples (YYYY, MM, DD[, HH, MM]).
+       Removes the need to supply datetime objects, but still allows dates
+       to be entered as datetime.datetime objects. The Year, Month and
+       Day are compulsory, the Hours and Minutes optional. May cause exceptions
+       if poorly formatted tuples are used."""
+    if type(date) is datetime.datetime:
+        return date
+    else:
+        return datetime.datetime(*date)
 
 
 def kill_irritating_popup(driver, wait_dur=60):
@@ -249,8 +261,8 @@ def assert_logged_out(driver, wait_dur=2):
         raise AssertionError("AssertLoggedOut: Not logged out!")
 
 
-def sign_up_to_isaac(driver, username="", firstname="", lastname="", password="", user=None,
-                     suppress=False, wait_dur=2):
+def sign_up_to_isaac(driver, username="", firstname="", lastname="", password="", date_of_birth=None,
+                     user=None, suppress=False, wait_dur=2):
     """Sign a user up to Isaac.
 
        Fill out the first login form and then the subsequent registration form.
@@ -264,6 +276,8 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
           specified.
         - 'password' is the password to use. It will be overridden if a 'user' is
           specified.
+        - 'date_of_birth' is the date of birth to enter at registration, if desired.
+          If left unset, the code will just confirm the signup age check.
         - 'user' is the User object to use to sign up. It will override any username
           and password otherwise set.
         - 'suppress' is a boolean flag to silence any error message upon failure.
@@ -293,17 +307,30 @@ def sign_up_to_isaac(driver, username="", firstname="", lastname="", password=""
     try:
         start_url = driver.current_url
         # Second form:
+        # Shouldn't need to fill in pwd1 or email address
         first_name = driver.find_element_by_xpath("//input[@id='account-firstname']")
         first_name.clear()
         first_name.send_keys(firstname)
         last_name = driver.find_element_by_xpath("//input[@id='account-lastname']")
         last_name.clear()
         last_name.send_keys(lastname)
-        # Shouldn't need to fill in pwd1
         pwd2 = driver.find_element_by_xpath("//input[@id='account-password2']")
         pwd2.clear()
         pwd2.send_keys(password)
-        # Shouldn't need to fill in email address
+        # Either confirm age or set date of birth:
+        if date_of_birth is not None:
+            date_of_birth = _date_parse(date_of_birth)
+            dob_day = Select(driver.find_element_by_xpath("//select[@ng-model='dob.day']"))
+            dob_day.select_by_visible_text(str(date_of_birth.day))
+            dob_month = Select(driver.find_element_by_xpath("//select[@ng-model='dob.month']"))
+            dob_month.select_by_visible_text(str(date_of_birth.strftime("%b")))
+            dob_year = Select(driver.find_element_by_xpath("//select[@ng-model='dob.year']"))
+            dob_year.select_by_visible_text(str(date_of_birth.year))
+        # Always attempt to confirm age, although ought to do nothing if date_of_birth is set!
+        confirm_age = driver.find_element_by_xpath("//div[contains(@class,'confirm-age')]/label")
+        confirm_age.click()
+        time.sleep(wait_dur)
+        # Then submit form:
         submit_button = driver.find_element_by_xpath("//input[@value='Register Now']")
         submit_button.click()
         time.sleep(wait_dur)
