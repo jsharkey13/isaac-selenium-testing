@@ -10,7 +10,7 @@ __all__ = ["groups_page_access"]
 
 
 #####
-# Test : Access Admin Page As Users
+# Test : Access Groups Page As Users
 #####
 @TestWithDependency("GROUPS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
@@ -45,8 +45,8 @@ def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, e.message)
         log(ERROR, "Logged out user accessed '/groups'; see 'ERROR_unexpected_groups_access.png'!")
 
-    access_cases = [("Student", Users.Student)]
-    for i_type, user in access_cases:
+    student_login = [("Student", Users.Student)]
+    for i_type, user in student_login:
         log(INFO, "Test if '%s' users can access groups page." % i_type)
         try:
             driver.get(ISAAC_WEB + "/groups")

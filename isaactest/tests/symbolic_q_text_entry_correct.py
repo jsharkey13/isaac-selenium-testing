@@ -10,7 +10,7 @@ __all__ = ["symbolic_q_text_entry_correct"]
 
 
 #####
-# Test : Numeric Questions Correct Answers
+# Test : Symbolic Questions Text Entry Correct Answers
 #####
 @TestWithDependency("SYMBOLIC_Q_TEXT_ENTRY_CORRECT")
 def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):

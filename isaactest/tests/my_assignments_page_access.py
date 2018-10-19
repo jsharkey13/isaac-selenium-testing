@@ -1,6 +1,6 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.isaac import submit_login_form, assert_logged_in
+from ..utils.isaac import submit_login_form
 from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element
 from ..tests import TestWithDependency
@@ -10,7 +10,7 @@ __all__ = ["my_assignments_page_access"]
 
 
 #####
-# Test : Access Admin Page As Users
+# Test : Access my_assignments Page As Users
 #####
 @TestWithDependency("MY_ASSIGNMENTS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
@@ -64,7 +64,7 @@ def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             log(INFO, "'%s' users can access '/assignments'." % i_type)
         except TimeoutException:
             admin_access_fail = True
-            image_div(driver, "ERROR_no_admin_access")
+            image_div(driver, "ERROR_no_my_assignments_access")
             log(ERROR, "'%s' user can't access '/assignments'; see 'ERROR_no_my_assignments_access.png'!" % i_type)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)

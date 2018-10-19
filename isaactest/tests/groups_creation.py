@@ -1,13 +1,9 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.isaac import submit_login_form, assert_logged_in
-from ..utils.i_selenium import assert_tab, image_div
-from ..utils.i_selenium import wait_for_xpath_element
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
+from ..utils.isaac import submit_login_form
+from ..utils.i_selenium import assert_tab
 from ..tests import TestWithDependency
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 
 __all__ = ["groups_creation"]
 
@@ -42,27 +38,24 @@ def groups_creation(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
             global_nav.click()
             time.sleep(WAIT_DUR)
-            site_admin_link = driver.find_element_by_xpath("//a[@ui-sref='groups']")
-            site_admin_link.click()
+            site_groups_link = driver.find_element_by_xpath("//a[@ui-sref='groups']")
+            site_groups_link.click()
             time.sleep(WAIT_DUR)
             group_editor = driver.find_element_by_xpath("//div[@class='panel ng-scope']")
-            log(INFO, "Found the group creation box.")
             group_name = group_editor.find_element_by_xpath(".//input[@ng-model='newGroup.groupName']")
             group_name.clear()
             group_name.send_keys("testGroup")
-            log(INFO, "Entered value 'testGroup'.")
+            log(INFO, "Entered 'testGroup' as the group name.")
             time.sleep(WAIT_DUR)
             creation_button = group_editor.find_element_by_xpath("(.//a[contains(@ng-click, 'saveGroup(selectedGroup != null)')])")
             creation_button.click()
             time.sleep(WAIT_DUR)
         except NoSuchElementException:
             group_creation_fail = True
-            log(ERROR, "Can't find the Create button; can't continue!")
+            log(ERROR, "Can't create the group 'testGroup' for %s; can't continue!" % i_type)
             return False
-        #popup = WebDriverWait(driver, WAIT_DUR).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='close-reveal-modal']")))
         group_modal = driver.find_element_by_id('isaacModal')
         group_modal_button = group_modal.find_element_by_class_name('close-reveal-modal')
-        # group_modal = driver.find_element_by_xpath(".//div[@id='isaacModal']")
         group_modal_button.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Created group named 'testGroup' for %s." % i_type)
@@ -71,7 +64,7 @@ def groups_creation(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         time.sleep(WAIT_DUR)
 
     if not group_creation_fail:
-        log(PASS, "Creating the group 'testGroup' works.")
+        log(PASS, "Creating the group 'testGroup' works for expected types.")
         return True
     else:
         return False

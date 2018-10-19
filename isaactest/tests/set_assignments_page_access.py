@@ -10,7 +10,7 @@ __all__ = ["set_assignments_page_access"]
 
 
 #####
-# Test : Access Admin Page As Users
+# Test : Access set_assignments Page As Users
 #####
 @TestWithDependency("SET_ASSIGNMENTS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def set_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
@@ -59,7 +59,7 @@ def set_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         except TimeoutException:
             admin_access_fail = True
             image_div(driver, "ERROR_unexpected_set_assignments_access")
-            log(ERROR, "User of type '%s' accessed '/set_assignments'; see 'ERROR_unexpected_groups_access.png'!")
+            log(ERROR, "User of type '%s' accessed '/set_assignments'; see 'ERROR_unexpected_assignments_access.png'!")
         except AssertionError:
             log(ERROR, "Couldn't log user in to test '/set_assignments' access!")
             return False
@@ -86,7 +86,7 @@ def set_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             log(INFO, "'%s' users can access '/set_assignments'." % i_type)
         except TimeoutException:
             admin_access_fail = True
-            image_div(driver, "ERROR_no_admin_access")
+            image_div(driver, "ERROR_no_set_assignments_access")
             log(ERROR, "'%s' user can't access '/set_assignments'; see 'ERROR_no_set_assignments_access.png'!" % i_type)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)

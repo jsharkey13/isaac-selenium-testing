@@ -12,7 +12,7 @@ __all__ = ["user_type_specific_menu_links"]
 
 
 #####
-# Test : Access Admin Page As Users
+# Test : Correct Menu Links Visible As Users
 #####
 @TestWithDependency("USER_TYPE_SPECIFIC_MENU_LINKS", ["LOGIN", "LOGOUT"])
 def user_type_specific_menu_links(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
@@ -52,7 +52,7 @@ def user_type_specific_menu_links(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             menu_links_fail = True
     unavailable_options = all_menu_options
     for suboption in menu_options_logged_out:
-        unavailable_options = list(filter(lambda a: a!= suboption, unavailable_options))
+        unavailable_options = list(filter(lambda a: a != suboption, unavailable_options))
     for badoption in unavailable_options:
         try:
             element = WebDriverWait(menu_to_check, 1).until(EC.visibility_of_element_located((By.XPATH, "//a[@href='%s']" % badoption)))
