@@ -14,7 +14,7 @@ __all__ = ["set_assignments_page_access"]
 #####
 @TestWithDependency("SET_ASSIGNMENTS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def set_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test access to admin page is suitably restricted.
+    """Test access set assignments page is suitably restricted.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.
@@ -78,8 +78,8 @@ def set_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
             global_nav.click()
             time.sleep(WAIT_DUR)
-            site_admin_link = driver.find_element_by_xpath("//a[@href='/set_assignments']")
-            site_admin_link.click()
+            set_assignments_page_link = driver.find_element_by_xpath("//a[@href='/set_assignments']")
+            set_assignments_page_link.click()
             time.sleep(WAIT_DUR)
             wait_for_xpath_element(driver, "//h1[text()='Set Assignments']")
             time.sleep(WAIT_DUR)

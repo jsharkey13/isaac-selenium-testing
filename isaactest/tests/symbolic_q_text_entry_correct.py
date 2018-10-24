@@ -14,7 +14,7 @@ __all__ = ["symbolic_q_text_entry_correct"]
 #####
 @TestWithDependency("SYMBOLIC_Q_TEXT_ENTRY_CORRECT")
 def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test if numeric questions can be answered correctly.
+    """Test if symbolic questions can be answered correctly with text entry.
 
         - 'driver' should be a Selenium WebDriver.
         - 'ISAAC_WEB' is the string URL of the Isaac website to be tested.

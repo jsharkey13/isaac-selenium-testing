@@ -14,7 +14,7 @@ __all__ = ["my_assignments_page_access"]
 #####
 @TestWithDependency("MY_ASSIGNMENTS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test access to admin page is suitably restricted.
+    """Test access to my assignments page is suitably restricted.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.
@@ -26,7 +26,7 @@ def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Logging out any logged in user.")
     time.sleep(WAIT_DUR)
 
-    admin_access_fail = False
+    assignments_page_access_fail = False
 
     try:
         log(INFO, "Test if logged out user can access '/assignments'.")
@@ -40,7 +40,7 @@ def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Logging out to start from same initial page each time.")
         time.sleep(WAIT_DUR)
     except AssertionError, e:
-        admin_access_fail = True
+        assignments_page_access_fail = True
         image_div(driver, "ERROR_unexpected_my_assignment_access")
         log(INFO, e.message)
         log(ERROR, "Logged out user accessed '/assignments'; see 'ERROR_unexpected_set_assignments_access.png'!")
@@ -56,21 +56,21 @@ def my_assignments_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
             global_nav.click()
             time.sleep(WAIT_DUR)
-            site_admin_link = driver.find_element_by_xpath("//a[@href='/assignments']")
-            site_admin_link.click()
+            site_assignments_link = driver.find_element_by_xpath("//a[@href='/assignments']")
+            site_assignments_link.click()
             time.sleep(WAIT_DUR)
             wait_for_xpath_element(driver, "//h1[text()='My Assignments']")
             time.sleep(WAIT_DUR)
             log(INFO, "'%s' users can access '/assignments'." % i_type)
         except TimeoutException:
-            admin_access_fail = True
+            assignments_page_access_fail = True
             image_div(driver, "ERROR_no_my_assignments_access")
             log(ERROR, "'%s' user can't access '/assignments'; see 'ERROR_no_my_assignments_access.png'!" % i_type)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)
         time.sleep(3)
 
-    if not admin_access_fail:
+    if not assignments_page_access_fail:
         log(PASS, "Access to my assignments page restricted appropriately.")
         return True
     else:

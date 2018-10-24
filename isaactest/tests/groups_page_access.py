@@ -14,7 +14,7 @@ __all__ = ["groups_page_access"]
 #####
 @TestWithDependency("GROUPS_PAGE_ACCESS", ["LOGIN", "LOGOUT"])
 def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
-    """Test access to admin page is suitably restricted.
+    """Test access to groups page is suitably restricted.
 
         - 'driver' should be a Selenium WebDriver.
         - 'Users' must be a TestUsers object.
@@ -26,7 +26,7 @@ def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     log(INFO, "Logging out any logged in user.")
     time.sleep(WAIT_DUR)
 
-    admin_access_fail = False
+    groups_page_access_fail = False
 
     try:
         log(INFO, "Test if logged out user can access '/groups'.")
@@ -40,7 +40,7 @@ def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(INFO, "Logging out to start from same initial page each time.")
         time.sleep(WAIT_DUR)
     except AssertionError, e:
-        admin_access_fail = True
+        groups_page_access_fail = True
         image_div(driver, "ERROR_unexpected_groups_access")
         log(INFO, e.message)
         log(ERROR, "Logged out user accessed '/groups'; see 'ERROR_unexpected_groups_access.png'!")
@@ -57,7 +57,7 @@ def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             wait_for_xpath_element(driver, "//h1[text()='Unauthorised']")
             log(INFO, "User of type '%s' can't access groups page." % i_type)
         except TimeoutException:
-            admin_access_fail = True
+            groups_page_access_fail = True
             image_div(driver, "ERROR_unexpected_groups_access")
             log(ERROR, "User of type '%s' accessed '/groups'; see 'ERROR_unexpected_groups_access.png'!")
         except AssertionError:
@@ -85,14 +85,14 @@ def groups_page_access(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
             time.sleep(WAIT_DUR)
             log(INFO, "'%s' users can access '/groups'." % i_type)
         except TimeoutException:
-            admin_access_fail = True
+            groups_page_access_fail = True
             image_div(driver, "ERROR_no_admin_access")
             log(ERROR, "'%s' user can't access '/groups'; see 'ERROR_no_groups_access.png'!" % i_type)
         driver.get(ISAAC_WEB + "/logout")
         log(INFO, "Logged out '%s' user." % i_type)
         time.sleep(3)
 
-    if not admin_access_fail:
+    if not groups_page_access_fail:
         log(PASS, "Access to groups page restricted appropriately.")
         return True
     else:
