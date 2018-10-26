@@ -167,6 +167,11 @@ from .accept_cookies import accept_cookies
 from .global_nav import global_nav
 from .global_nav_mobile import global_nav_mobile
 from .logout import logout
+from .user_type_specific_menu_links import user_type_specific_menu_links
+from .my_assignments_page_access import my_assignments_page_access
+from .set_assignments_page_access import set_assignments_page_access
+from .groups_page_access import groups_page_access
+from .groups_creation import groups_creation
 from .login_throttle import login_throttle
 from .login_timeout import login_timeout
 from .login_mobile import login_mobile
@@ -193,6 +198,7 @@ from .admin_page_access import admin_page_access
 from .accordion_behaviour import accordion_behavior
 from .quick_questions import quick_questions
 from .multiple_choice_questions import multiple_choice_questions
+from .symbolic_q_text_entry_correct import symbolic_q_text_entry_correct
 from .numeric_q_units_select import numeric_q_units_select
 from .numeric_q_all_correct import numeric_q_all_correct
 from .numeric_q_answer_reloaded import numeric_q_answer_reloaded

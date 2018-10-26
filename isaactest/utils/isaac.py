@@ -10,7 +10,7 @@ import pickle
 
 __all__ = ['User', 'TestUsers', 'kill_irritating_popup', 'disable_irritating_popup',
            'submit_login_form', 'assert_logged_in', 'assert_logged_out', 'sign_up_to_isaac',
-           'answer_numeric_q']
+           'answer_numeric_q', 'answer_symbolic_q_text_entry']
 
 
 class User():
@@ -466,6 +466,38 @@ def answer_numeric_q(num_question, value, correct_unit, get_unit_wrong=False, wa
         return False
     try:
         check_answer_button = num_question.find_element_by_xpath(".//button[text()='Check my answer']")
+        check_answer_button.click()
+        log(INFO, "Clicked 'Check my answer'.")
+        time.sleep(wait_dur)
+        return True
+    except NoSuchElementException:
+        log(ERROR, "Couldn't click the 'Check my answer' button; can't continue!")
+        return False
+
+
+def answer_symbolic_q_text_entry(sym_question, value, wait_dur=2):
+    """Submit an answer to a symbolic question, given a value.
+
+       Given a symbolic question WebElement, enter an answer;
+        - 'sym_question' should be the WebElement of the question, probably selected
+          using '//div[@ng-switch-when='isaacSymbolicQuestion']' as the XPATH.
+        - 'value' should be the numeric answer in string form.
+        - 'correct_unit' should be the LaTeX of the correct unit in string form.
+        - 'get_unit_wrong' allows choosing a definitely incorrect unit for testing.
+        - 'wait_dur' ensures JavaScript elements have time to react given different
+          browser speeds.
+    """
+    try:
+        answer_box = sym_question.find_element_by_xpath(".//input[@ng-paste='textEdit()']")
+        answer_box.clear()
+        answer_box.send_keys(value)
+        log(INFO, "Entered value '%s'." % value)
+        time.sleep(wait_dur)
+    except NoSuchElementException:
+        log(ERROR, "Can't find the answer field; can't continue!")
+        return False
+    try:
+        check_answer_button = sym_question.find_element_by_xpath(".//button[text()='Check my answer']")
         check_answer_button.click()
         log(INFO, "Clicked 'Check my answer'.")
         time.sleep(wait_dur)
