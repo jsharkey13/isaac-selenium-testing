@@ -146,11 +146,11 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         level_field = Select(driver.find_element_by_xpath('//select[@ng-model="questionSearchLevel"]'))
         query_field = driver.find_element_by_xpath('//input[@ng-model="questionSearchText"]')
         time.sleep(WAIT_DUR)
-        question_results_text = [question_result.text for question_result in driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li")]
+        question_result_titles = [' - '.join(question_result.text.split(' - ')[:-2]) for question_result in driver.find_elements_by_xpath("//ul[@class='no-bullet results-list ng-scope']//li")]
         assert subject_field.first_selected_option.text == 'Physics', 'Subject field value "{}" does not match expected "{}"'.format(subject_field.first_selected_option.text, 'Physics')
         assert level_field.first_selected_option.text == 'Any', 'Level field value "{}" does not match expected "{}"'.format(level_field.first_selected_option.text, 'Any')
         assert query_field.get_attribute('value') == '"physics_skills_14"', 'Query field value "{}" does not match expected "{}"'.format(query_field.get_attribute('value'), '"physics_skills_14"')
-        assert question_results_text == sorted(question_results_text), 'Question results were not sorted as was expected\n{}'.format(question_results_text)
+        assert question_result_titles == sorted(question_result_titles), 'Question results were not sorted by title as was expected\n{}'.format(question_result_titles)
 
         log(INFO, "Try to save board with a pre-existing ID")
         title_field = driver.find_element_by_xpath('//input[@ng-model="currentGameBoard.title"]')
@@ -178,7 +178,7 @@ def board_builder(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return True
 
     except AssertionError as e:
-        log(ERROR, "Asserton Error: {}".format(e))
+        log(ERROR, "Assertion Error: {}".format(e))
         return False
     except NoSuchElementException as e:
         log(ERROR, "No Such Element Exception: {}".format(e))
