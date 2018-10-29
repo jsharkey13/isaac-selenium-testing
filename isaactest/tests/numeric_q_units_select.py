@@ -42,7 +42,7 @@ def numeric_q_units_select(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         units_dropdown.click()
         time.sleep(WAIT_DUR)
         log(INFO, "Clicked to open units dropdown.")
-        left = int(float(num_question.find_element_by_xpath(".//ul[@class='f-dropdown']").value_of_css_property('left').replace('px', '')))
+        left = int(float(num_question.find_element_by_xpath(".//ul[contains(@class, 'f-dropdown')]").value_of_css_property('left').replace('px', '')))
         assert left > 0
         log(INFO, "Units dropdown displayed correctly.")
     except AssertionError:
