@@ -29,7 +29,7 @@ def numeric_q_help_popup(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         open_accordion_section(driver, 3)
         time.sleep(WAIT_DUR)
         num_question = wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacNumericQuestion']")
-        log(INFO, "Accordion opened, multiple choice question displayed.")
+        log(INFO, "Accordion opened, numeric question displayed.")
     except NoSuchElementException:
         log(ERROR, "Can't find third accordion section to open; can't continue!")
         return False
