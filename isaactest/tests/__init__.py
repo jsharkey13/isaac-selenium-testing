@@ -214,6 +214,7 @@ from .numeric_q_known_wrong_sf_tagged import numeric_q_known_wrong_sf_tagged
 from .numeric_q_units_none import numeric_q_units_none
 from .numeric_q_help_popup import numeric_q_help_popup
 from .answer_saved_login import answer_saved_login
+from .string_match_q_correct import string_match_q_correct
 from .concept_index_page import concept_index_page
 from .concept_pages import concept_pages
 from .tab_behaviour import tab_behavior
