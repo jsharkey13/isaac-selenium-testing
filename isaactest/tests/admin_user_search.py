@@ -99,9 +99,9 @@ def admin_user_search(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         log(INFO, "Test search by manually entered school name.")
         time.sleep(WAIT_DUR)
-        school_dropdown = Select(driver.find_element_by_id("user-school-other"))
+        school_other_input = driver.find_element_by_id("user-school-other")
         time.sleep(WAIT_DUR)
-        school_dropdown.select_by_value("A Manually Entered School")
+        school_other_input.send_keys("A Manually Entered School")
         time.sleep(WAIT_DUR)
         search_button = driver.find_elements_by_xpath("//button[@type='submit']")[0]
         search_button.click()
