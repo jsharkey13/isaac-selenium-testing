@@ -41,7 +41,7 @@ def req_verify_emails(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
             email_verification_popup_shown_yet = True
             wait_for_invisible_xpath(driver, verify_popup_xpath)
             email_verification_popup_shown_yet = False
-            time.sleep(WAIT_DUR)
+            time.sleep(WAIT_DUR + 10)
             if i <= verification_email_request_limit - 1:  # i starts from 0, not 1
                 assert popup_text == "Email verification request succeeded."
                 log(INFO, "Success message shown.")
