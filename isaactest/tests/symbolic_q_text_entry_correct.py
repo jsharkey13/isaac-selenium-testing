@@ -26,9 +26,9 @@ def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
     submit_login_form(driver, user=Users.Admin, disable_popup=False, wait_dur=WAIT_DUR)
     time.sleep(WAIT_DUR)
-    driver.get(ISAAC_WEB + "questions/_regression_test_")
+    driver.get(ISAAC_WEB + "/questions/_regression_test_")
     time.sleep(WAIT_DUR)
-    assert_tab(driver, ISAAC_WEB + "questions/_regression_test_")
+    assert_tab(driver, ISAAC_WEB + "/questions/_regression_test_")
     time.sleep(WAIT_DUR)
     try:
         open_accordion_section(driver, 4)
