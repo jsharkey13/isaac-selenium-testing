@@ -2,7 +2,7 @@ import selenium.webdriver
 import time
 from .log import log, INFO
 from .i_selenium import new_tab, NoWebDriverException
-from .isaac import TestUsers, User
+from .isaac import TestUsers, User, is_live_site
 from ..emails.guerrillamail import GuerrillaInbox, set_guerrilla_mail_address
 
 
@@ -32,6 +32,7 @@ def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
           look for the ChromeDriver executable. If not specified, Firefox will
           be used.
     """
+    assert not is_live_site(ISAAC_WEB), "Cannot perform testing on live Isaac website!"
     # Selenium Start-up:
     if "chrome" in PATH_TO_DRIVER:
         driver = selenium.webdriver.Chrome(executable_path=PATH_TO_DRIVER)

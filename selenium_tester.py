@@ -1,4 +1,8 @@
-# Selenium Testing of Isaac Physics
+# Selenium Testing of the Isaac Website
+#
+# Unauthorised use of this tool on Isaac websites is a violation of our Terms of Use:
+#    https://isaacphysics.org/terms
+#
 # Python Imports:
 import os
 import time

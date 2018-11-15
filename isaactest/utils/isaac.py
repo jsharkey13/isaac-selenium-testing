@@ -1,4 +1,5 @@
 import time
+import re
 import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
@@ -10,7 +11,7 @@ import pickle
 
 __all__ = ['User', 'TestUsers', 'kill_irritating_popup', 'disable_irritating_popup',
            'submit_login_form', 'assert_logged_in', 'assert_logged_out', 'sign_up_to_isaac',
-           'answer_numeric_q', 'answer_symbolic_q_text_entry']
+           'answer_numeric_q', 'answer_symbolic_q_text_entry', 'is_live_site']
 
 
 class User():
@@ -93,6 +94,18 @@ class MobileIsaac(object):
         self.driver.maximize_window()
         self.driver.refresh()
         log(INFO, "Restored window dimensions.")
+
+
+def is_live_site(url):
+    """Ensure that the tool is not used on the production Isaac website.
+
+       Use of this tool or any part of it on Isaac Physics and related websites
+       is a violation of our terms of use: https://isaacphysics.org/terms
+    """
+    if re.search("http(s)?://isaac(physics|chemistry|maths|biology|science)\.org", url):
+        return True
+    else:
+        return False
 
 
 def _date_parse(date):

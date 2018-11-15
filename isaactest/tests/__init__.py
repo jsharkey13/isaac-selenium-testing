@@ -1,4 +1,5 @@
 from functools import wraps
+from ..utils.isaac import is_live_site
 from ..utils.log import log, TEST, INFO, ERROR
 from collections import OrderedDict
 
@@ -95,6 +96,7 @@ class TestWithDependency(object):
               and runs any necessary tests to cleanup. Do not pass this parameter
               by hand without good reason.
         """
+        assert not is_live_site(ISAAC_WEB), "Cannot perform testing on live Isaac website!"
         # This is the superset of all arguments required by tests. Their "**kwargs"
         # argument allows us to pass in all arguments and any extra ones will simply
         # be ignored.
@@ -132,6 +134,7 @@ class TestWithDependency(object):
             - 'GUERRILLAMAIL' is the string URL of GuerrillaMail.
             - 'WAIT_DUR' is the time in seconds to wait for JavaScript to run/load.
         """
+        assert not is_live_site(ISAAC_WEB), "Cannot perform testing on live Isaac website!"
         # This is the superset of all arguments required by tests. Their "**kwargs"
         # argument allows us to pass in all arguments and any extra ones will simply
         # be ignored.
