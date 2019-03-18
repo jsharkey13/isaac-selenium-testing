@@ -1,6 +1,6 @@
 import time
 from ..utils.log import log, INFO, ERROR, PASS
-from ..utils.isaac import answer_symbolic_q_text_entry, open_accordion_section, submit_login_form
+from ..utils.isaac import answer_symbolic_q_text_entry, open_accordion_section, submit_login_form, assert_logged_in
 from ..utils.i_selenium import assert_tab, image_div
 from ..utils.i_selenium import wait_for_xpath_element
 from ..tests import TestWithDependency
@@ -26,9 +26,34 @@ def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     time.sleep(WAIT_DUR)
     submit_login_form(driver, user=Users.Admin, disable_popup=False, wait_dur=WAIT_DUR)
     time.sleep(WAIT_DUR)
+    assert_logged_in(driver, user=Users.Admin)
+    global_nav = driver.find_element_by_xpath("//button[@ng-click='menuToggle()']")
+    global_nav.click()
+    log(INFO, "Opened global nav (menu bar).")
+    time.sleep(WAIT_DUR)
+    my_account_link = driver.find_element_by_xpath("(//a[@ui-sref='accountSettings'])[2]")
+    my_account_link.click()
+    log(INFO, "Clicked 'My Account' button.")
+    time.sleep(WAIT_DUR)
+    beta_tab = driver.find_element_by_xpath("//dd[@ng-click='activateTab(4)']")
+    beta_tab.click()
+    log(INFO, "Clicked 'Beta Features' tab.")
+    time.sleep(WAIT_DUR)
+    text_entry = driver.find_element_by_xpath("(//input[@id='eqn-editor-text-entry'])")
+    if 'ng-empty' in text_entry.get_attribute("class"):
+        text_entry.click()
+        time.sleep(WAIT_DUR)
+        log(INFO, "Text entry now enabled")
+        save_button = driver.find_element_by_xpath("//a[text()='Save']")
+        save_button.click()
+        log(INFO, "Saving account changes.")
+        time.sleep(WAIT_DUR)
+    else:
+        log(INFO, "Text entry already enabled")
+    time.sleep(WAIT_DUR)
     driver.get(ISAAC_WEB + "/questions/_regression_test_")
     time.sleep(WAIT_DUR)
-    assert_tab(driver, ISAAC_WEB + "/questions/_regression_test_")
+    assert_tab(driver, ISAAC_WEB + "questions/_regression_test_")
     time.sleep(WAIT_DUR)
     try:
         open_accordion_section(driver, 4)
@@ -46,12 +71,7 @@ def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacSymbolicQuestion']//h1[text()='Correct!']")
         log(INFO, "A 'Correct!' message was displayed as expected.")
-        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacSymbolicQuestion']//p[text()='This is a correct choice.'])[2]")
-        log(INFO, "The editor entered explanation text was correctly shown.")
-        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacSymbolicQuestion']//strong[text()='Well done!']")
-        log(INFO, "The 'Well done!' message was correctly shown.")
-        log(INFO, "Avoid rate limiting: wait 1 minute.")
-        time.sleep(60)
+        time.sleep(WAIT_DUR)
         log(PASS, "Symbolic Question 'correct value, correct unit' behavior as expected.")
         return True
     except TimeoutException:

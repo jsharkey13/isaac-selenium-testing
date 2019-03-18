@@ -31,24 +31,25 @@ def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     password_resets = 0
     forgot_pwd_request_limit = 4
     try:
-        user = driver.find_element_by_xpath("(//input[@name='email'])[2]")
-        user.clear()
-        user.send_keys(Users.Guerrilla.email)
         for i in range(10):
+            driver.refresh()
+            user = driver.find_element_by_xpath("(//input[@name='email'])[2]")
+            user.clear()
+            user.send_keys(Users.Guerrilla.email)
             forgot_password_button = driver.find_element_by_xpath("(//a[@ng-click='resetPassword()'])[2]")
             log(INFO, "Clicking password reset button.")
             forgot_password_button.click()
-            time.sleep(0.5)
+            time.sleep(3)
             image_div(driver, "reset_password_button_message_%s" % i)
             password_resets += 1
             if i <= forgot_pwd_request_limit - 1:  # i starts from 0 not 1
                 try:
-                    wait_for_invisible_xpath(driver, "//div[@class='toast-message']/h4", 0.5)
+                    wait_for_invisible_xpath(driver, "//*[contains(text(), 'Your password reset request is being processed. Please check your inbox.')]", 0.5)
                 except TimeoutException:
                     raise TimeoutException("Password reset error message unexpectedly shown after %s requests!" % password_resets)
-                time.sleep(0.5)
-                message = driver.find_element_by_xpath("(//p[@ng-show='passwordResetFlag'])[2]")
-                assert "Your password request is being processed." in message.text
+                time.sleep(2)
+                message = driver.find_element_by_xpath("(//*[@ng-show='passwordResetFlag'])")
+                assert 'Your password reset request is being processed. Please check your inbox.' in message.get_attribute("innerHTML")
             else:
                 try:
                     wait_for_xpath_element(driver, "//div[@class='toast-message']/h4")
@@ -64,7 +65,7 @@ def pwd_reset_throttle(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         log(ERROR, "Incorrect password reset message shown; see 'reset_password_button_message.png'!")
         return False
     except NoSuchElementException:
-        log(ERROR, "No password reset messagew shown; see 'reset_password_button_message.png'!")
+        log(ERROR, "No password reset message shown; see 'reset_password_button_message.png'!")
         return False
     except TimeoutException, e:
         log(ERROR, e.msg)

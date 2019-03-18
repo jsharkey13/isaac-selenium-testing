@@ -213,7 +213,7 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
         login = driver.find_element_by_xpath("(//input[@value='Log in'])[%s]" % i)
         login.click()
         log(INFO, "Submitted login form for '%s'." % username)
-        # time.sleep(wait_dur)
+        time.sleep(wait_dur)
         if disable_popup:
             disable_irritating_popup(driver)
         try:
