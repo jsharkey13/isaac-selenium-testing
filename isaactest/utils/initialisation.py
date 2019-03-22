@@ -17,7 +17,7 @@ def define_users():
     return Users
 
 
-def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
+def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER, skip_guerillamail=False):
     """Start the Selenium WebDriver of choice.
 
        Start a Selenium WebDriver then return it and a GuerrillaInbox object. If
@@ -44,22 +44,25 @@ def start_selenium(Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, PATH_TO_DRIVER):
     driver.maximize_window()
     log(INFO, "Opened Selenium Driver for '%s'." % driver.name.title())
     time.sleep(WAIT_DUR)
-    # Navigate to Staging:
+    # Navigate to Isaac:
     driver.get(ISAAC_WEB)
     log(INFO, "Got: %s" % ISAAC_WEB)
     time.sleep(WAIT_DUR)
-    # Open GuerrillaMail:
-    new_tab(driver)
-    time.sleep(WAIT_DUR)
-    driver.get(GUERRILLAMAIL)
-    log(INFO, "Got: %s" % GUERRILLAMAIL)
-    # Set Guerrilla Mail email address:
-    time.sleep(WAIT_DUR)
-    Users.Guerrilla.email = set_guerrilla_mail_address(driver, Users.Guerrilla.email)
-    time.sleep(WAIT_DUR)
-    inbox = GuerrillaInbox(driver)
-    time.sleep(WAIT_DUR)
-    # Delete GuerrillaMail welcome and clear inbox:
-    inbox.delete_emails()
-    time.sleep(WAIT_DUR)
+    if not skip_guerillamail:
+        # Open GuerrillaMail:
+        new_tab(driver)
+        time.sleep(WAIT_DUR)
+        driver.get(GUERRILLAMAIL)
+        log(INFO, "Got: %s" % GUERRILLAMAIL)
+        # Set Guerrilla Mail email address:
+        time.sleep(WAIT_DUR)
+        Users.Guerrilla.email = set_guerrilla_mail_address(driver, Users.Guerrilla.email)
+        time.sleep(WAIT_DUR)
+        inbox = GuerrillaInbox(driver)
+        time.sleep(WAIT_DUR)
+        # Delete GuerrillaMail welcome and clear inbox:
+        inbox.delete_emails()
+        time.sleep(WAIT_DUR)
+    else:
+        inbox = None
     return driver, inbox
