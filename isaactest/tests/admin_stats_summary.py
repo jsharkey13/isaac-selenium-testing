@@ -43,8 +43,8 @@ def admin_stats_summary(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
 
     try:
-        users_text = driver.find_element_by_xpath("//div[@ng-show='statistics.totalUsers']//strong[contains(text(), 'Users:')]").text
-        count = int(users_text.split(":")[3])
+        users_text = driver.find_element_by_xpath("//div[@ng-show='statistics']//li[contains(text(), 'Registered')]").text #.get_attribute("innerHTML") #//strong[contains(text(), 'Users:')]
+        count = int(users_text.split(":")[1])
         assert count > 0, "Expected user registered count > 0, got '%s'!" % count
         log(INFO, "User registered count loaded: %s" % count)
     except NoSuchElementException:
@@ -58,7 +58,7 @@ def admin_stats_summary(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
 
     try:
-        answer_events_text = driver.find_element_by_xpath("//div[@ng-show='statistics.totalUsers']//li[contains(text(), '# of Questions')]").text
+        answer_events_text = driver.find_element_by_xpath("//div[@ng-show='statistics']//li[contains(text(), '# of Questions')]").text
         answers_count = int(answer_events_text.split("(")[1].replace(")", ""))
         assert answers_count > 0, "Expected question answer attempt count > 0, got '%s'!" % answers_count
         log(INFO, "Question attempt count loaded: %s" % answers_count)

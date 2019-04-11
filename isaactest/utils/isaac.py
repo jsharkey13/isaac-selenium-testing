@@ -213,7 +213,7 @@ def submit_login_form(driver, username="", password="", user=None, disable_popup
         login = driver.find_element_by_xpath("(//input[@value='Log in'])[%s]" % i)
         login.click()
         log(INFO, "Submitted login form for '%s'." % username)
-        # time.sleep(wait_dur)
+        time.sleep(wait_dur)
         if disable_popup:
             disable_irritating_popup(driver)
         try:
@@ -502,6 +502,9 @@ def answer_symbolic_q_text_entry(sym_question, value, wait_dur=2):
     """
     try:
         answer_box = sym_question.find_element_by_xpath(".//input[@ng-paste='textEdit()']")
+        answer_box.clear()
+        answer_box.send_keys("clear any old attempts")
+        time.sleep(wait_dur)
         answer_box.clear()
         answer_box.send_keys(value)
         log(INFO, "Entered value '%s'." % value)

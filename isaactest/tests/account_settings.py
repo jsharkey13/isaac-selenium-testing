@@ -139,7 +139,7 @@ def account_settings(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
         dob_year = Select(dob_selects[2]).first_selected_option.text
         assert (dob_day == "23") and (dob_month == "Jun") and (dob_year == "1912"), "Expected date of birth changes to be persisted; changes lost!"
 
-        school_name_box = driver.find_element_by_xpath("//div[@ng-show='selection.school']/span[1]")
+        school_name_box = driver.find_element_by_xpath("//div[@ng-show='selection.school.name']/span[1]")
         assert school_name in school_name_box.text, "Expected school change to be persisted; changes lost!"
     except AssertionError as e:
         log(ERROR, e.message + " See 'ERROR_my_account_persist.png'. Can't continue!")
