@@ -71,6 +71,11 @@ def symbolic_q_text_entry_correct(driver, Users, ISAAC_WEB, WAIT_DUR, **kwargs):
     try:
         wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacSymbolicQuestion']//h1[text()='Correct!']")
         log(INFO, "A 'Correct!' message was displayed as expected.")
+        wait_for_xpath_element(driver, "(//div[@ng-switch-when='isaacSymbolicQuestion']//p[text()='This is a correct choice. It requires an exact match!'])[2]")
+        log(INFO, "The editor entered explanation text was correctly shown.")
+        wait_for_xpath_element(driver, "//div[@ng-switch-when='isaacSymbolicQuestion']//strong[text()='Well done!']")
+        log(INFO, "The 'Well done!' message was correctly shown.")
+        log(INFO, "Avoid rate limiting: wait 1 minute.")
         time.sleep(WAIT_DUR)
         log(PASS, "Symbolic Question 'correct value, correct unit' behavior as expected.")
         return True

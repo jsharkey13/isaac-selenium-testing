@@ -503,6 +503,9 @@ def answer_symbolic_q_text_entry(sym_question, value, wait_dur=2):
     try:
         answer_box = sym_question.find_element_by_xpath(".//input[@ng-paste='textEdit()']")
         answer_box.clear()
+        answer_box.send_keys("clear any old attempts")
+        time.sleep(wait_dur)
+        answer_box.clear()
         answer_box.send_keys(value)
         log(INFO, "Entered value '%s'." % value)
         time.sleep(wait_dur)
