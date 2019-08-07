@@ -58,7 +58,7 @@ def pwd_reset_link(driver, inbox, Users, ISAAC_WEB, GUERRILLAMAIL, WAIT_DUR, **k
         log(ERROR, "Can't access reset password form correctly; can't continue!")
         return False
     try:
-        driver.find_element_by_xpath("//div[@ng-switch='submitted']/div[contains(text(), 'reset successfully')]")
+        driver.find_element_by_xpath("//div[@ng-switch='submitted']//div[contains(text(), 'reset successfully')]")
         Users.Guerrilla.password = Users.Guerrilla.new_password
         close_tab(driver)
         time.sleep(WAIT_DUR)
