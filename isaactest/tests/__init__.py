@@ -201,7 +201,6 @@ from .admin_page_access import admin_page_access
 from .accordion_behaviour import accordion_behavior
 from .quick_questions import quick_questions
 from .multiple_choice_questions import multiple_choice_questions
-from .symbolic_q_text_entry_correct import symbolic_q_text_entry_correct
 from .numeric_q_units_select import numeric_q_units_select
 from .numeric_q_all_correct import numeric_q_all_correct
 from .numeric_q_answer_reloaded import numeric_q_answer_reloaded
@@ -217,6 +216,7 @@ from .numeric_q_known_wrong_sf_tagged import numeric_q_known_wrong_sf_tagged
 from .numeric_q_units_none import numeric_q_units_none
 from .numeric_q_help_popup import numeric_q_help_popup
 from .answer_saved_login import answer_saved_login
+from .symbolic_q_text_entry_correct import symbolic_q_text_entry_correct
 from .string_match_q_correct import string_match_q_correct
 from .concept_index_page import concept_index_page
 from .concept_pages import concept_pages
