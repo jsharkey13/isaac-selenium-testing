@@ -68,7 +68,7 @@ def accordion_behavior(driver, ISAAC_WEB, WAIT_DUR, **kwargs):
         return False
     log(INFO, "Check all accordion sections work.")
     try:
-        expected_accordion_sections = 7
+        expected_accordion_sections = 9
         accordion_sections = driver.find_elements_by_xpath("//a[contains(@class, 'ru_accordion_titlebar')]")
         assert len(accordion_sections) == expected_accordion_sections, "Expected %d accordion sections, got %s!" % (expected_accordion_sections, len(accordion_sections))
         log(INFO, "%d accordion sections on page as expected." % expected_accordion_sections)
